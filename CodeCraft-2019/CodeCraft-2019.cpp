@@ -9,8 +9,8 @@ Cross cross[MAX_CROSS];
 int main(int argc,char** argv)
 {
   print_time("Begin");
-    std::ifstream fin_road(argv[1]);
-    std::ifstream fin_car(argv[2]);
+    std::ifstream fin_car(argv[1]);
+    std::ifstream fin_road(argv[2]);
     std::ifstream fin_cross(argv[3]);
     
     if(!fin_road.is_open())  {std::cout<<"/**ERROR:No Road input file**/"<<std::endl;return 0;} 
@@ -73,6 +73,19 @@ int main(int argc,char** argv)
        }
        fin_cross.close();
        std::cout<<"read finished"<<std::endl;
+       int l=0;
+       int m=0;
+       int n=0;
+       printf("Number %d  car_info: %d  %d  %d  %d  %d \n",l,car[l].id,car[l].set,car[l].goal,car[l].max_speed,car[l].set_time);
+       printf("Number %d  cross: %d  %d  %d  %d  %d \n",m,cross[m].id,cross[m].road_id[0],cross[m].road_id[1],cross[m].road_id[2],cross[m].road_id[3]);
+       printf("Number %d  road: %d  %d  %d  %d  %d  %d  %d\n",n,(road[n].id),
+						    (road[n].road_length),
+						    (road[n].limit_speed),
+						    (road[n].lane_num),
+						    (road[n].start),
+						    (road[n].end),
+						    (road[n].flag_twoway));
+       
        printf("road_num: %d  car_num: %d  cross_num: %d \n",road_num,car_num,cross_num);
 
   print_time("End");
