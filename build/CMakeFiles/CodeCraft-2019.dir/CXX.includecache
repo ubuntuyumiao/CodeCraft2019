@@ -9,14 +9,20 @@
 /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/CodeCraft-2019.cpp
 iostream
 -
-fstream
--
 stdio.h
 -
-lib_io.h
+fstream
+-
+cstring
+-
+stack
 -
 lib_time.h
 /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/lib_time.h
+lib_io.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/lib_io.h
+
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/algrithm_test.cpp
 
 /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/io.cpp
 stdio.h
@@ -40,5 +46,5 @@ signal.h
 
 /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/lib/lib_io.h
 
-/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/lib_time.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/lib/lib_time.h
 

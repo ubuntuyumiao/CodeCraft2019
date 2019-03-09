@@ -150,6 +150,33 @@ CodeCraft-2019.cpp.s:
 	$(MAKE) -f CMakeFiles/CodeCraft-2019.dir/build.make CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.s
 .PHONY : CodeCraft-2019.cpp.s
 
+algrithm_test.o: algrithm_test.cpp.o
+
+.PHONY : algrithm_test.o
+
+# target to build an object file
+algrithm_test.cpp.o:
+	$(MAKE) -f CMakeFiles/CodeCraft-2019.dir/build.make CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o
+.PHONY : algrithm_test.cpp.o
+
+algrithm_test.i: algrithm_test.cpp.i
+
+.PHONY : algrithm_test.i
+
+# target to preprocess a source file
+algrithm_test.cpp.i:
+	$(MAKE) -f CMakeFiles/CodeCraft-2019.dir/build.make CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.i
+.PHONY : algrithm_test.cpp.i
+
+algrithm_test.s: algrithm_test.cpp.s
+
+.PHONY : algrithm_test.s
+
+# target to generate assembly for a file
+algrithm_test.cpp.s:
+	$(MAKE) -f CMakeFiles/CodeCraft-2019.dir/build.make CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.s
+.PHONY : algrithm_test.cpp.s
+
 io.o: io.cpp.o
 
 .PHONY : io.o
@@ -189,6 +216,9 @@ help:
 	@echo "... CodeCraft-2019.o"
 	@echo "... CodeCraft-2019.i"
 	@echo "... CodeCraft-2019.s"
+	@echo "... algrithm_test.o"
+	@echo "... algrithm_test.i"
+	@echo "... algrithm_test.s"
 	@echo "... io.o"
 	@echo "... io.i"
 	@echo "... io.s"

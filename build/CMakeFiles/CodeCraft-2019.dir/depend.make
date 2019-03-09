@@ -3,7 +3,9 @@
 
 CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/CodeCraft-2019.cpp
 CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/lib/lib_io.h
-CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/lib_time.h
+CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/lib/lib_time.h
+
+CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/algrithm_test.cpp
 
 CMakeFiles/CodeCraft-2019.dir/io.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/io.cpp
 

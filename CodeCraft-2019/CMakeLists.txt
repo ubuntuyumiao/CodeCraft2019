@@ -24,3 +24,4 @@ aux_source_directory(. DIR_SRCS)
 
 # 指定生成目标
 add_executable(CodeCraft-2019 ${DIR_SRCS})
+# add_executable(al_test ./algrithm_test.cpp)
