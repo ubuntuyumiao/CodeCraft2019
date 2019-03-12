@@ -273,21 +273,22 @@ int main(int argc,char** argv)
    for(int sche_cross=min_cross_id;sche_cross<=max_cross_id;sche_cross++)
    {
         int cur_cross_road[4];
+	std::stack<int> cross_shoulebe;
         std::memcpy(cur_cross_road,cross[sche_cross].road_id,sizeof(cross[sche_cross].road_id));
-	int array_offset=0;
+	int array_offset=3;
 	for(int i=0;i<4;i++)
 	  if(cur_cross_road[i]!=-1)
 	   if(road[cur_cross_road[i]].flag_twoway!=1)                      //该道路为单向道，且该路口为入口
 	    if(sche_cross!=road[cur_cross_road[i]].end)  cur_cross_road[i]=-1;
 	std::sort(cur_cross_road,cur_cross_road+4);    
-	while(cur_cross_road[array_offset]==-1) array_offset++;    //去掉不存在的道路 或者不调度 不进入该交叉口的道路	
+	while(cur_cross_road[array_offset]>0){cross_shoulebe.push(cur_cross_road[array_offset]); array_offset--;if(array_offset<0) break;}   //去掉不存在的道路 或者不调度 不进入该交叉口的道路	
 	 
       //需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset
 
 
 	printf("%d 号路口的调度顺序为： ",sche_cross);     //测试输出
-	for(int j=array_offset;j<4;j++)
-	  std::cout << cur_cross_road[j]<< "  ";
+	while(!cross_shoulebe.empty())
+	{ std::cout << cross_shoulebe.top()<< "  ";cross_shoulebe.pop();}
 	std::cout << std::endl;
    }
 

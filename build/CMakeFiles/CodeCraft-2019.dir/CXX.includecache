@@ -6,17 +6,17 @@
 
 #IncludeRegexTransform: 
 
-/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/CodeCraft-2019.cpp
+/home/robot/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019.cpp
 include.h
-/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/include.h
+/home/robot/Documents/CodeCraft2019/CodeCraft-2019/include.h
 
-/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/algrithm_test.cpp
+/home/robot/Documents/CodeCraft2019/CodeCraft-2019/algrithm_test.cpp
 
-/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/io.cpp
+/home/robot/Documents/CodeCraft2019/CodeCraft-2019/io.cpp
 io.h
-/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/io.h
+/home/robot/Documents/CodeCraft2019/CodeCraft-2019/io.h
 
-/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/lib/include.h
+/home/robot/Documents/CodeCraft2019/CodeCraft-2019/lib/include.h
 iostream
 -
 stdio.h
@@ -32,7 +32,7 @@ vector
 algorithm
 -
 
-/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/lib/io.h
+/home/robot/Documents/CodeCraft2019/CodeCraft-2019/lib/io.h
 iostream
 -
 fstream
@@ -56,5 +56,5 @@ cmath
 string.h
 -
 include.h
-/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/lib/include.h
+/home/robot/Documents/CodeCraft2019/CodeCraft-2019/lib/include.h
 

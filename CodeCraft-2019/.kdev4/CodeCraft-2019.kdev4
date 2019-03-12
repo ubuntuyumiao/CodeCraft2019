@@ -7,12 +7,12 @@ Current Build Directory Index=0
 ProjectRootRelative=./
 
 [CMake][CMake Build Directory 0]
-Build Directory Path=file:///home/ym/Documents/CodeCraft2019/CodeCraft-2019/build
-Build Type=
+Build Directory Path=file:///home/robot/Documents/CodeCraft2019/build
+Build Type=Debug
 CMake Binary=file:///usr/bin/cmake
 Environment Profile=
 Extra Arguments=
-Install Directory=file:///usr/local
+Install Directory=
 
 [Defines And Includes][Compiler]
 Name=GCC
