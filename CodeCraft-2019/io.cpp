@@ -9,11 +9,38 @@
 #define PRINT(...)
 #endif
 
-bool Astar_search(int from_,int to_,Road* road,int min_road_id,int max_road_id,Cross* cross,int min_cross_id,int max_cross_id)
+
+
+
+/******************************车辆调度规则执行******************************/
+bool car_schedule()
+{
+//     for(int current_cross=min_cross_id;current_cross<=max_cross_id;current_cross++)
+//     {
+//         
+//   
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+//     }
+
+}
+
+
+/******************************车辆调度规则执行******************************/
+
+
+bool Astar_search(Car *car_,Road* road,int min_road_id,int max_road_id,Cross* cross,int min_cross_id,int max_cross_id)
 {
     
-    int  from=  from_  ;
-    int	 to=  to_     ;
+    int  from=  car_->set  ;
+    int	 to=  car_->goal     ;
+    int i=0;
     A_star *a=new A_star(road, min_road_id, max_road_id,cross,min_cross_id, max_cross_id);
     
     
@@ -23,14 +50,15 @@ bool Astar_search(int from_,int to_,Road* road,int min_road_id,int max_road_id,C
     a->search(start,end);
     if(a->find_path==true){
     while(!a->route_stack.empty()){
-	std::cout << a->route_stack.top() ;
-	if(a->route_stack.top()!=to_) std::cout<< "--->";
+        car_->path[i]= a->route_stack.top() ;
+//	if(a->route_stack.top()!=to) std::cout<< a->route_stack.top()"--->";
 	//打印栈顶元素，实现了顶点的逆序打印
 	a->route_stack.pop();      
+	i++;
 	//出栈
     }
     }
-    std::cout << std::endl<<std::endl;
+//     std::cout << std::endl<<std::endl;
     return a->find_path;
 
 }
@@ -59,5 +87,24 @@ void print_time(const char *head)
     
 #endif
 }
+//将车辆的出发时间进行排序
+int  campare_settime(const void * a, const void * b)
+{
+ return (*(Car *)a).set_time > (*(Car *)b).set_time ? 1 : -1; 
+}
 
-
+void quickSortOfCpp(Car* car_list,int car_begin,int car_end)
+{
+    qsort(car_list+car_begin, car_end-car_begin+1, sizeof(car_list[0]), campare_settime);
+}
+bool cmp(int a,int b){
+    return a > b;
+}
+int min_ready_road_id(Road *road_,Cross *cross_)
+{
+   int up,right,down,left;
+   if(cross_->up_cross_id ==-1)    up=-1;
+   if(cross_->right_cross_id ==-1) right=-1;
+   if(cross_->down_cross_id ==-1)  down=-1;
+   if(cross_->left_cross_id ==-1)  left=-1;
+}

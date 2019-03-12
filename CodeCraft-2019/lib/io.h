@@ -51,10 +51,8 @@ typedef struct node
 }node;
  
 int weightW=10;//直线代价
-int weightWH=14;//对角线代价
-int row=36;//行
-int col=36;//列
- 
+
+
 class A_star
 {
 public: 

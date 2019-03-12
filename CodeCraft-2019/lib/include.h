@@ -7,12 +7,38 @@
 #include <cstring>
 #include <stack>
 #include <vector>
-
-#define MAX_ROAD    10000
-#define MAX_CAR     20000
-#define MAX_CROSS   5000
+#include<algorithm>
+#define MAX_ROAD    7000
+#define MAX_CAR     15000
+#define MAX_CROSS   100
 #define INF 0x3f3f3f3f
 
+#define MAX_LANE 10
+#define MAX_LANE_LENGHT 10
+
+typedef enum drive_state
+{
+  still_stored, 
+  wait_schedule,
+  completed
+};
+typedef enum sche_direct
+{
+  straight, 
+  left,
+  right
+};
+typedef struct Car
+{
+    int id;
+    int set;
+    int goal;
+    int max_speed;
+    int set_time;
+    int path[MAX_CROSS];
+    drive_state state;  //调度状态 ： 等待出发态 等待调度态 终止态
+    sche_direct move_ori;
+}Car;
 typedef struct Road
 {
     int id;
@@ -22,17 +48,12 @@ typedef struct Road
     int start;
     int end;
     int flag_twoway;
+    int car_on_road;
+    //(双向或者单向)道路负载 以 lane_num×road_length数组表示 (start>end)?1:0
+    int load[2][MAX_LANE][MAX_LANE];
+
+    //定义： load[0]存放 从较小id路口通往较大路口id方向 load[1]存放 从较大id路口通往较小路口id方向
 }Road;
-
-typedef struct Car
-{
-    int id;
-    int set;
-    int goal;
-    int max_speed;
-    int set_time;
-}Car;
-
 
 typedef struct Cross
 {
@@ -42,8 +63,13 @@ typedef struct Cross
     int right_cross_id;
     int down_cross_id;
     int left_cross_id;
+    
+    bool up_cro_to_me_isempty;
+    bool right_cro_to_me_isempty;
+    bool down_cro_to_me_isempty;
+    bool left_cro_to_me_isempty;
+    std::stack<int> magic_garage;
 }Cross;
-
 
 
 typedef struct MGraph
@@ -57,6 +83,9 @@ typedef struct MGraph
 
 //打印时间。入参为打印信息头
 void print_time(const char * const head);
-bool Astar_search(int from_,int to_,Road* road,int min_road_id,int max_road_id,Cross* cross,int min_cross_id,int max_cross_id);
+bool Astar_search(Car *car_,Road* road,int min_road_id,int max_road_id,Cross* cross,int min_cross_id,int max_cross_id);
+int campare_settime(const void * a, const void * b);
+void quickSortOfCpp(Car* car_list,int car_begin,int car_end);
+bool cmp(int a,int b);
 #endif
 
