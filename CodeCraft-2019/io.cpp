@@ -41,9 +41,9 @@ bool Astar_search(Car *car_,Road* road,int min_road_id,int max_road_id,Cross* cr
     int  from=  car_->set  ;
     int	 to=  car_->goal     ;
     int i=0;
+    int path[2000];
+    memset(path,-1,sizeof(path));
     A_star *a=new A_star(road, min_road_id, max_road_id,cross,min_cross_id, max_cross_id);
-    
-    
     node *start=new node(from);
     node *end=new node(to);
     
@@ -51,16 +51,25 @@ bool Astar_search(Car *car_,Road* road,int min_road_id,int max_road_id,Cross* cr
     if(a->find_path==true){
     while(!a->route_stack.empty()){
         car_->path[i]= a->route_stack.top() ;
-//	if(a->route_stack.top()!=to) std::cout<< a->route_stack.top()"--->";
+	if(a->route_stack.top()!=to) std::cout<< a->route_stack.top() <<"--->";
+	 else std::cout<< a->route_stack.top();
 	//打印栈顶元素，实现了顶点的逆序打印
 	a->route_stack.pop();      
 	i++;
 	//出栈
     }
     }
-//     std::cout << std::endl<<std::endl;
+    std::cout << std::endl<<std::endl;
     return a->find_path;
-
+    
+   
+    
+//     for(int i=0;i<2000;i++)
+//     {
+//       Answer[0].
+//       
+//     }
+     
 }
 
 void print_time(const char *head)

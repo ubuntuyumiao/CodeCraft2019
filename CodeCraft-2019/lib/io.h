@@ -49,7 +49,8 @@ typedef struct node
         this->father=father;
     }
 }node;
- 
+
+
 int weightW=10;//直线代价
 
 

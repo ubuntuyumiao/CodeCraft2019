@@ -7,7 +7,7 @@ Current Build Directory Index=0
 ProjectRootRelative=./
 
 [CMake][CMake Build Directory 0]
-Build Directory Path=file:///home/robot/Documents/CodeCraft2019/build
+Build Directory Path=file:///home/dengguang/Documents/CodeCraft2019/build
 Build Type=Debug
 CMake Binary=file:///usr/bin/cmake
 Environment Profile=

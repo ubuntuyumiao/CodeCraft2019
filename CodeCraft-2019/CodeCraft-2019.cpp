@@ -16,6 +16,7 @@ int main(int argc,char** argv)
     if(!fin_road.is_open())  {std::cout<<"/**ERROR:No Road input file**/"<<std::endl;return 0;} 
     if(!fin_car.is_open())   {std::cout<<"/**ERROR:No Car input file**/"<<std::endl;return 0;}
     if(!fin_car.is_open())   {std::cout<<"/**ERROR:No Cross input file**/"<<std::endl;return 0;}
+    
     std::string s;
     int count=1;
     int min_car_id,max_car_id;
@@ -26,6 +27,7 @@ int main(int argc,char** argv)
     int Subscript=0;
     
     std::cout<<"read start"<<std::endl;
+    
     while(!fin_road.eof())
       {
        char str_tr[50];
@@ -259,11 +261,22 @@ int main(int argc,char** argv)
        if( Astar_search(&car[i], road,min_road_id,max_road_id,cross,min_cross_id,max_cross_id))
            has_find++;
      }
-     for(int j=0;j<MAX_CROSS;j++)
+      std::ofstream fout("answer.txt", std::ios::app);
+      fout <<"#(road_id,starttime,road...)"<<std::endl;
+     for(int i=min_car_id;i<=max_car_id;i++)
      {
-       if(car[max_car_id].path[j]==0) break;
-       std::cout << car[max_car_id].path[j] << "-->";
-     }
+       fout <<"("<<car[i].id<<","<<car[i].set_time<<",";
+       for(int j=0;j<MAX_CROSS;j++)
+       { 
+       if(car[i].path[j+1]==0) break;
+//        std::cout << car[i].path[j] << "-->";
+       fout <<map[car[i].path[j]][car[i].path[j+1]].id ; 
+       if(car[i].path[j+2]!=0) fout <<",";
+       if(car[i].path[j+2]==0)fout <<")"<<std::endl; 
+	 }
+      }
+      fout.close();
+    
      printf("\nget %d solution of %d car\n\n",has_find,car_num);
      
 /*********************************A-Star算法*********************************/
@@ -286,10 +299,10 @@ int main(int argc,char** argv)
       //需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset
 
 
-	printf("%d 号路口的调度顺序为： ",sche_cross);     //测试输出
-	while(!cross_shoulebe.empty())
-	{ std::cout << cross_shoulebe.top()<< "  ";cross_shoulebe.pop();}
-	std::cout << std::endl;
+// 	printf("%d 号路口的调度顺序为： ",sche_cross);     //测试输出
+// 	while(!cross_shoulebe.empty())
+// 	{ std::cout << cross_shoulebe.top()<< "  ";cross_shoulebe.pop();}
+// 	std::cout << std::endl;
    }
 
    
