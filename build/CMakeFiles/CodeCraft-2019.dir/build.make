@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019
+CMAKE_SOURCE_DIR = /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/dengguang/Documents/CodeCraft2019/build
+CMAKE_BINARY_DIR = /home/ym/Documents/CodeCraft2019/CodeCraft-2019/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/CodeCraft-2019.dir/depend.make
@@ -57,18 +57,42 @@ include CMakeFiles/CodeCraft-2019.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/CodeCraft-2019.dir/flags.make
 
+CMakeFiles/CodeCraft-2019.dir/io.cpp.o: CMakeFiles/CodeCraft-2019.dir/flags.make
+CMakeFiles/CodeCraft-2019.dir/io.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/io.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ym/Documents/CodeCraft2019/CodeCraft-2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/CodeCraft-2019.dir/io.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/CodeCraft-2019.dir/io.cpp.o -c /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/io.cpp
+
+CMakeFiles/CodeCraft-2019.dir/io.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/CodeCraft-2019.dir/io.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/io.cpp > CMakeFiles/CodeCraft-2019.dir/io.cpp.i
+
+CMakeFiles/CodeCraft-2019.dir/io.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/CodeCraft-2019.dir/io.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/io.cpp -o CMakeFiles/CodeCraft-2019.dir/io.cpp.s
+
+CMakeFiles/CodeCraft-2019.dir/io.cpp.o.requires:
+
+.PHONY : CMakeFiles/CodeCraft-2019.dir/io.cpp.o.requires
+
+CMakeFiles/CodeCraft-2019.dir/io.cpp.o.provides: CMakeFiles/CodeCraft-2019.dir/io.cpp.o.requires
+	$(MAKE) -f CMakeFiles/CodeCraft-2019.dir/build.make CMakeFiles/CodeCraft-2019.dir/io.cpp.o.provides.build
+.PHONY : CMakeFiles/CodeCraft-2019.dir/io.cpp.o.provides
+
+CMakeFiles/CodeCraft-2019.dir/io.cpp.o.provides.build: CMakeFiles/CodeCraft-2019.dir/io.cpp.o
+
+
 CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o: CMakeFiles/CodeCraft-2019.dir/flags.make
-CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o: /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dengguang/Documents/CodeCraft2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o -c /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019.cpp
+CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/CodeCraft-2019.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ym/Documents/CodeCraft2019/CodeCraft-2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o -c /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/CodeCraft-2019.cpp
 
 CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019.cpp > CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/CodeCraft-2019.cpp > CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.i
 
 CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019.cpp -o CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/CodeCraft-2019.cpp -o CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.s
 
 CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o.requires:
 
@@ -82,17 +106,17 @@ CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o.provides.build: CMakeFiles/Co
 
 
 CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o: CMakeFiles/CodeCraft-2019.dir/flags.make
-CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o: /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019/algrithm_test.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dengguang/Documents/CodeCraft2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o -c /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019/algrithm_test.cpp
+CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/algrithm_test.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ym/Documents/CodeCraft2019/CodeCraft-2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o -c /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/algrithm_test.cpp
 
 CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019/algrithm_test.cpp > CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/algrithm_test.cpp > CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.i
 
 CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019/algrithm_test.cpp -o CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/algrithm_test.cpp -o CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.s
 
 CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o.requires:
 
@@ -105,55 +129,31 @@ CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o.provides: CMakeFiles/CodeCraft
 CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o.provides.build: CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o
 
 
-CMakeFiles/CodeCraft-2019.dir/io.cpp.o: CMakeFiles/CodeCraft-2019.dir/flags.make
-CMakeFiles/CodeCraft-2019.dir/io.cpp.o: /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019/io.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dengguang/Documents/CodeCraft2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/CodeCraft-2019.dir/io.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/CodeCraft-2019.dir/io.cpp.o -c /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019/io.cpp
-
-CMakeFiles/CodeCraft-2019.dir/io.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/CodeCraft-2019.dir/io.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019/io.cpp > CMakeFiles/CodeCraft-2019.dir/io.cpp.i
-
-CMakeFiles/CodeCraft-2019.dir/io.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/CodeCraft-2019.dir/io.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019/io.cpp -o CMakeFiles/CodeCraft-2019.dir/io.cpp.s
-
-CMakeFiles/CodeCraft-2019.dir/io.cpp.o.requires:
-
-.PHONY : CMakeFiles/CodeCraft-2019.dir/io.cpp.o.requires
-
-CMakeFiles/CodeCraft-2019.dir/io.cpp.o.provides: CMakeFiles/CodeCraft-2019.dir/io.cpp.o.requires
-	$(MAKE) -f CMakeFiles/CodeCraft-2019.dir/build.make CMakeFiles/CodeCraft-2019.dir/io.cpp.o.provides.build
-.PHONY : CMakeFiles/CodeCraft-2019.dir/io.cpp.o.provides
-
-CMakeFiles/CodeCraft-2019.dir/io.cpp.o.provides.build: CMakeFiles/CodeCraft-2019.dir/io.cpp.o
-
-
 # Object files for target CodeCraft-2019
 CodeCraft__2019_OBJECTS = \
+"CMakeFiles/CodeCraft-2019.dir/io.cpp.o" \
 "CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o" \
-"CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o" \
-"CMakeFiles/CodeCraft-2019.dir/io.cpp.o"
+"CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o"
 
 # External object files for target CodeCraft-2019
 CodeCraft__2019_EXTERNAL_OBJECTS =
 
-/home/dengguang/Documents/CodeCraft2019/bin/CodeCraft-2019: CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o
-/home/dengguang/Documents/CodeCraft2019/bin/CodeCraft-2019: CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o
-/home/dengguang/Documents/CodeCraft2019/bin/CodeCraft-2019: CMakeFiles/CodeCraft-2019.dir/io.cpp.o
-/home/dengguang/Documents/CodeCraft2019/bin/CodeCraft-2019: CMakeFiles/CodeCraft-2019.dir/build.make
-/home/dengguang/Documents/CodeCraft2019/bin/CodeCraft-2019: CMakeFiles/CodeCraft-2019.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/dengguang/Documents/CodeCraft2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable /home/dengguang/Documents/CodeCraft2019/bin/CodeCraft-2019"
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/bin/CodeCraft-2019: CMakeFiles/CodeCraft-2019.dir/io.cpp.o
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/bin/CodeCraft-2019: CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/bin/CodeCraft-2019: CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/bin/CodeCraft-2019: CMakeFiles/CodeCraft-2019.dir/build.make
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/bin/CodeCraft-2019: CMakeFiles/CodeCraft-2019.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ym/Documents/CodeCraft2019/CodeCraft-2019/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable /home/ym/Documents/CodeCraft2019/CodeCraft-2019/bin/CodeCraft-2019"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/CodeCraft-2019.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-CMakeFiles/CodeCraft-2019.dir/build: /home/dengguang/Documents/CodeCraft2019/bin/CodeCraft-2019
+CMakeFiles/CodeCraft-2019.dir/build: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/bin/CodeCraft-2019
 
 .PHONY : CMakeFiles/CodeCraft-2019.dir/build
 
+CMakeFiles/CodeCraft-2019.dir/requires: CMakeFiles/CodeCraft-2019.dir/io.cpp.o.requires
 CMakeFiles/CodeCraft-2019.dir/requires: CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o.requires
 CMakeFiles/CodeCraft-2019.dir/requires: CMakeFiles/CodeCraft-2019.dir/algrithm_test.cpp.o.requires
-CMakeFiles/CodeCraft-2019.dir/requires: CMakeFiles/CodeCraft-2019.dir/io.cpp.o.requires
 
 .PHONY : CMakeFiles/CodeCraft-2019.dir/requires
 
@@ -162,6 +162,6 @@ CMakeFiles/CodeCraft-2019.dir/clean:
 .PHONY : CMakeFiles/CodeCraft-2019.dir/clean
 
 CMakeFiles/CodeCraft-2019.dir/depend:
-	cd /home/dengguang/Documents/CodeCraft2019/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019 /home/dengguang/Documents/CodeCraft2019/CodeCraft-2019 /home/dengguang/Documents/CodeCraft2019/build /home/dengguang/Documents/CodeCraft2019/build /home/dengguang/Documents/CodeCraft2019/build/CMakeFiles/CodeCraft-2019.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/ym/Documents/CodeCraft2019/CodeCraft-2019/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019 /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019 /home/ym/Documents/CodeCraft2019/CodeCraft-2019/build /home/ym/Documents/CodeCraft2019/CodeCraft-2019/build /home/ym/Documents/CodeCraft2019/CodeCraft-2019/build/CMakeFiles/CodeCraft-2019.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/CodeCraft-2019.dir/depend
 

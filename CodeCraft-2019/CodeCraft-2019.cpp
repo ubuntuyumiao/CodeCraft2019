@@ -261,11 +261,15 @@ int main(int argc,char** argv)
        if( Astar_search(&car[i], road,min_road_id,max_road_id,cross,min_cross_id,max_cross_id))
            has_find++;
      }
-      std::ofstream fout("../config/answer.txt", std::ios::app);
+     int read_num[MAX_ROAD];
+      std::ofstream fout(argv[4], std::ios::app);
+      if(!fout.is_open()) { std::cout<< "No output file" <<std::endl; return 0;}
+      std::fstream file(argv[4], std::ios::out);
       fout <<"#(road_id,starttime,road...)"<<std::endl;
      for(int i=min_car_id;i<=max_car_id;i++)
      {
-       fout <<"("<<car[i].id<<","<<car[i].set_time<<",";
+       
+       fout <<"("<<car[i].id<<","<<car[i].set_time+read_num[car[i].path[0]]<<",";
        for(int j=0;j<MAX_CROSS;j++)
        { 
        if(car[i].path[j+1]==0) break;
@@ -274,6 +278,7 @@ int main(int argc,char** argv)
        if(car[i].path[j+2]!=0) fout <<",";
        if(car[i].path[j+2]==0)fout <<")"<<std::endl; 
 	 }
+	 read_num[car[i].path[0]]++;
       }
       fout.close();
     
