@@ -261,7 +261,7 @@ int main(int argc,char** argv)
        if( Astar_search(&car[i], road,min_road_id,max_road_id,cross,min_cross_id,max_cross_id))
            has_find++;
      }
-      std::ofstream fout("answer.txt", std::ios::app);
+      std::ofstream fout("../config/answer.txt", std::ios::app);
       fout <<"#(road_id,starttime,road...)"<<std::endl;
      for(int i=min_car_id;i<=max_car_id;i++)
      {
