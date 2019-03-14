@@ -9,33 +9,38 @@
 #define PRINT(...)
 #endif
 
-
-
-
-/******************************检查第k号路口 x号道路 y车道是否为空 并将周围道路最高优先级车辆发布到公共字段******************************/
-
-bool check_lane_isempty_and_publish_most_prior(Cross *cur_cross_,Road *cur_road_,Road (*map_)[MAX_CROSS],int lane)
+bool All_car_iscompleted(Car* car_array,int min_car_id_,int max_car_id_)
 {
-       bool is_empty=true;
-       bool find_most_prior=false;
-//     if((map_[cur_road_->start][cur_cross_->id]).id ==-1){  std::cout << "IO.CPP: NO THIS ROAD" << std::endl; return NULL;} 
-//    std::cout <<cur_road_->road_length<< " "<<cur_cross_->id<< " "<<cur_road_->end<< " "<<lane<< " ";	
-//     
-       for(int j=0;j<cur_road_->road_length;j++)
+   for(int i=min_car_id_;i<=max_car_id_;i++)
+    {
+      if((car_array[i].state!=completed)&&(car_array[i].now_road!=-1)) return false;   //已上路的车是否都已达到终止态
+    }
+return true;
+}
+
+/******************************检查某道路是否为空 不为空 那最高优先级的有余量的车道是哪条 最优先车位的下标？******************************/
+
+road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_)
+{
+       road_empty road_situation;
+       road_situation.is_empty=true;
+       road_situation.lane=-1;
+       for(int j=cur_road_->road_length-1;j>=0;j--)
        {
-	 if(cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][lane][j]!=0)  
+	 for(int l=0;l<cur_road_->lane_num;l++)
+	 if(cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][l][j]!=0)  
 	 {
-	   if(is_empty) is_empty=false;
-	   if(!find_most_prior){
-    if(cur_road_->id==cur_cross_->up_cross_id)  cur_cross_->prior_up=cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][lane][j];
-   else if(cur_road_->id==cur_cross_->right_cross_id)  cur_cross_->prior_right=cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][lane][j];
-   else if(cur_road_->id==cur_cross_->down_cross_id)  cur_cross_->prior_down=cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][lane][j];
-   else if(cur_road_->id==cur_cross_->left_cross_id)  cur_cross_->prior_left=cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][lane][j];
-	   find_most_prior=true;
-	  }
+	   if(road_situation.is_empty) 
+	   {
+	     road_situation.is_empty=false;
+	     road_situation.lane=l;
+	     road_situation.offset=j;
+	     break;
+	   }
 	  }
        }
-return is_empty; 
+       
+return road_situation; 
 }
 /******************************调度k号车辆后 更新道路******************************/
 void car_change_raod(Car *car_,Road *road_)
@@ -45,13 +50,13 @@ void car_change_raod(Car *car_,Road *road_)
 /******************************车辆调度规则执行******************************/
 
 
-bool Astar_search(Car *car_,Road* road,int min_road_id,int max_road_id,Cross* cross,int min_cross_id,int max_cross_id)
+bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,Cross* cross_array_,int min_cross_id,int max_cross_id)
 {
     
     int  from=  car_->set  ;
     int	 to=  car_->goal     ;
     int i=0;
-    A_star *a=new A_star(road, min_road_id, max_road_id,cross,min_cross_id, max_cross_id);
+    A_star *a=new A_star(road_array_, min_road_id, max_road_id,cross_array_,min_cross_id, max_cross_id);
     
     
     node *start=new node(from);

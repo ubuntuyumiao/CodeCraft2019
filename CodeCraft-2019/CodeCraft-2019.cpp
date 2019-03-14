@@ -80,6 +80,7 @@ int main(int argc,char** argv)
 	  } 
 	car_sorted[Subscript] = car[Subscript];
 	car[Subscript].state = still_stored;
+	car[Subscript].now_road= car[Subscript].next_road =-1;
 	Subscript++;
 	count++;
          }
@@ -232,13 +233,18 @@ int main(int argc,char** argv)
 
 /*********************************神奇车库 将在该路口出发的车优先级由低到高压入栈 最先出栈则优先级最高*********************************/
           quickSortOfCpp(car_sorted,min_car_id,max_car_id);
-          for(int i=min_cross_id;i<=max_cross_id;i++)
-	  {
 	    for(int j=max_car_id;j>=min_car_id;j--)
 	    {
-	      //该车找到出发所在路口
-	      if(car_sorted[j].set==i)  cross[i].magic_garage.push(car_sorted[j].id);    
-	    }
+	      for(int i=0;i<=MAX_CROSS;i++)
+	       {
+	      
+		 if((car_sorted[j].path[i+1]<min_cross_id)||(car_sorted[j].path[i+1]>max_cross_id))
+		    break;
+		//找到该车出发所在道路 将其压入神奇车库中  start-->end 为0号栈  反之为1号栈
+		 map[car_sorted[j].path[i]][car_sorted[j].path[i+1]].
+		    magic_garage[car_sorted[j].path[i]=map[car_sorted[j].path[i]][car_sorted[j].path[i+1]].start?0:1].push(j);
+
+		}
 	    
 	  }
 // 	    printf("\n\n 在 %d 号路口出发的车有： \n",min_cross_id);
@@ -260,11 +266,7 @@ int main(int argc,char** argv)
        if( Astar_search(&car[i], road,min_road_id,max_road_id,cross,min_cross_id,max_cross_id))
            has_find++;
      }
-     for(int j=0;j<MAX_CROSS;j++)
-     {
-       if(car[max_car_id].path[j]==0) break;
-       std::cout << car[max_car_id].path[j] << "-->";
-     }
+
      printf("\nget %d solution of %d car\n\n",has_find,car_num);
      
 /*********************************A-Star算法*********************************/
@@ -272,20 +274,10 @@ int main(int argc,char** argv)
 
 /******************************车辆调度规则执行******************************/
 
+/*   
    for(int sche_cross=min_cross_id;sche_cross<=max_cross_id;sche_cross++)
    {
-        int cur_cross_road[4];
-	std::stack<int> cross_shoulebe;
-        std::memcpy(cur_cross_road,cross[sche_cross].road_id,sizeof(cross[sche_cross].road_id));
-	int array_offset=3;
-	for(int i=0;i<4;i++)
-	  if(cur_cross_road[i]!=-1)
-	   if(road[cur_cross_road[i]].flag_twoway!=1)                      //该道路为单向道，且该路口为入口
-	    if(sche_cross!=road[cur_cross_road[i]].end)  cur_cross_road[i]=-1;
-	std::sort(cur_cross_road,cur_cross_road+4);    
-	while(cur_cross_road[array_offset]>0){cross_shoulebe.push(cur_cross_road[array_offset]); array_offset--;if(array_offset<0) break;}   //去掉不存在的道路 或者不调度 不进入该交叉口的道路	
-	 
-      //需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset
+
 
 
 // 	printf("%d 号路口的调度顺序为： ",sche_cross);     //测试输出  测试输出  测试输出  测试输出
@@ -296,21 +288,67 @@ int main(int argc,char** argv)
 // 	  { 
 // 	    while(!cross[sche_cross].magic_garage.empty()){
 // 	    std::cout << "  " << cross[sche_cross].magic_garage.top();cross[sche_cross].magic_garage.pop();}}
-// 	  
+// 	  1 
 // 	  std::cout << std::endl;
+	} 
+*/
 
-
-
-
-
-
-
+       int T=0;
+       while(!All_car_iscompleted(car,min_car_id,max_car_id))
+	{
+	    int sch_init_cross=min_cross_id;
+	    int sch_cur_road;
+	    for(int sch_cur_cross=sch_init_cross;sch_cur_cross<=max_cross_id;sch_cur_cross++)
+	    {
+	      /******需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset******/
+	      int cur_cross_road[4];
+	      std::stack<int> cross_shoulebe;
+	      std::memcpy(cur_cross_road,cross[sch_cur_cross].road_id,sizeof(cross[sch_cur_cross].road_id));
+	      int array_offset=3;
+	    for(int i=0;i<4;i++)
+	      if(cur_cross_road[i]!=-1)
+	        if(road[cur_cross_road[i]].flag_twoway!=1)                      //该道路为单向道，且该路口为入口 则此道路值为-1
+	          if(sch_cur_cross!=road[cur_cross_road[i]].end)  cur_cross_road[i]=-1;
+	      std::sort(cur_cross_road,cur_cross_road+4);    
+	     //去掉不存在的道路 或者不调度 不进入该交叉口的道路
+	    while(cur_cross_road[array_offset]>0){                      
+	      cross_shoulebe.push(cur_cross_road[array_offset]); 
+	      array_offset--;
+	      if(array_offset<0) 
+		break;
+	    }  	
+	      /******需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset******/
+	      for(int road_offset=array_offset;road_offset<4;road_offset++)
+	      {
+		sch_cur_road=cur_cross_road[road_offset];
+		road_empty empty_Condition = check_road_empty(&cross[sch_cur_cross],&road[sch_cur_road]);
+		bool road_is_empty=empty_Condition.is_empty;	
+		if(road_is_empty)          //道路上无车 为空
+		{
+// 		  if()                     //尝试调度该道路的神奇车库
+		  
+		  
+		}
+		else                      //道路上有车 非空
+		{
+		  
+		  
+		  
+		  
+		  
+		}
+		
+		
+	      }
+	      
+	      
+	      
+	    }
+	  
+	  
+	  
+	 T++;            //一轮调度结束 道路上所有车都为终止态 调度时间往后累加
 	}
-	
-	
-	
-
-          check_lane_isempty_and_publish_most_prior(&cross[min_cross_id],&road[5000],map,0);
 	
 /******************************车辆调度规则执行******************************/
 

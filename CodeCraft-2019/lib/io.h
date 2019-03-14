@@ -13,11 +13,7 @@
 #include<cmath>
 #include<string.h>
 #include "include.h"
-#define RED "\033[31m" /*red*/
-#define YELLOW "\033[33m" /*Green*/
-#define RESET "\033[0m"
-#define BOLDCYAN "\033[1m\033[36m" /* Bold Cyan */
-#define BOLDWHITE "\033[1m\033[37m" /* Bold White */
+
 
 using namespace std;
 
@@ -60,7 +56,7 @@ public:
     node *end; 
     vector<node*> openlist;//open表，存遍历到的节点
     vector<node*> closelist;//close表，存访问过的节点
-    A_star(Road* road_,int minroad_id,int maxroad_id,Cross* cross_,int mincross_id,int maxcross_id);
+    A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array,int mincross_id,int maxcross_id);
     ~A_star();
  
     void search(node* start,node* end);
@@ -76,14 +72,14 @@ public:
     bool find_path=false;
 };
 
-A_star::A_star(Road* road_,int minroad_id,int maxroad_id,Cross* cross_,int mincross_id,int maxcross_id)
+A_star::A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array,int mincross_id,int maxcross_id)
 {
   min_cross_id=mincross_id;
   max_cross_id=maxcross_id;
   for(int i =mincross_id;i<max_cross_id+1;i++)
-    memcpy(&cross[i],&cross_[i],sizeof(Cross));
+    memcpy(&cross[i],&cross_array[i],sizeof(Cross));
   for(int i =minroad_id;i<maxroad_id+1;i++)
-    memcpy(&road[i],&road_[i],sizeof(Road));
+    memcpy(&road[i],&road_array[i],sizeof(Road));
 
 }
 A_star::~A_star()

@@ -17,6 +17,12 @@
 #define MAX_LANE 10
 #define MAX_LANE_LENGHT 30
 
+#define RED "\033[31m" /*red*/
+#define YELLOW "\033[33m" /*Green*/
+#define RESET "\033[0m"
+#define BOLDCYAN "\033[1m\033[36m" /* Bold Cyan */
+#define BOLDWHITE "\033[1m\033[37m" /* Bold White */
+
 typedef enum drive_state
 {
   still_stored, 
@@ -52,9 +58,13 @@ typedef struct Road
     int end;
     int flag_twoway;
     int car_on_road;
+    
+    //定义： magic_garage[0]存放 start-->end方向车辆 magic_garage[1]存放 end->start方向车辆
+    std::stack<int> magic_garage[2];
+    
     //(双向或者单向)道路负载 以 lane_num×road_length数组表示 start-->end:0    end->start:1
+    //定义： load[0]存放 start-->end方向道路 load[1]存放 end->start方向道路
     int load[2][MAX_LANE][MAX_LANE_LENGHT];
-    //定义： load[0]存放 从较小id路口通往较大路口id方向 load[1]存放 从较大id路口通往较小路口id方向
 }Road;
 
 typedef struct Cross
@@ -77,9 +87,14 @@ typedef struct Cross
     bool right_cro_to_me_isempty;
     bool down_cro_to_me_isempty;
     bool left_cro_to_me_isempty;
-    std::stack<int> magic_garage;
+    
 }Cross;
-
+typedef struct road_empty
+{
+    bool is_empty;// 是否空标志
+    int  lane;    // 非空的话优先级最高的有容量的车道
+    int  offset;    // 非空的话优先级最高的有容量的车道 的倒数第几个车位
+}road_empty;
 
 typedef struct MGraph
 {
@@ -91,9 +106,10 @@ typedef struct MGraph
 
 
 //打印时间。入参为打印信息头
-bool check_lane_isempty_and_publish_most_prior(Cross *cur_cross_,Road *cur_road_,Road (*map_)[MAX_CROSS],int lane);
+bool All_car_iscompleted(Car* car_array,int min_car_id_,int max_car_id_);
+road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_);
 void print_time(const char * const head);
-bool Astar_search(Car *car_,Road* road,int min_road_id,int max_road_id,Cross* cross,int min_cross_id,int max_cross_id);
+bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,Cross* cross_array_,int min_cross_id,int max_cross_id);
 int campare_settime(const void * a, const void * b);
 void quickSortOfCpp(Car* car_list,int car_begin,int car_end);
 bool cmp(int a,int b);
