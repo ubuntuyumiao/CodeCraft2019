@@ -79,6 +79,7 @@ int main(int argc,char** argv)
 	    car_sorted[Subscript] = car[Subscript] = car[0];
 	  } 
 	car_sorted[Subscript] = car[Subscript];
+	car[Subscript].state = still_stored;
 	Subscript++;
 	count++;
          }
@@ -268,6 +269,7 @@ int main(int argc,char** argv)
      
 /*********************************A-Star算法*********************************/
 
+
 /******************************车辆调度规则执行******************************/
 
    for(int sche_cross=min_cross_id;sche_cross<=max_cross_id;sche_cross++)
@@ -286,13 +288,30 @@ int main(int argc,char** argv)
       //需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset
 
 
-	printf("%d 号路口的调度顺序为： ",sche_cross);     //测试输出
-	while(!cross_shoulebe.empty())
-	{ std::cout << cross_shoulebe.top()<< "  ";cross_shoulebe.pop();}
-	std::cout << std::endl;
-   }
+// 	printf("%d 号路口的调度顺序为： ",sche_cross);     //测试输出  测试输出  测试输出  测试输出
+// 	while(!cross_shoulebe.empty())
+// 	{ std::cout << cross_shoulebe.top()<< "  ";cross_shoulebe.pop();}
+// 	printf("发车顺序为： ") ;
+// 	  for(int j=max_car_id;j>=min_car_id;j--)
+// 	  { 
+// 	    while(!cross[sche_cross].magic_garage.empty()){
+// 	    std::cout << "  " << cross[sche_cross].magic_garage.top();cross[sche_cross].magic_garage.pop();}}
+// 	  
+// 	  std::cout << std::endl;
 
-   
+
+
+
+
+
+
+	}
+	
+	
+	
+
+          check_lane_isempty_and_publish_most_prior(&cross[min_cross_id],&road[5000],map,0);
+	
 /******************************车辆调度规则执行******************************/
 
        

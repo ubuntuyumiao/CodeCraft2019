@@ -12,26 +12,36 @@
 
 
 
-/******************************车辆调度规则执行******************************/
-bool car_schedule()
+/******************************检查第k号路口 x号道路 y车道是否为空 并将周围道路最高优先级车辆发布到公共字段******************************/
+
+bool check_lane_isempty_and_publish_most_prior(Cross *cur_cross_,Road *cur_road_,Road (*map_)[MAX_CROSS],int lane)
 {
-//     for(int current_cross=min_cross_id;current_cross<=max_cross_id;current_cross++)
-//     {
-//         
-//   
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-//     }
-
+       bool is_empty=true;
+       bool find_most_prior=false;
+//     if((map_[cur_road_->start][cur_cross_->id]).id ==-1){  std::cout << "IO.CPP: NO THIS ROAD" << std::endl; return NULL;} 
+//    std::cout <<cur_road_->road_length<< " "<<cur_cross_->id<< " "<<cur_road_->end<< " "<<lane<< " ";	
+//     
+       for(int j=0;j<cur_road_->road_length;j++)
+       {
+	 if(cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][lane][j]!=0)  
+	 {
+	   if(is_empty) is_empty=false;
+	   if(!find_most_prior){
+    if(cur_road_->id==cur_cross_->up_cross_id)  cur_cross_->prior_up=cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][lane][j];
+   else if(cur_road_->id==cur_cross_->right_cross_id)  cur_cross_->prior_right=cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][lane][j];
+   else if(cur_road_->id==cur_cross_->down_cross_id)  cur_cross_->prior_down=cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][lane][j];
+   else if(cur_road_->id==cur_cross_->left_cross_id)  cur_cross_->prior_left=cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][lane][j];
+	   find_most_prior=true;
+	  }
+	  }
+       }
+return is_empty; 
 }
-
-
+/******************************调度k号车辆后 更新道路******************************/
+void car_change_raod(Car *car_,Road *road_)
+{
+  
+}
 /******************************车辆调度规则执行******************************/
 
 
