@@ -309,7 +309,7 @@ int main(int argc,char** argv)
 	
 	
 	
-        //举例：该函数功能为检查连接min_cross_id 路口的5000 道路是否为空
+        //举例：该函数功能为检查连接min_cross_id 路口的5000 道路是否为空，并返回布尔值;另外的功能还没写完
           check_lane_isempty_and_publish_most_prior(&cross[min_cross_id],&road[5000],map,0);
 	
 /******************************车辆调度规则执行******************************/
