@@ -298,7 +298,7 @@ int main(int argc,char** argv)
 	{
 	    int sch_init_cross=min_cross_id;
 	    int sch_cur_road;
-	    for(int sch_cur_cross=sch_init_cross;sch_cur_cross<=max_cross_id;sch_cur_cross++)
+	    for(int sch_cur_cross=sch_init_cross;sch_cur_cross<=max_cross_id;sch_cur_cross++) 
 	    {
 	      /******需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset******/
 	      int cur_cross_road[4];
@@ -320,13 +320,26 @@ int main(int argc,char** argv)
 	      /******需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset******/
 	      for(int road_offset=array_offset;road_offset<4;road_offset++)
 	      {
-		sch_cur_road=cur_cross_road[road_offset];
+		sch_cur_road=cur_cross_road[road_offset];   //即将进行调度的道路
 		road_empty empty_Condition = check_road_empty(&cross[sch_cur_cross],&road[sch_cur_road]);
 		bool road_is_empty=empty_Condition.is_empty;	
 		if(road_is_empty)          //道路上无车 为空
 		{
-// 		  if()                     //尝试调度该道路的神奇车库
-		  
+		  //尝试调度该道路的神奇车库
+		  //神奇车库有车
+		  if( road[sch_cur_road].magic_garage[sch_cur_cross=road[sch_cur_road].start?0:1].empty())                     
+		  {
+		    
+		    
+		    
+		  }
+                  //神奇车库无车
+                  {
+		    
+		    
+		    
+		    
+		  }
 		  
 		}
 		else                      //道路上有车 非空
