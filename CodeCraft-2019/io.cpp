@@ -8,14 +8,28 @@
 #else
 #define PRINT(...)
 #endif
-
-bool All_car_iscompleted(Car* car_array,int min_car_id_,int max_car_id_)
+//全局车辆的两种判断 1、所有车辆是否全是终止态 2、所有已上路车辆全是终止态  
+Global All_car_iscompleted(Car* car_array,int min_car_id_,int max_car_id_)
 {
+  Global global;
+  global.all_car_iscompleted=true;
+  global.car_inroad_iscompleted=0;
+  int car_inroad_notcomp_num=0,global_car_notcomp_num=0;
    for(int i=min_car_id_;i<=max_car_id_;i++)
     {
-      if((car_array[i].state!=completed)&&(car_array[i].now_road!=-1)) return false;   //已上路的车是否都已达到终止态
+      //等待调度车辆 （只有上路了才会是等待态）
+      if(car_array[i].state==wait_schedule)  
+      { 
+	car_inroad_notcomp_num++;
+      }
+      //有车存在车库中
+     if(car_array[i].state==still_stored)  
+      { 
+	global.all_car_iscompleted=false;
+      }
+      if(car_inroad_notcomp_num>0) global.all_car_iscompleted=false;
     }
-return true;
+return global;
 }
 
 /******************************检查某道路是否为空 不为空 那最高优先级的有余量的车道是哪条 最优先车位的下标？******************************/

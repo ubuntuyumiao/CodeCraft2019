@@ -96,6 +96,12 @@ typedef struct road_empty
     int  offset;    // 非空的话优先级最高的有容量的车道 的倒数第几个车位
 }road_empty;
 
+typedef struct Global
+{
+    bool all_car_iscompleted;// 是否空标志
+    int car_inroad_iscompleted;    // 非空的话优先级最高的有容量的车道
+}Global;
+
 typedef struct MGraph
 {
     int edges[MAX_ROAD][MAX_ROAD];//邻接矩阵，记录的是两点之间的距离，也就是权值 
@@ -106,7 +112,7 @@ typedef struct MGraph
 
 
 //打印时间。入参为打印信息头
-bool All_car_iscompleted(Car* car_array,int min_car_id_,int max_car_id_);
+Global All_car_iscompleted(Car* car_array,int min_car_id_,int max_car_id_);
 road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_);
 void print_time(const char * const head);
 bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,Cross* cross_array_,int min_cross_id,int max_cross_id);
