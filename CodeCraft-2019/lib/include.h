@@ -9,9 +9,9 @@
 #include <stack>
 #include <vector>
 #include<algorithm>
-#define MAX_ROAD    7000          //5000-
-#define MAX_CAR     45000         //10000-
-#define MAX_CROSS   100           //1- 
+#define MAX_ROAD    7000
+#define MAX_CAR     15000
+#define MAX_CROSS   100
 #define INF 0x3f3f3f3f
 
 #define MAX_LANE 10
@@ -35,13 +35,11 @@ typedef enum sche_direct
   left,
   right
 };
-typedef struct magic_garage
+typedef struct Magic_garage
 {
-    int road_id;                   //哪条道路的车库
-    
-    //神奇车库 定义： garage[0]存放 start-->end方向车辆 garage[1]存放 end->start方向车辆
-    std::vector<int> garage[2];        //哪个方向的车.
-}magic_garage;
+    int road_id;
+    std::vector<int> garage[2];
+}Magic_garage;
 typedef struct Car
 {
     int id;
@@ -49,7 +47,7 @@ typedef struct Car
     int goal;
     int max_speed;
     int set_time;
-    int path[MAX_CROSS];
+    int cross_path[MAX_CROSS];
     int now_road;
     int next_road;
     drive_state state;  //调度状态 ： 等待出发态 等待调度态 终止态
@@ -66,32 +64,19 @@ typedef struct Road
     int flag_twoway;
     int car_on_road;
     
-    //神奇车库 定义： magic_garage[0]存放 start-->end方向车辆 magic_garage[1]存放 end->start方向车辆
-//     int magic_garage[2][10];         //暂时定义最多5000辆车
-//     
-//     std::stack<int> magic_garage[2];   
-//     注意：：  结构体中的栈 会极大消耗计算时间
-    
     //定义： load[0]存放 start-->end方向道路 load[1]存放 end->start方向道路
     int load[2][MAX_LANE][MAX_LANE_LENGHT];
 }Road;
-// (3)尾部插入数字：vec.push_back(a);
-// (4)使用下标访问元素，cout<<vec[0]<<endl;记住下标是从0开始的。
-// (5)使用迭代器访问元素.
-// (6)插入元素：    vec.insert(vec.begin()+i,a);在第i+1个元素前面插入a;
-// (7)删除元素：    vec.erase(vec.begin()+2);删除第3个元素
-// vec.erase(vec.begin()+i,vec.end()+j);删除区间[i,j-1];区间从0开始
-// (8)向量大小:vec.size();
-// (9)清空:vec.clear();
+
 typedef struct Cross
 {
     int id;
     int road_id[4];
     
-    int prior_up;
-    int prior_right;
-    int prior_down;
-    int prior_left;   //该段数据供所有通过这路口的车辆查阅 对比优先级
+    int prior_uproad;
+    int prior_rightroad;
+    int prior_downroad;
+    int prior_leftroad;   //该段数据供所有通过这路口的车辆查阅 对比优先级
     
     
     int up_cross_id;
@@ -126,14 +111,23 @@ typedef struct MGraph
 }MG;
 
 
-
-
-//打印时间。入参为打印信息头
-Global All_car_iscompleted(Car* car_array,int min_car_id_,int max_car_id_);
+//检查该道路的车是否都已是终止态，且返回非终止态车数量
+int has_car_wait_inroad(Cross* cross_,Road* road_,Car *car_array_);
+// 如果该道路在位置上最靠前 且为终止态 ，且下一个时刻即将过路口，将其信息发送到其下一个路口公告字段
+void update_to_cross(Car* car_,Road* road_,Cross* cross_);
+//检查某道路的神奇车库是否有车 输入参数 当前调度的路口 和道路
+bool check_garage(Cross* cross_,Road* road_,Magic_garage* garage_);
+//检查此车是否在等待列表中出现
+bool check_in_list(int car_id_,std::vector<int>wait_list_);
+//全局车辆的两种判断 1、所有车辆是否全是终止态 2、所有已上路车辆全是终止态 
+Global All_car_iscompleted(Car *car_array,int min_car_id_,int max_car_id_);
+//检查某道路是否为空 不为空 那最高优先级的有余量的车道是哪条 最优先车位的下标？
 road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_);
 void print_time(const char * const head);
+//Astart寻路
 bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,Cross* cross_array_,int min_cross_id,int max_cross_id,int (*weight_)[MAX_CROSS]);
 int campare_settime(const void * a, const void * b);
+//发车排序
 void quickSortOfCpp(Car* car_list,int car_begin,int car_end);
 bool cmp(int a,int b);
 #endif

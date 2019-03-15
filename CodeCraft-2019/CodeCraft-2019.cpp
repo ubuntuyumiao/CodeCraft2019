@@ -4,7 +4,8 @@ Road road[MAX_ROAD],road_sorted[MAX_ROAD];
 Car  car[MAX_CAR],car_sorted[MAX_CAR];
 Cross cross[MAX_CROSS],cross_sorted[MAX_CROSS];
 Road map[MAX_CROSS][MAX_CROSS];
-magic_garage garage[MAX_ROAD];
+//神奇车库数组 存放每条道路处的神奇车库
+Magic_garage garage[MAX_ROAD];
 // 道路（边）总数 路口（节点）数 车辆数
 int road_num=0,cross_num=0,car_num=0;
 // 路口到路口的权重网络
@@ -238,97 +239,68 @@ int main(int argc,char** argv)
 	      }
 	 }
        }
-/*****************测试数据结构正确性 查看路口的十字连通情况 -1为不连通*****************/
-//           for(int across=min_cross_id;across<=max_cross_id;across++)
-// 	  {
-//           printf("%d 号路口上面是 %d 号路口\n",across,cross[across].up_cross_id);
-// 	  printf("%d 号路口右面是 %d 号路口\n",across,cross[across].right_cross_id);
-// 	  printf("%d 号路口下面是 %d 号路口\n",across,cross[across].down_cross_id);
-// 	  printf("%d 号路口左面是 %d 号路口\n",across,cross[across].left_cross_id);
-// 	  std::cout << std::endl;
-// 	  }
-/*****************测试数据结构正确性 查看路口的十字连通情况 -1为不连通*****************/
-
 /*********************************将所有路口与道路信息以邻接矩阵表示*********************************/      
        
    
 
-/*********************************神奇车库 将在该路口出发的车优先级由低到高压入栈 最先出栈则优先级最高*********************************/
-          quickSortOfCpp(car_sorted,min_car_id,max_car_id);
-	  std::vector<int> test[2];
-	  test[0].push_back(2); test[0].push_back(2);
-	  test[0].push_back(2); test[0].push_back(2);
-	  test[0].push_back(2); test[0].push_back(2);
-	  test[0].push_back(2); test[0].push_back(2);
-	  test[0].push_back(2); test[0].push_back(2);
-	  test[0].push_back(2); test[0].push_back(2);
-	  test[0].push_back(2); test[0].push_back(2);
-	  std::cout << test[0].size()<<" ";
-	  test[0].erase(test[0].begin());
-	  std::cout << test[0].size()<<" "; test[0].erase(test[0].begin());
-	  std::cout << test[0].size();
-	  out("ERROR");
-//           for(int i=min_car_id;i<=max_car_id;i++)
-// 	  {
-// 	    test.push_back(2);
-// 	   // road[car_sorted[i].path[0]].magic_garage[car_sorted[i].set=road[car_sorted[i].path[0]].start?0:1].push_back(car_sorted[i].id); ;
-// 	  }
-	 // while(road[min_road_id].magic_garage[0].size()>0) 
-// 	  {
-// 	    std::cout << road[min_road_id].magic_garage[0][0] <<std::endl;
-// 	    road[min_road_id].magic_garage[0].erase(road[min_road_id].magic_garage[0].begin());
-// 	    
-// 	     std::cout << road[min_road_id].magic_garage[0][0] <<std::endl;
-// 	    road[min_road_id].magic_garage[0].erase(road[min_road_id].magic_garage[0].begin());
-// 	  }
-// 	    printf("\n\n 在 %d 号路口出发的车有： \n",min_cross_id);
-// 	    while(!cross[min_cross_id].magic_garage.empty()){
-// 	    std::cout << cross[min_cross_id].magic_garage.top()<<"  settime:  "<<car[cross[min_cross_id].magic_garage.top()].set_time ;
-// 	    std::cout <<std::endl;
-// 	    //打印栈顶元素，实现了顶点的逆序打印
-// 	    cross[min_cross_id].magic_garage.pop();      
-// 	    //出栈
-// 	    }
-    
-    
-/*********************************神奇车库*********************************/
-
-/*********************************A-Star算法*********************************/ 
-      int has_find=0;
-
+/*********************************A-Star算法  + 神奇车库*********************************/ 
+      int has_find=0; 
+      quickSortOfCpp(car_sorted,min_car_id,max_car_id);
      for(int i=min_car_id;i<max_car_id+1;i++)
      {
        if( Astar_search(&car[i], road,min_road_id,max_road_id,cross,min_cross_id,max_cross_id,weight_net))
            has_find++;
      }
-
+      std::ofstream fout(argv[4], std::ios::app);
+      if(!fout.is_open()) { std::cout<< "No output file" <<std::endl; return 0;}
+      std::fstream file(argv[4], std::ios::out);
+      fout <<"#(road_id,starttime,road...)"<<std::endl;
+     for(int i=min_car_id;i<=max_car_id;i++)
+     {
+       int road_path,ga_roadpath;
+       fout <<"("<<car[i].id<<","<<car[i].set_time<<",";
+       for(int j=0;j<MAX_CROSS;j++)
+       { 
+       if(car[i].cross_path[j+1]==0) break;
+//        std::cout << car[i].cross_path[j] << "-->";
+       road_path= map[car[i].cross_path[j]][car[i].cross_path[j+1]].id ;
+       fout << road_path; 
+       if(j==0)  
+       {
+	   ga_roadpath = map[car[car_sorted[i].id].cross_path[j]][car[car_sorted[i].id].cross_path[j+1]].id;
+	   garage[ga_roadpath].garage[car_sorted[i].set=road[ga_roadpath].start?0:1].push_back(car_sorted[i].id); 
+       }
+       if(car[i].cross_path[j+2]!=0) fout <<",";
+         else fout <<")"<<std::endl; 
+	 }
+      }
+      fout.close();
      printf("\nget %d solution of %d car\n\n",has_find,car_num);
      
-/*********************************A-Star算法*********************************/
-
+/*********************************A-Star算法  + 神奇车库*********************************/
+/*********************************神奇车库 将在该路口出发的车压入向量中*********************************/
+     for(int i=min_road_id;i<=max_road_id;i++)
+     {
+       for(int j=0;j<=1;j++)
+       {
+	 if(j==0) printf(" 道路 %d 正向出发的车： ",i );
+  	  else  printf(" \n     反向出发的车： ");
+      while(garage[i].garage[j].size()>0)
+	  {
+	   std::cout<<garage[i].garage[j][0]<< "  ";
+	    garage[i].garage[j].erase(garage[i].garage[j].begin());
+	  }
+       }
+       	    std::cout<<std::endl<<std::endl;
+     }
+/*********************************神奇车库*********************************/
+             
 
 /******************************车辆调度规则执行******************************/
-
-/*   
-   for(int sche_cross=min_cross_id;sche_cross<=max_cross_id;sche_cross++)
-   {
-
-
-
-// 	printf("%d 号路口的调度顺序为： ",sche_cross);     //测试输出  测试输出  测试输出  测试输出
-// 	while(!cross_shoulebe.empty())
-// 	{ std::cout << cross_shoulebe.top()<< "  ";cross_shoulebe.pop();}
-// 	printf("发车顺序为： ") ;
-// 	  for(int j=max_car_id;j>=min_car_id;j--)
-// 	  { 
-// 	    while(!cross[sche_cross].magic_garage.empty()){
-// 	    std::cout << "  " << cross[sche_cross].magic_garage.top();cross[sche_cross].magic_garage.pop();}}
-// 	  1 
-// 	  std::cout << std::endl;
-	} 
-*/
-
-//        int T=0;
+//        //记录时刻     
+//        int T=0;  
+//        //已上路车的等待态表;
+//        std::vector<int> wait_list; 
 //        while(!All_car_iscompleted(car,min_car_id,max_car_id).all_car_iscompleted)
 // 	{
 // 	    int car_inroad_iscompleted = All_car_iscompleted(car,min_car_id,max_car_id).car_inroad_iscompleted;
@@ -352,37 +324,66 @@ int main(int argc,char** argv)
 // 	      array_offset--;
 // 	      if(array_offset<0) 
 // 		break;
-// 	    }  	
+// 	    }  
 // 	      /******需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset******/
 // 	      for(int road_offset=array_offset;road_offset<4;road_offset++)
 // 	      {
 // 		sch_cur_road=cur_cross_road[road_offset];   //即将进行调度的道路
 // 		road_empty empty_Condition = check_road_empty(&cross[sch_cur_cross],&road[sch_cur_road]);
-// 		bool road_is_empty=empty_Condition.is_empty;	
+// 		bool road_is_empty=empty_Condition.is_empty;	//查看道路是否为空 非空的话可加塞最高优先级车道是？ 余量是？ （可以是0 ！=-1）
 // 		if(road_is_empty)          //道路上无车 为空
 // 		{
-// 		  //尝试调度该道路的神奇车库
-// 		  //神奇车库有车
-// 		  if( road[sch_cur_road].magic_garage[sch_cur_cross=road[sch_cur_road].start?0:1].empty())                     
-// 		  {
+// 		  //等待表非空 调度下一条道路
+//                     if(!wait_list.empty())   continue;
+// 			else{
+// 			      //等待表为空  调度神奇车库 判断神奇车库是否有车 等同于已上路的车全为终止态.
+// 			      //该条道路的神奇车库无车 调度下一条道路  
+// 				if(!check_garage(&cross[sch_cur_cross],&road[sch_cur_road],&garage[sch_cur_road]))                 
+// 				 {
+// 				  if(road_is_empty) continue;
+// 				    else
+// 				    {
+// 				      // 如果该道路在位置上最靠前 且为终止态 ，且下一个时刻即将过路口，将其信息发送到其下一个路口公告字段
+// 				      update_to_cross(car,&road[sch_cur_road],&cross[sch_cur_cross]);
+// 				      continue;
+// 				    }
+// 				      
+// 				 }  
+// 				 //神奇车库有车  empty_Condition.lane  empty_Condition.offset
+// 				 else 
+// 				 {
+// 				   // 往可以加塞的车道驶入
+// 				   for(int sch_cur_lane=empty_Condition.lane;sch_cur_lane<road[sch_cur_road].lane_num;sch_cur_lane++)
+// 				   {
+// // 				     if()
+// 				     
+// 				   }
+// 				   
+// 				 }
+// 				  
+// 			    }
 // 		    
-// 		    
-// 		    
-// 		  }
-//                   //神奇车库无车
-//                   {
-// 		    
-// 		    
-// 		    
-// 		    
-// 		  }
-// 		  
+// 			
+// 		  //
 // 		}
 // 		else                      //道路上有车 非空
 // 		{
-// 		  
-// 		  
-// 		  
+// 		  //empty_Condition.lane  empty_Condition.offset  为道路非空时 最先优先级车道 以及其余量
+// 		  int wait_car_num=has_car_wait_inroad(&cross[sch_cur_cross],&road[sch_cur_road],car);
+// 		  //无车等待 全为终止态
+// 		  if(wait_car_num==0)
+// 		  {
+// 		    //等待表飞空
+// 		    if(!wait_list.empty())   continue;
+// 		      else 
+// 		      {
+// 			
+// 		      }
+// 		  }
+// 		    else
+// 		     {
+// 		    
+// 		     }
 // 		  
 // 		  
 // 		}
@@ -395,10 +396,10 @@ int main(int argc,char** argv)
 // 	    }
 // 	  
 // 	  
-// 	  
+// 
 // 	 T++;            //一轮调度结束 道路上所有车都为终止态 调度时间往后累加
 // 	}
-	
+// 	
 /******************************车辆调度规则执行******************************/
 
        
