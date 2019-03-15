@@ -9,9 +9,9 @@
 #include <stack>
 #include <vector>
 #include<algorithm>
-#define MAX_ROAD    7000
-#define MAX_CAR     15000
-#define MAX_CROSS   100
+#define MAX_ROAD    7000          //5000-
+#define MAX_CAR     45000         //10000-
+#define MAX_CROSS   100           //1- 
 #define INF 0x3f3f3f3f
 
 #define MAX_LANE 10
@@ -35,6 +35,13 @@ typedef enum sche_direct
   left,
   right
 };
+typedef struct magic_garage
+{
+    int road_id;                   //哪条道路的车库
+    
+    //神奇车库 定义： garage[0]存放 start-->end方向车辆 garage[1]存放 end->start方向车辆
+    std::vector<int> garage[2];        //哪个方向的车.
+}magic_garage;
 typedef struct Car
 {
     int id;

@@ -4,10 +4,17 @@ Road road[MAX_ROAD],road_sorted[MAX_ROAD];
 Car  car[MAX_CAR],car_sorted[MAX_CAR];
 Cross cross[MAX_CROSS],cross_sorted[MAX_CROSS];
 Road map[MAX_CROSS][MAX_CROSS];
+magic_garage garage[MAX_ROAD];
 // 道路（边）总数 路口（节点）数 车辆数
 int road_num=0,cross_num=0,car_num=0;
 // 路口到路口的权重网络
 int weight_net[MAX_CROSS][MAX_CROSS];
+
+void out(std::string s)
+{
+  std::cout << std::endl;
+  std::cout << RED <<s <<std::endl;
+}
 int main(int argc,char** argv)
 {
   print_time("Begin");
@@ -248,8 +255,19 @@ int main(int argc,char** argv)
 
 /*********************************神奇车库 将在该路口出发的车优先级由低到高压入栈 最先出栈则优先级最高*********************************/
           quickSortOfCpp(car_sorted,min_car_id,max_car_id);
-// 	  std::vector<int> test;
-// 	  test.push_back(2);
+	  std::vector<int> test[2];
+	  test[0].push_back(2); test[0].push_back(2);
+	  test[0].push_back(2); test[0].push_back(2);
+	  test[0].push_back(2); test[0].push_back(2);
+	  test[0].push_back(2); test[0].push_back(2);
+	  test[0].push_back(2); test[0].push_back(2);
+	  test[0].push_back(2); test[0].push_back(2);
+	  test[0].push_back(2); test[0].push_back(2);
+	  std::cout << test[0].size()<<" ";
+	  test[0].erase(test[0].begin());
+	  std::cout << test[0].size()<<" "; test[0].erase(test[0].begin());
+	  std::cout << test[0].size();
+	  out("ERROR");
 //           for(int i=min_car_id;i<=max_car_id;i++)
 // 	  {
 // 	    test.push_back(2);
