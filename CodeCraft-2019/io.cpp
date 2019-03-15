@@ -64,13 +64,13 @@ void car_change_raod(Car *car_,Road *road_)
 /******************************车辆调度规则执行******************************/
 
 
-bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,Cross* cross_array_,int min_cross_id,int max_cross_id)
+bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,Cross* cross_array_,int min_cross_id,int max_cross_id,int (*weight_)[MAX_CROSS])
 {
     
     int  from=  car_->set  ;
     int	 to=  car_->goal     ;
     int i=0;
-    A_star *a=new A_star(road_array_, min_road_id, max_road_id,cross_array_,min_cross_id, max_cross_id);
+    A_star *a=new A_star(road_array_, min_road_id, max_road_id,cross_array_,min_cross_id, max_cross_id,weight_);
     
     
     node *start=new node(from);

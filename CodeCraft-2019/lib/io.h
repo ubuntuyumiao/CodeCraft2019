@@ -56,7 +56,7 @@ public:
     node *end; 
     vector<node*> openlist;//open表，存遍历到的节点
     vector<node*> closelist;//close表，存访问过的节点
-    A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array,int mincross_id,int maxcross_id);
+    A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array,int mincross_id,int maxcross_id,int (*weight_)[MAX_CROSS]);
     ~A_star();
  
     void search(node* start,node* end);
@@ -70,12 +70,14 @@ public:
     Cross cross[MAX_CROSS];
     std::stack<int> route_stack;
     bool find_path=false;
+    int weight_net[MAX_CROSS][MAX_CROSS];
 };
 
-A_star::A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array,int mincross_id,int maxcross_id)
+A_star::A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array,int mincross_id,int maxcross_id,int (*weight_)[MAX_CROSS])
 {
   min_cross_id=mincross_id;
   max_cross_id=maxcross_id;
+  memcpy(weight_net,weight_,sizeof(weight_));
   for(int i =mincross_id;i<max_cross_id+1;i++)
     memcpy(&cross[i],&cross_array[i],sizeof(Cross));
   for(int i =minroad_id;i<maxroad_id+1;i++)
@@ -117,13 +119,13 @@ void A_star::search(node* start,node* end)
 }
 void A_star::nextstep(node* current)
 { 
-    check(cross[current->cross_id].down_cross_id,current,weightW);
+    check(cross[current->cross_id].down_cross_id,current,weight_net[cross[current->cross_id].down_cross_id][current->cross_id]);
     //下
-    check(cross[current->cross_id].up_cross_id,current,weightW);
+    check(cross[current->cross_id].up_cross_id,current,weight_net[cross[current->cross_id].up_cross_id][current->cross_id]);
     //上
-    check(cross[current->cross_id].right_cross_id,current,weightW);
+    check(cross[current->cross_id].right_cross_id,current,weight_net[cross[current->cross_id].right_cross_id][current->cross_id]);
     //右
-    check(cross[current->cross_id].left_cross_id,current,weightW);
+    check(cross[current->cross_id].left_cross_id,current,weight_net[cross[current->cross_id].left_cross_id][current->cross_id]);
     //左
 }
 void A_star::check(int cross_id_neighbor,node* father,int g)

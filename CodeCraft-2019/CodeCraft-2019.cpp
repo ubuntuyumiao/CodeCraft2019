@@ -6,6 +6,8 @@ Cross cross[MAX_CROSS],cross_sorted[MAX_CROSS];
 Road map[MAX_CROSS][MAX_CROSS];
 // 道路（边）总数 路口（节点）数 车辆数
 int road_num=0,cross_num=0,car_num=0;
+// 路口到路口的权重网络
+int weight_net[MAX_CROSS][MAX_CROSS];
 int main(int argc,char** argv)
 {
   print_time("Begin");
@@ -175,13 +177,17 @@ int main(int argc,char** argv)
  */       
        for(int i=min_cross_id;i<max_cross_id+1;i++)
        {
+	  weight_net[i][i]=INF;
 	 for(int j=i+1;j<max_cross_id+1;j++)
 	 {
 	   if((cross[i].road_id[0]!=-1)&&(cross[i].road_id[0]==cross[j].road_id[2])) 
 	      {
+		weight_net[i][j]=10;                              
+		//先初始化所有权重为10
 		map[i][j]=road[cross[i].road_id[0]];
 		cross[i].up_cross_id=j;
 		if(road[cross[i].road_id[0]].flag_twoway==1) {   
+		  weight_net[j][i]=10;
 		  //如果是双向道路 （j,i）元素值与(i,j)处相等 下同
 		  map[j][i]=road[cross[i].road_id[0]];
 		  cross[j].down_cross_id=i;
@@ -189,26 +195,35 @@ int main(int argc,char** argv)
 	      }
 	   if((cross[i].road_id[1]!=-1)&&(cross[i].road_id[1]==cross[j].road_id[3]))
 	      { 
+		weight_net[i][j]=10;                              
+		//先初始化所有权重为10
 		map[i][j]=road[cross[i].road_id[1]];
 		cross[i].right_cross_id=j;
 		if(road[cross[i].road_id[1]].flag_twoway==1){
+		  weight_net[j][i]=10;
 		  map[j][i]=road[cross[i].road_id[1]];
 		  cross[j].left_cross_id=i;
 		}
 	      }
 	   if((cross[i].road_id[2]!=-1)&&(cross[i].road_id[2]==cross[j].road_id[0])) 
-	      { 
+	      {
+		weight_net[i][j]=10;                              
+		//先初始化所有权重为10
 		map[i][j]=road[cross[i].road_id[2]];
 		cross[i].down_cross_id=j;
 		if(road[cross[i].road_id[2]].flag_twoway==1){
+		  weight_net[j][i]=10;
 		  map[j][i]=road[cross[i].road_id[2]];
 		  cross[j].up_cross_id=i;
 		}
 	      }
 	   if((cross[i].road_id[3]!=-1)&&(cross[i].road_id[3]==cross[j].road_id[1])) 
 	      { 
+		weight_net[i][j]=10;                              
+		//先初始化所有权重为10
 		map[i][j]=road[cross[i].road_id[3]];
 		if(road[cross[i].road_id[3]].flag_twoway==1){
+		  weight_net[j][i]=10;
 		  cross[i].left_cross_id=j;
 		  map[j][i]=road[cross[i].road_id[3]];
 		  cross[j].right_cross_id=i;
@@ -233,20 +248,21 @@ int main(int argc,char** argv)
 
 /*********************************神奇车库 将在该路口出发的车优先级由低到高压入栈 最先出栈则优先级最高*********************************/
           quickSortOfCpp(car_sorted,min_car_id,max_car_id);
-	    for(int j=max_car_id;j>=min_car_id;j--)
-	    {
-	      for(int i=0;i<=MAX_CROSS;i++)
-	       {
-	      
-		 if((car_sorted[j].path[i+1]<min_cross_id)||(car_sorted[j].path[i+1]>max_cross_id))
-		    break;
-		//找到该车出发所在道路 将其压入神奇车库中  start-->end 为0号栈  反之为1号栈
-		 map[car_sorted[j].path[i]][car_sorted[j].path[i+1]].
-		    magic_garage[car_sorted[j].path[i]=map[car_sorted[j].path[i]][car_sorted[j].path[i+1]].start?0:1].push(j);
-
-		}
-	    
-	  }
+// 	  std::vector<int> test;
+// 	  test.push_back(2);
+//           for(int i=min_car_id;i<=max_car_id;i++)
+// 	  {
+// 	    test.push_back(2);
+// 	   // road[car_sorted[i].path[0]].magic_garage[car_sorted[i].set=road[car_sorted[i].path[0]].start?0:1].push_back(car_sorted[i].id); ;
+// 	  }
+	 // while(road[min_road_id].magic_garage[0].size()>0) 
+// 	  {
+// 	    std::cout << road[min_road_id].magic_garage[0][0] <<std::endl;
+// 	    road[min_road_id].magic_garage[0].erase(road[min_road_id].magic_garage[0].begin());
+// 	    
+// 	     std::cout << road[min_road_id].magic_garage[0][0] <<std::endl;
+// 	    road[min_road_id].magic_garage[0].erase(road[min_road_id].magic_garage[0].begin());
+// 	  }
 // 	    printf("\n\n 在 %d 号路口出发的车有： \n",min_cross_id);
 // 	    while(!cross[min_cross_id].magic_garage.empty()){
 // 	    std::cout << cross[min_cross_id].magic_garage.top()<<"  settime:  "<<car[cross[min_cross_id].magic_garage.top()].set_time ;
@@ -256,6 +272,7 @@ int main(int argc,char** argv)
 // 	    //出栈
 // 	    }
     
+    
 /*********************************神奇车库*********************************/
 
 /*********************************A-Star算法*********************************/ 
@@ -263,7 +280,7 @@ int main(int argc,char** argv)
 
      for(int i=min_car_id;i<max_car_id+1;i++)
      {
-       if( Astar_search(&car[i], road,min_road_id,max_road_id,cross,min_cross_id,max_cross_id))
+       if( Astar_search(&car[i], road,min_road_id,max_road_id,cross,min_cross_id,max_cross_id,weight_net))
            has_find++;
      }
 
