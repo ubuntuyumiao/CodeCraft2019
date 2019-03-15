@@ -101,7 +101,7 @@ typedef struct road_empty
 typedef struct Global
 {
     bool all_car_iscompleted;// 是否空标志
-    int car_inroad_iscompleted;    // 非空的话优先级最高的有容量的车道
+    bool car_inroad_iscompleted;    // 非空的话优先级最高的有容量的车道
 }Global;
 
 typedef struct MGraph
@@ -112,7 +112,7 @@ typedef struct MGraph
 
 
 //检查该道路的车是否都已是终止态，且返回非终止态车数量
-int has_car_wait_inroad(Cross* cross_,Road* road_,Car *car_array_);
+int* has_car_wait_inroad(Cross* cross_,Road* road_,Car *car_array_);
 // 如果该道路在位置上最靠前 且为终止态 ，且下一个时刻即将过路口，将其信息发送到其下一个路口公告字段
 void update_to_cross(Car* car_,Road* road_,Cross* cross_);
 //检查某道路的神奇车库是否有车 输入参数 当前调度的路口 和道路

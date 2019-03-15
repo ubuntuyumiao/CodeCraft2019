@@ -10,26 +10,31 @@
 #endif
 //检查该道路的车是否都已是终止态，且返回非终止态 最高优先车id
 // 0: 该车道全终止态   非0：该车道 非终止态 优先级最高的车
-int has_car_wait_inroad(Cross* cross_,Road* road_,Car *car_array_)
+//返回两个元素的数组  分别为道路上等待调度的车的数量 以及 最高优先级的车辆id
+int* has_car_wait_inroad(Cross* cross_,Road* road_,Car *car_array_)
 {
        bool has_wait_car=false;
        bool this_line_findcar=false;
        int car_id=0;
+       int ret[2]={0,0};
        for(int j=0;j<road_->lane_num;j++)
 	for(int l=0;l<road_->road_length;l++)
          {
 	    if(road_->load[(cross_->id==road_->end)?0:1][j][l]!=0)   //查询该车状态
 	    {
 	      if(car_array_[road_->load[(cross_->id==road_->end)?0:1][j][l]].state==wait_schedule)
-	       if(!has_wait_car)
+	      {
+		if(!has_wait_car)
 	       {
 		 has_wait_car=true;
 		 car_id=road_->load[(cross_->id==road_->end)?0:1][j][l];
-	         break;
 	       }
+	       ret[0]++;
+	      }
 	    }
-         }         
-  return car_id;
+         }      
+               ret[1]=car_id;  
+  return ret;
 }
 // 如果该道路在位置上最靠前 且为终止态 ，且下一个时刻即将过路口，将其信息发送到其下一个路口公告字段
 void update_to_cross(Car* car_array_,Road* road_,Cross* cross_)
@@ -72,21 +77,20 @@ Global All_car_iscompleted(Car* car_array,int min_car_id_,int max_car_id_)
 {
   Global global;
   global.all_car_iscompleted=true;
-  global.car_inroad_iscompleted=0;
-  int car_inroad_notcomp_num=0,global_car_notcomp_num=0;
+  global.car_inroad_iscompleted=true;
    for(int i=min_car_id_;i<=max_car_id_;i++)
     {
-      //等待调度车辆 （只有上路了才会是等待态）
+      //路上还有车等待调度
       if(car_array[i].state==wait_schedule)  
       { 
-	car_inroad_notcomp_num++;
+	global.car_inroad_iscompleted=false;
       }
-      //有车存在车库中
-     if(car_array[i].state==still_stored)  
+      //所有车辆未调度完
+     if((car_array[i].state==still_stored) ||(car_array[i].state==wait_schedule))
       { 
 	global.all_car_iscompleted=false;
       }
-      if(car_inroad_notcomp_num>0) global.all_car_iscompleted=false;
+      if((!global.car_inroad_iscompleted)&&(!global.car_inroad_iscompleted)) break;
     }
 return global;
 }

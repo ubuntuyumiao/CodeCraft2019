@@ -1,18 +1,15 @@
-[Buildset]
-BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x1c\x00C\x00o\x00d\x00e\x00C\x00r\x00a\x00f\x00t\x00-\x002\x000\x001\x009)
-
 [CMake]
 Build Directory Count=1
 Current Build Directory Index=0
 ProjectRootRelative=./
 
 [CMake][CMake Build Directory 0]
-Build Directory Path=file:///home/ym/Documents/CodeCraft2019/CodeCraft-2019/build
+Build Directory Path=file:///home/robot/Documents/CodeCraft2019/build
 Build Type=Debug
 CMake Binary=file:///usr/bin/cmake
 Environment Profile=
 Extra Arguments=
-Install Directory=file:///usr/local
+Install Directory=
 
 [Defines And Includes][Compiler]
 Name=GCC
