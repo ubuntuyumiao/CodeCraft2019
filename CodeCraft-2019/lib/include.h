@@ -1,7 +1,7 @@
 #ifndef __INCLUDE__H__
 #define __INCLUDE__H__
 
-#include <iostream>
+
 #include <stdio.h>
 #include <queue>
 #include <fstream>
@@ -25,9 +25,10 @@
 
 typedef enum drive_state
 {
-  still_stored, 
-  wait_schedule,
-  completed
+  still_stored, //还在车库
+  wait_schedule, //某时刻在路上等待调度
+  completed,     //某时刻已经调度完成
+  reached        //到达终点
 };
 typedef enum sche_direct
 {
@@ -97,6 +98,12 @@ typedef struct road_empty
     int  lane;    // 非空的话优先级最高的有容量的车道
     int  offset;    // 非空的话优先级最高的有容量的车道 的倒数第几个车位
 }road_empty;
+typedef struct road_space
+{
+    bool is_empty;// 是否空标志
+    int  lane;    // 非空的话优先级最高的有容量的车道
+    int  offset;    // 非空的话优先级最高的有容量的车道 的倒数第几个车位
+}road_space;
 
 typedef struct Global
 {
@@ -121,8 +128,12 @@ bool check_garage(Cross* cross_,Road* road_,Magic_garage* garage_);
 bool check_in_list(int car_id_,std::vector<int>wait_list_);
 //全局车辆的两种判断 1、所有车辆是否全是终止态 2、所有已上路车辆全是终止态 
 Global All_car_iscompleted(Car *car_array,int min_car_id_,int max_car_id_);
-//检查某道路是否为空 不为空 那最高优先级的有余量的车道是哪条 最优先车位的下标？
+//检查是否有车未到终点
+bool All_car_isreached(Car* car_array,int min_car_id_,int max_car_id_);
+//检查某道路是否为空 不为空 那最高优先级的有余量的车道是哪条 最优先车位的下标？  驶向路口
 road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_);
+// 为进入该道路的车辆提供数据   注意： 此次检查发生在调度道路的车库 所以 车道为驶离路口
+road_space check_road_space(Cross *cur_cross_,Road *cur_road_);
 void print_time(const char * const head);
 //Astart寻路
 bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,Cross* cross_array_,int min_cross_id,int max_cross_id,int (*weight_)[MAX_CROSS]);
@@ -130,5 +141,6 @@ int campare_settime(const void * a, const void * b);
 //发车排序
 void quickSortOfCpp(Car* car_list,int car_begin,int car_end);
 bool cmp(int a,int b);
+int not_equal(int a,int b);
 #endif
 

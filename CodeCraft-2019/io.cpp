@@ -43,14 +43,14 @@ void update_to_cross(Car* car_array_,Road* road_,Cross* cross_)
   {
     for(int j=0;j<road_->limit_speed;j++)
       //可能冲出路口的范围内有车
-      if(road_->load[road_->end=cross_->id?0:1][i][j]!=0)   
+      if(road_->load[(road_->end==cross_->id)?0:1][i][j]!=0)   
       {
-	if(car_array_[road_->load[road_->end=cross_->id?0:1][i][j]].state==completed) 
+	if(car_array_[road_->load[(road_->end==cross_->id)?0:1][i][j]].state==completed)
 	{
-	 if (road_->id==cross_->road_id[0])        cross_->prior_uproad= car_array_[road_->load[road_->end=cross_->id?0:1][i][j]].id  ;                //up
-	 else if (road_->id==cross_->road_id[1])   cross_->prior_uproad= car_array_[road_->load[road_->end=cross_->id?0:1][i][j]].id  ;                   //right
-	 else if (road_->id==cross_->road_id[2])   cross_->prior_uproad= car_array_[road_->load[road_->end=cross_->id?0:1][i][j]].id  ;                   //down
-	 else if (road_->id==cross_->road_id[3])   cross_->prior_uproad= car_array_[road_->load[road_->end=cross_->id?0:1][i][j]].id  ;                   //left
+	 if (road_->id==cross_->road_id[0])        cross_->prior_uproad= car_array_[road_->load[(road_->end==cross_->id?0:1)][i][j]].id  ;                //up
+	 else if (road_->id==cross_->road_id[1])   cross_->prior_uproad= car_array_[road_->load[(road_->end==cross_->id?0:1)][i][j]].id  ;                   //right
+	 else if (road_->id==cross_->road_id[2])   cross_->prior_uproad= car_array_[road_->load[(road_->end==cross_->id?0:1)][i][j]].id  ;                   //down
+	 else if (road_->id==cross_->road_id[3])   cross_->prior_uproad= car_array_[road_->load[(road_->end==cross_->id?0:1)][i][j]].id  ;                   //left
 	}
 	//终止搜索
 // 	  else 
@@ -61,7 +61,7 @@ void update_to_cross(Car* car_array_,Road* road_,Cross* cross_)
 //检查某道路的神奇车库是否有车 输入参数 当前调度的路口 和道路
 bool check_garage(Cross* cross_,Road* road_,Magic_garage* garage_)
 {
-  return garage_[road_->id].garage[cross_->id=road_->start?0:1].empty();
+  return garage_[road_->id].garage[(cross_->id==road_->start?0:1)].empty();
 }
 //检查此车是否在等待列表中出现
 bool check_in_list(int car_id_,std::vector<int>wait_list_)
@@ -94,8 +94,24 @@ Global All_car_iscompleted(Car* car_array,int min_car_id_,int max_car_id_)
     }
 return global;
 }
+//检查是否有车未到终点 
+bool All_car_isreached(Car* car_array,int min_car_id_,int max_car_id_)
+{
+  bool all_car_isreached=true;
+   for(int i=min_car_id_;i<=max_car_id_;i++)
+    {
+      //路上还有车等待调度
+      if(car_array[i].state!=reached)  
+      { 
+	all_car_isreached=false;
+	break;
+      }
+
+    }
+return all_car_isreached;
+}
 /******************************检查某道路是否为空 不为空 那最高优先级的有余量的车道是哪条 最优先车位的下标？******************************/
-// 为进入该道路的车辆提供数据
+// 为进入该道路的车辆提供数据   注意： 此次检查发生在调度路上车辆 所以 车道为指向路口
 road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_)
 {
        road_empty road_situation;
@@ -108,6 +124,35 @@ road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_)
 	for(int l=cur_road_->road_length-1;l>=0;l--)
          {
 	    if(cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][j][l]!=0)   //查询该车位是否有车
+	    {
+	       if(road_situation.is_empty) road_situation.is_empty=false;
+	       break;
+	    }
+	    sub[j]++;
+         }         
+       if(road_situation.is_empty)  return road_situation;
+       //路上一定有车
+       for(int k=0;k<cur_road_->lane_num;k++)
+       {
+	 //该行有空位
+	 if(sub[k]!=-1)   {road_situation.lane=k;road_situation.offset=cur_road_->road_length-sub[k]-1;break; }           
+       }
+       
+return road_situation; 
+}
+// 为进入该道路的车辆提供数据   注意： 此次检查发生在调度道路的车库 所以 方向为驶离路口
+road_space check_road_space(Cross *cur_cross_,Road *cur_road_)
+{
+       road_space road_situation;
+       road_situation.is_empty=true;
+       road_situation.lane=-1;     //-1 代表该道路无车位
+       road_situation.offset=-1;
+       bool this_line_findcar=false;
+       int sub[10]={-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};  //存放每个车道最末尾的车
+       for(int j=0;j<cur_road_->lane_num;j++)
+	for(int l=cur_road_->road_length-1;l>=0;l--)
+         {
+	    if(cur_road_->load[(cur_cross_->id==cur_road_->start)?0:1][j][l]!=0)   //查询该车位是否有车
 	    {
 	       if(road_situation.is_empty) road_situation.is_empty=false;
 	       break;
@@ -181,7 +226,7 @@ void print_time(const char *head)
         out_ms += 1000;
         out_s -= 1;
     }
-    printf("%s date/time is: %s \tused time is %lu s %d ms.\n", head, asctime(timeinfo), out_s, out_ms);
+    printf("\n%s date/time is: %s \tused time is %lu s %d ms.\n", head, asctime(timeinfo), out_s, out_ms);
     
 #endif
 }
@@ -205,4 +250,10 @@ int min_ready_road_id(Road *road_,Cross *cross_)
    if(cross_->right_cross_id ==-1) right=-1;
    if(cross_->down_cross_id ==-1)  down=-1;
    if(cross_->left_cross_id ==-1)  left=-1;
+}
+//输入
+int not_equal(int a,int b)
+{
+  if(a==b) return 0;
+    else return 1;
 }
