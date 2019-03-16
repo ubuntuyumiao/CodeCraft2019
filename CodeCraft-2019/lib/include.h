@@ -32,10 +32,15 @@ typedef enum drive_state
 };
 typedef enum sche_direct
 {
-  straight, 
-  left,
-  right
+  go_straight, 
+  turn_left,
+  turn_right
 };
+typedef struct how_tonext
+{
+  int next_road;
+  sche_direct direct;
+}how_tonext;
 typedef struct Magic_garage
 {
     int road_id;
@@ -116,8 +121,10 @@ typedef struct MGraph
     int edges[MAX_ROAD][MAX_ROAD];//邻接矩阵，记录的是两点之间的距离，也就是权值 
     int n,e;//顶点数和边数
 }MG;
-
-
+//通过当前所在道路输出下一条道路 以及转向关系
+how_tonext next_road(Car* car_,Road* cur_road,Cross* cross_array_,Road map_[][MAX_CROSS]);
+// 将所有终止态的车改为等待态
+void chang_completed_towait(int min_car_id_,int max_car_id_,Car *car_array_,std::vector<int> *wait_list_);
 //检查该道路的车是否都已是终止态，且返回非终止态车数量
 int* has_car_wait_inroad(Cross* cross_,Road* road_,Car *car_array_);
 // 如果该道路在位置上最靠前 且为终止态 ，且下一个时刻即将过路口，将其信息发送到其下一个路口公告字段

@@ -1,0 +1,96 @@
+
+     for(int i=min_car_id;i<=max_car_id;i++)
+     {
+       int road_path,ga_roadpath;
+       fout <<"("<<car[i].id<<","<<car[i].set_time<<",";
+       for(int j=0;j<MAX_CROSS;j++)
+       { 
+       if(car[i].cross_path[j+1]==0) break;
+//        std::cout << car[i].cross_path[j] << "-->";
+       road_path= map[car[i].cross_path[j]][car[i].cross_path[j+1]].id ;
+       fout << road_path; 
+       if(j==0)  
+       {
+	   ga_roadpath = map[car[car_sorted[i].id].cross_path[j]][car[car_sorted[i].id].cross_path[j+1]].id;
+	   garage[ga_roadpath].garage[car_sorted[i].set=road[ga_roadpath].start?0:1].push_back(car_sorted[i].id); 
+       }
+       if(car[i].cross_path[j+2]!=0) fout <<",";
+         else fout <<")"<<std::endl; 
+	 }
+      }
+      fout.close();
+
+
+
+
+//以下为调度等待态车辆
+               //  调度路上的车  直到路上所有车全是终止态  让等待表为空
+		  while(!wait_list.empty())
+		  {
+		    int sch_cur_road;
+		    for(int sch_cur_cross=min_cross_id;sch_cur_cross<=max_cross_id;sch_cur_cross++) 
+		    {
+		      /******需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset******/
+			  int cur_cross_road[4];
+			  std::memcpy(cur_cross_road,cross[sch_cur_cross].road_id,sizeof(cross[sch_cur_cross].road_id));
+			  int array_offset=3;
+			for(int i=0;i<4;i++)
+			  if(cur_cross_road[i]!=-1)
+			    if(road[cur_cross_road[i]].flag_twoway!=1)                      //该道路为单向道，且该路口为入口 则此道路值为-1
+			      if(sch_cur_cross!=road[cur_cross_road[i]].end)  cur_cross_road[i]=-1;
+			  std::sort(cur_cross_road,cur_cross_road+4);    
+			//去掉不存在的道路 或者不调度 不进入该交叉口的道路
+			for(;array_offset>=0;array_offset--)
+			{
+			  if((array_offset==0)&&(cur_cross_road[array_offset]!=-1)) break;
+			  if(cur_cross_road[array_offset]==-1) { array_offset+=1;  break;}
+			}
+		      /******需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset******/
+		      
+		      for(int road_offset=array_offset;road_offset<4;road_offset++)
+		      {
+			sch_cur_road=cur_cross_road[road_offset];   //即将进行调度的道路
+			road_empty empty_Condition = check_road_empty(&cross[sch_cur_cross],&road[sch_cur_road]);
+			bool road_is_empty=empty_Condition.is_empty;	//查看道路是否为空 非空的话可加塞最高优先级车道是？ 余量是？ （可以是0 ！=-1）
+			if(road_is_empty)          //道路上无车 为空
+			{
+			  //等待表非空 调度下一条道路
+			    if(!wait_list.empty())   continue;
+			      else { std::cout << YELLOW << "Logitic warning" <<std::endl; continue;}
+			}
+			else                      //道路上有车 非空
+			{
+			  //empty_Condition.lane  empty_Condition.offset  为道路非空时 最先优先级车道 以及其余量
+			  int *road_contain_car;
+			  road_contain_car=has_car_wait_inroad(&cross[sch_cur_cross],&road[sch_cur_road],car);
+			  //返回两个元素的数组  分别为道路上等待调度的车的数量 以及 最高优先级的车辆id
+			  if(*road_contain_car==0)
+			  {
+			    //等待表飞空
+			    if(!wait_list.empty())   continue;
+			      else 
+			      {
+				
+			      }
+			  }
+			  //调度该车
+			    else
+			    {   //尝试调度该路上所有车辆
+				  while(*(road_contain_car+1)>0)
+				  {
+				    
+				    
+				    
+				    //再次获得该道路车辆情况
+				    road_contain_car=has_car_wait_inroad(&cross[sch_cur_cross],&road[sch_cur_road],car);
+				  }
+			    }
+			  
+			  
+			}
+			
+			
+		      }
+		      
+		    }      
+		  }

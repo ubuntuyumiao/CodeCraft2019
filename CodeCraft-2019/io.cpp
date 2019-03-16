@@ -8,6 +8,68 @@
 #else
 #define PRINT(...)
 #endif
+
+
+//通过当前所在道路输出下一条道路 以及转向关系转向
+how_tonext next_road(Car* car_,Road* cur_road,Cross *cross_array_,Road map_[][MAX_CROSS])
+{
+  how_tonext tonext;
+  tonext.next_road=-1;
+  tonext.direct=go_straight;
+  int cur_sub,next_sub;
+  for(int i=0;i<MAX_CROSS;i++)
+  {
+    if(car_->cross_path[i+2]==0) {return tonext;break;}
+    if(map_[car_->cross_path[i]][car_->cross_path[i+1]].id==cur_road->id)
+    {
+      //cur_road 与这条道路算出转向关系 car_->cross_path[i+1]为两者的连接路口
+      tonext.next_road=map_[car_->cross_path[i+1]][car_->cross_path[i+2]].id;
+      for(int j=0;j<4;j++)
+      {
+	if(cross_array_[car_->cross_path[i+1]].road_id[j]==cur_road->id) cur_sub=j;
+	if(cross_array_[car_->cross_path[i+1]].road_id[j]==tonext.next_road) next_sub=j;
+      }
+	    // 1:直行 2：左转 3：右转
+	    if(cur_sub==0)
+	    {
+	    if(next_sub==1) tonext.direct= turn_left;
+	    else if(next_sub==2) tonext.direct=go_straight;
+	    else if(next_sub==3) tonext.direct= turn_right;
+	    }
+	    else if(cur_sub==1)
+	    {
+	    if(next_sub==0) tonext.direct= turn_right;
+	    else if(next_sub==2) tonext.direct= turn_left;
+	    else if(next_sub==3) tonext.direct= go_straight;
+	    }
+	    else if(cur_sub==2)
+	    {
+	     if(next_sub==1) tonext.direct= turn_right;
+	    else if(next_sub==0) tonext.direct= go_straight;
+	    else if(next_sub==3) tonext.direct= turn_left;
+	    }
+	    else if(cur_sub==3)
+	    {
+	     if(next_sub==1) tonext.direct= go_straight;
+	    else if(next_sub==2) tonext.direct= turn_right;
+	    else if(next_sub==0) tonext.direct= turn_left;
+	    }
+    }
+  }
+  return tonext;
+}
+// 将所有终止态的车改为等待态
+void chang_completed_towait(int min_car_id_,int max_car_id_,Car *car_array_,std::vector<int> *wait_list_)
+{
+  for(int sub=min_car_id_;sub<=max_car_id_;sub++)
+  {
+    if(car_array_[sub].state==completed)
+    {
+      car_array_[sub].state=wait_schedule;
+      wait_list_->push_back(sub);
+    }
+  }
+}
 //检查该道路的车是否都已是终止态，且返回非终止态 最高优先车id
 // 0: 该车道全终止态   非0：该车道 非终止态 优先级最高的车
 //返回两个元素的数组  分别为道路上等待调度的车的数量 以及 最高优先级的车辆id
@@ -112,6 +174,7 @@ return all_car_isreached;
 }
 /******************************检查某道路是否为空 不为空 那最高优先级的有余量的车道是哪条 最优先车位的下标？******************************/
 // 为进入该道路的车辆提供数据   注意： 此次检查发生在调度路上车辆 所以 车道为指向路口
+// 0316增加： 若非空 返回优先级最高的车的id
 road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_)
 {
        road_empty road_situation;
@@ -155,12 +218,16 @@ road_space check_road_space(Cross *cur_cross_,Road *cur_road_)
          {
 	    if(cur_road_->load[(cur_cross_->id==cur_road_->start)?0:1][j][l]!=0)   //查询该车位是否有车
 	    {
-	       if(space_situation.is_empty) space_situation.is_empty=false;
-	       break;
+	       if(space_situation.is_empty) space_situation.is_empty=false;        break;
 	    }
-	    sub[j]++;
+           sub[j]++;
          }         
-       if(space_situation.is_empty)  return space_situation;
+       if(space_situation.is_empty) 
+       {       
+	 space_situation.lane=0;    
+         space_situation.offset=0;  
+	 return space_situation; 
+      }
        //路上一定有车
        for(int k=0;k<cur_road_->lane_num;k++)
        {
