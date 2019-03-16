@@ -77,11 +77,29 @@ A_star::A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array
 {
   min_cross_id=mincross_id;
   max_cross_id=maxcross_id;
-  memcpy(weight_net,weight_,sizeof(weight_));
-  for(int i =mincross_id;i<max_cross_id+1;i++)
+  
+ 
+   memcpy(weight_net,weight_,sizeof(weight_net)); 
+   //  经测试此二位数组复制有问题，复制之后所有值都是0
+ 
+//      for(int i=0;i<MAX_CROSS;i++)
+//        for(int j=0;j<MAX_CROSS;j++)
+// 	 weight_net[i][j]=weight_[i][j]; 
+//        //复制权重表
+	  
+    for(int i =mincross_id;i<max_cross_id+1;i++)
     memcpy(&cross[i],&cross_array[i],sizeof(Cross));
-  for(int i =minroad_id;i<maxroad_id+1;i++)
+    for(int i =minroad_id;i<maxroad_id+1;i++)
     memcpy(&road[i],&road_array[i],sizeof(Road));
+     
+          //输出每条路径的权值
+     for(int i=0;i<10;i++)
+     {
+       for(int j=0;j<10;j++)
+       {
+       cout <<"the weight of "<<i<<"Row"<<j<<"column is" << weight_net[i][j]<<std::endl;
+       } 
+     }
 
 }
 A_star::~A_star()

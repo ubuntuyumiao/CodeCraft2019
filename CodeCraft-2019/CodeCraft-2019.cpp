@@ -245,16 +245,41 @@ int main(int argc,char** argv)
 
 /*********************************A-Star算法  + 神奇车库*********************************/ 
       int has_find=0; 
+      int cur_node=0;
+      int next_node=0;
       quickSortOfCpp(car_sorted,min_car_id,max_car_id);
      for(int i=min_car_id;i<max_car_id+1;i++)
      {
        if( Astar_search(&car[i], road,min_road_id,max_road_id,cross,min_cross_id,max_cross_id,weight_net))
            has_find++;
+  
+ /*********************************每规划一台小车的路径，就将小车经过的车道权重加10*********************************/       
+	 for(int j=0;j<max_cross_id+1;j++)
+	 {
+	   if(car[i].cross_path[j+1]!=0)
+	   {
+	   weight_net[car[i].cross_path[j]][car[i].cross_path[j+1]]=weight_net[car[i].cross_path[j]][car[i].cross_path[j+1]]+10;
+	   cur_node=car[i].cross_path[j];
+	   next_node=car[i].cross_path[j+1];
+	   std::cout <<cur_node<<"to"<< next_node<<"is"<<weight_net[car[i].cross_path[j]][car[i].cross_path[j+1]] << std::endl;
+	   }
+	}
+/*********************************每规划一台小车的路径，就将小车经过的车道权重加10*********************************/
      }
+     
+//      //输出每条路径的权值
+//      for(int i=0;i<36;i++)
+//      {
+//        for(int j=0;j<36;j++)
+//        {
+// 	 std::cout <<"the weight of "<<i<<"Row"<<j<<"column is" << weight_net[car[i].cross_path[j]][car[i].cross_path[j+1]]<<std::endl;
+//        } 
+//      }
+/**********************************输出文件*********************************/    
       std::ofstream fout(argv[4], std::ios::app);
       if(!fout.is_open()) { std::cout<< "No output file" <<std::endl; return 0;}
       std::fstream file(argv[4], std::ios::out);
-      fout <<"#(road_id,starttime,road...)"<<std::endl;
+      fout <<"#(car_id,starttime,road...)"<<std::endl;
      for(int i=min_car_id;i<=max_car_id;i++)
      {
        int road_path,ga_roadpath;
