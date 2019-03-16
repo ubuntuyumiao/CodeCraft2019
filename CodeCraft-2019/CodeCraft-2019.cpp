@@ -267,9 +267,10 @@ int main(int argc,char** argv)
        fout << road_path; 
        if(j==0)  
        {
+	ga_roadpath = map[car[car_sorted[i].id].cross_path[j]][car[car_sorted[i].id].cross_path[j+1]].id;
+	
 	int cur_dup = not_equal(car[car_sorted[i].id].set,road[ga_roadpath].start);
-	   ga_roadpath = map[car[car_sorted[i].id].cross_path[j]][car[car_sorted[i].id].cross_path[j+1]].id;
-	   garage[ga_roadpath].garage[cur_dup].push_back(car_sorted[i].id); 
+	garage[ga_roadpath].garage[cur_dup].push_back(car_sorted[i].id); 
        }
        if(car[i].cross_path[j+2]!=0) fout <<",";
          else fout <<")"<<std::endl; 
@@ -287,28 +288,23 @@ int main(int argc,char** argv)
      
 /*********************************A-Star算法  + 神奇车库*********************************/
 /*********************************神奇车库  测试输出*********************************/
-//      for(int i=5029;i<=5029;i++)
-//      {
-//        for(int j=0;j<=1;j++)
-//        {
-// 	 if(j==0) printf(" 道路 %d 正向出发的车： ",i );
-//   	  else  printf(" \n     反向出发的车： ");
-//       while(garage[i].garage[j].size()>0)
-// 	  {
-// 	   std::cout<<garage[i].garage[j][0]<< "  ";
-// 	    garage[i].garage[j].erase(garage[i].garage[j].begin());
-// 	  }
-//        }
-//        	    std::cout<<std::endl<<std::endl;
-//      }
+     for(int i=min_road_id;i<=max_road_id;i++)
+     {
+       for(int j=0;j<=1;j++)
+       {
+	std::vector<int>  copy_garage(garage[i].garage[j]);
+	 if(j==0) printf(" 道路 %d 正向出发的车： ",i );
+  	  else  printf("      反向出发的车： ");
+      while(copy_garage.size()>0)
+	  {
+	   std::cout<<copy_garage[0]<< "  ";
+	    copy_garage.erase(copy_garage.begin());
+	  }
+       }
+       	    std::cout<<std::endl;
+     }
 /*********************************神奇车库*********************************/
 
-
-
-//              road[5018].load[0][0][10]=10023;
-	     road_space empty_Condition = check_road_space(&cross[15],&road[5018]);
-		
-//              std::cout << empty_Condition.is_empty <<" " <<empty_Condition.offset<<std::endl;
 /******************************车辆调度规则执行******************************/
 
        //记录时刻     
@@ -341,18 +337,19 @@ int main(int argc,char** argv)
 		  if(cur_cross_road[array_offset]==-1) { array_offset+=1;  break;}
 		} 
 		  /******需要调度的道路id升序存于cur_cross_road中    起始下标为 array_offset******/
-		  std::cout << sch_cross_garage<<" connect: ";
+// 		  std::cout <<sch_cross_garage<<" connect: ";
 		  for(int sch_road_garage_offset=array_offset;sch_road_garage_offset<4;sch_road_garage_offset++)
 		  {   
 		    
-		    int sch_road_garage = cur_cross_road[sch_road_garage_offset]; std::cout<<" "<< sch_road_garage;	
+		    int sch_road_garage = cur_cross_road[sch_road_garage_offset]; 
+		    //std::cout<<" "<< sch_road_garage;	
 		    //判断该路是否有车调度
 		    int cur_dup=not_equal(sch_cross_garage,road[sch_road_garage].start);
 		    
 		     if(garage[sch_road_garage].garage[cur_dup].empty()){ continue;}
 		      else
 			 {   
-			std::cout<<"|"<<sch_road_garage<< "|";
+// 			std::cout<<"|"<<sch_road_garage<< "|";
 			//路上的车已不需调动  所以调度哪个神奇车库都没关系;但是需满足假设：所有道路的长度<=limit_speed
 			//该方向是否有道路 只调度从该路口驶出的车
 		        //方向也符合 查看车库是否有车
@@ -363,24 +360,34 @@ int main(int argc,char** argv)
 			      road_space space_Condition = check_road_space(&cross[sch_cross_garage],&road[sch_road_garage]);
 			      //车道非空且车库有车
 			      int cur_dup=not_equal(sch_cross_garage,road[sch_road_garage].start);
-			      std::cout <<" "<< space_Condition.lane;
-			      while((space_Condition.lane!=-1)&&(!garage[road[sch_road_garage].id].garage[cur_dup].empty()))
+			      //循环直到道路填满 或者 车库为空
+			      while((space_Condition.lane!=-1)||(!garage[road[sch_road_garage].id].garage[cur_dup].empty()))
 			      {
-				   //循环判断车库是否有车
-				
-				int cur_dup=not_equal(sch_cross_garage,road[sch_road_garage].start);
-			        if(garage[road[sch_road_garage].id].garage[cur_dup].empty()) continue;
-				  else
-				    //调度该车库知道道路无法加塞
-			  	  {
 				    int cur_dup=not_equal(sch_cross_garage,road[sch_road_garage].start);
-				    std::vector<int> car_garage(garage[road[sch_road_garage].id].garage[cur_dup]);
-// 			            std::cout<<car_garage[0]<< "  ";	   
+				    std::vector<int> car_garage(garage[road[sch_road_garage].id].garage[cur_dup]); 
+				    //向量拷贝 只是为了让后面看起来短一点 没什么太大软用
+				    //判断发车时刻.<=T
+				    if(car[car_garage[0]].set_time>T) 
+				    {printf("%d 号车发车时刻为 %d 现在时刻为 %d\n",car_garage[0],car[car_garage[0]].set_time,T); break;}
+// 			            std::cout<<car_garage[0]<< "  ";  //将要出发车辆的id
+				    //判断该车速度与可行驶距离大小 
+				    //D=min（car_speed,offset）
+				    int how_far = min(road[sch_road_garage].road_length-space_Condition.offset,car[car_garage[0]].max_speed);
+				    how_far = road[sch_road_garage].road_length-how_far;
+				    /**** 终于将车安排上了 难受****/
+				    road[sch_road_garage].load[cur_dup][space_Condition.lane][how_far]=car_garage[0];
+				    /**** 终于将车安排上了 难受****/
+				    
+				    /**** 上路后还有一系列操作 比如 ***/
+				    /***如果下一时刻即将过路口 则更新路口公共字段****/
+				    /***写car结构体中的state now_road next_road move_ori settime ****/
+				    
+				    
+				    //发车成功  将其从车库中删掉
 			  	   garage[road[sch_road_garage].id].
 				    garage[cur_dup].erase(garage[road[sch_road_garage].id].
 					garage[cur_dup].begin());
 				      
-			  	  }
 				space_Condition = check_road_space(&cross[sch_cross_garage],&road[sch_road_garage]);
 			      }
 			      //如果道路已经无车位驶入 调度下一道路车库

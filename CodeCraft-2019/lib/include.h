@@ -142,5 +142,6 @@ int campare_settime(const void * a, const void * b);
 void quickSortOfCpp(Car* car_list,int car_begin,int car_end);
 bool cmp(int a,int b);
 int not_equal(int a,int b);
+int min(int a, int b);
 #endif
 

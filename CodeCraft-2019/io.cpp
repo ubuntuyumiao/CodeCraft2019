@@ -141,12 +141,13 @@ road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_)
 return road_situation; 
 }
 // 为进入该道路的车辆提供数据   注意： 此次检查发生在调度道路的车库 所以 方向为驶离路口
+// 0316 修正 ： 如果偏移量大于该段道路限速则等于限速
 road_space check_road_space(Cross *cur_cross_,Road *cur_road_)
 {
-       road_space road_situation;
-       road_situation.is_empty=true;
-       road_situation.lane=-1;     //-1 代表该道路无车位
-       road_situation.offset=-1;
+       road_space space_situation;
+       space_situation.is_empty=true;
+       space_situation.lane=-1;     //-1 代表该道路无车位
+       space_situation.offset=-1;
        bool this_line_findcar=false;
        int sub[10]={-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};  //存放每个车道最末尾的车
        for(int j=0;j<cur_road_->lane_num;j++)
@@ -154,20 +155,26 @@ road_space check_road_space(Cross *cur_cross_,Road *cur_road_)
          {
 	    if(cur_road_->load[(cur_cross_->id==cur_road_->start)?0:1][j][l]!=0)   //查询该车位是否有车
 	    {
-	       if(road_situation.is_empty) road_situation.is_empty=false;
+	       if(space_situation.is_empty) space_situation.is_empty=false;
 	       break;
 	    }
 	    sub[j]++;
          }         
-       if(road_situation.is_empty)  return road_situation;
+       if(space_situation.is_empty)  return space_situation;
        //路上一定有车
        for(int k=0;k<cur_road_->lane_num;k++)
        {
 	 //该行有空位
-	 if(sub[k]!=-1)   {road_situation.lane=k;road_situation.offset=cur_road_->road_length-sub[k]-1;break; }           
+	 if(sub[k]!=-1)   
+	 {
+	   space_situation.lane=k;
+	   if((sub[k]+1)>cur_road_->limit_speed) space_situation.offset= cur_road_->road_length-sub[k]-1;
+	     else space_situation.offset=cur_road_->road_length-cur_road_->limit_speed;
+	   break; 
+	}           
        }
        
-return road_situation; 
+return space_situation; 
 }
 
 /******************************调度k号车辆后 更新道路******************************/
@@ -256,4 +263,9 @@ int not_equal(int a,int b)
 {
   if(a==b) return 0;
     else return 1;
+}
+int min(int a, int b)
+{
+  if(a>b) return b;
+     return a;
 }
