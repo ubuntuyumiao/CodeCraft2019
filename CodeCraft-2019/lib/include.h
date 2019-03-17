@@ -132,9 +132,7 @@ void chang_completed_towait(int min_car_id_,int max_car_id_,Car *car_array_,std:
 //检查该道路的车是否都已是终止态，且返回非终止态车数量
 int* has_car_wait_inroad(Cross* cross_,Road* road_,Car *car_array_);
 // 如果该道路在位置上最靠前 且为终止态 ，且下一个时刻即将过路口，将其信息发送到其下一个路口公告字段
-void update_to_cross(Car* car_,Road* road_,Cross* cross_);
-//检查某道路的神奇车库是否有车 输入参数 当前调度的路口 和道路
-bool check_garage(Cross* cross_,Road* road_,Magic_garage* garage_);
+void update_to_cross(Car* car_,Road* road_,Cross* cross_,Cross *cross_array_);
 //检查此车是否在等待列表中出现
 bool check_in_list(int car_id_,std::vector<int>wait_list_);
 //全局车辆的两种判断 1、所有车辆是否全是终止态 2、所有已上路车辆全是终止态 
@@ -154,5 +152,30 @@ void quickSortOfCpp(Car* car_list,int car_begin,int car_end);
 bool cmp(int a,int b);
 int not_equal(int a,int b);
 int min(int a, int b);
+void debug_dir_leavecross(Road *road_array_,int min_cross_id,int max_cross_id,Cross *cross_array_);
+void debug_dir_tocross(Road *road_array_,int min_cross_id,int max_cross_id,Cross *cross_array_);
+
+
+
+
+
+
+bool sch_allcross_drive(Car* car_array,
+			 Cross* cross_array_,int min_cross_id,int max_cross_id,
+			 Road* road_array,
+			 Magic_garage* garage,
+			 Road map_[][MAX_CROSS],
+			 int T,
+			 std::vector<int> *wait_list_
+			);
+
+
+void sch_allcross_garage(Car* car_array,
+			 Cross* cross_array_,int min_cross_id,int max_cross_id,
+			 Road* road_array,
+			 Magic_garage* garage,
+			 Road map_[][MAX_CROSS],
+			 int T
+			);
 #endif
 
