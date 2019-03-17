@@ -443,19 +443,17 @@ int main(int argc,char** argv)
 
 	    break;
 	  }
-	
 /******************************车辆调度规则执行******************************/
-	      for(int tese_cross=min_cross_id;tese_cross<=max_cross_id;tese_cross++)
+	      for(int test_cross=min_cross_id;test_cross<=max_cross_id;test_cross++)
 	      {
-		std::cout<<"CROSS: "<<tese_cross;
 		/******需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset******/
 		int cur_cross_road[4];
-		std::memcpy(cur_cross_road,cross[tese_cross].road_id,sizeof(cross[tese_cross].road_id));
+		std::memcpy(cur_cross_road,cross[test_cross].road_id,sizeof(cross[test_cross].road_id));
 		int array_offset=3;
 	      for(int i=0;i<4;i++)
 		if(cur_cross_road[i]!=-1)
 		  if(road[cur_cross_road[i]].flag_twoway!=1)                      //该道路为单向道，且该路口不是起点
-		    if(tese_cross!=road[cur_cross_road[i]].start)  cur_cross_road[i]=-1;
+		    if(test_cross!=road[cur_cross_road[i]].start)  cur_cross_road[i]=-1;
 		std::sort(cur_cross_road,cur_cross_road+4);    
 	      //去掉不存在的道路 或者不调度 不进入该交叉口的道路
 		for(;array_offset>=0;array_offset--)
@@ -465,13 +463,15 @@ int main(int argc,char** argv)
 		} 
 		for(int test_offset=array_offset;test_offset<4;test_offset++)
 	      { 
-		std::cout <<" ROAD: "<<cur_cross_road[test_offset]<<": "<<std::endl;
 		int test_road = cur_cross_road[test_offset];
+		if(road[test_road].start==test_cross)
+		 std::cout <<cross[test_cross].id<<"-------"<<cur_cross_road[test_offset]<<"------->"<<road[test_road].end<<std::endl;
+		else std::cout <<cross[test_cross].id<<"-------"<<cur_cross_road[test_offset]<<"------->"<<road[test_road].start<<std::endl;
 		for(int lane=0;lane<road[test_road].lane_num;lane++)
 		{
-		  for(int j=0;j<road[test_road].road_length;j++)
+		  for(int j=road[test_road].road_length-1;j>=0;j--)
 		  { 
-		    std::cout<< road[test_road].load[(tese_cross==road[test_road].start)?0:1][lane][j]<<"  "; 
+		    std::cout<< road[test_road].load[(test_cross==road[test_road].start)?0:1][lane][j]<<"  "; 
 		  }
 		}
 		

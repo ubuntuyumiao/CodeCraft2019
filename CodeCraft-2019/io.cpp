@@ -226,7 +226,6 @@ road_space check_road_space(Cross *cur_cross_,Road *cur_road_)
          {
 	    if(cur_road_->load[(cur_cross_->id==cur_road_->start)?0:1][j][l]!=0)   //查询该车位是否有车
 	    {
-	      std::cout<<"here:" <<l;
 	       if(space_situation.is_empty) space_situation.is_empty=false;        break;
 	    }
            sub[j]++;
