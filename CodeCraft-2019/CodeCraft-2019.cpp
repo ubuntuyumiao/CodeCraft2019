@@ -297,21 +297,21 @@ int main(int argc,char** argv)
      
 /*********************************A-Star算法  + 神奇车库*********************************/
 /*********************************神奇车库  测试输出*********************************/
-//      for(int i=min_road_id;i<=max_road_id;i++)
-//      {
-//        for(int j=0;j<=1;j++)
-//        {
-// 	std::vector<int>  copy_garage(garage[i].garage[j]);
-// 	 if(j==0) printf(" 道路 %d 正向出发的车： ",i );
-//   	  else  printf("      反向出发的车： ");
-//       while(copy_garage.size()>0)
-// 	  {
-// 	   std::cout<<copy_garage[0]<< "  ";
-// 	    copy_garage.erase(copy_garage.begin());
-// 	  }
-//        }
-//        	    std::cout<<std::endl;
-//      }
+     for(int i=5005;i<=5005;i++)
+     {
+       for(int j=0;j<=1;j++)
+       {
+	std::vector<int>  copy_garage(garage[i].garage[j]);
+	 if(j==0) printf(" 道路 %d 正向出发的车： ",i );
+  	  else  printf("      反向出发的车： ");
+      while(copy_garage.size()>0)
+	  {
+	   std::cout<<copy_garage[0]<< "  ";
+	    copy_garage.erase(copy_garage.begin());
+	  }
+       }
+       	    std::cout<<std::endl;
+     }
 /*********************************神奇车库*********************************/
 
 /******************************车辆调度规则执行******************************/
@@ -356,8 +356,7 @@ int main(int argc,char** argv)
 		  for(int sch_road_garage_offset=array_offset;sch_road_garage_offset<4;sch_road_garage_offset++)
 		  {   
 		    
-		    int sch_road_garage = cur_cross_road[sch_road_garage_offset]; 
-// 		    std::cout<<" "<< sch_road_garage<< ": ";	
+		    int sch_road_garage = cur_cross_road[sch_road_garage_offset]; 	
 		    //判断该路的车库是否有车调度
 		    int cur_dup=not_equal(sch_cross_garage,road[sch_road_garage].start);
 		      
@@ -369,6 +368,7 @@ int main(int argc,char** argv)
 			      road_space space_Condition = check_road_space(&cross[sch_cross_garage],&road[sch_road_garage]);
 // 			       std::cout << "test: "<<space_Condition.lane <<std::endl;
 			      if(space_Condition.lane==-1) continue;
+// 			      std::cout<<"sch_road_garage "<< sch_road_garage<< " "<<cur_dup;
 			      //道路是否有余量
 			      int cur_dup=not_equal(sch_cross_garage,road[sch_road_garage].start);
 			      //循环的条件 道路非满且车库非空
@@ -392,34 +392,32 @@ int main(int argc,char** argv)
 				    /**** 终于将车安排上了 更新车道数组****/
 				    road[sch_road_garage].load[cur_dup][space_Condition.lane][space_offset]=car_garage[0];
 				    /**** 终于将车安排上了 更新车道数组****/
-				    
 				    /**** 上路后还有一系列操作 比如 ***/
 				      /***写car结构体中的state now_road next_road move_ori settime ****/
 				    car[car_garage[0]].set_time=T;
 				    car[car_garage[0]].now_road=sch_road_garage;
 				    car[car_garage[0]].state=completed;
 				      /***如果下一时刻即将过路口 则更新路口公共字段****/
-				      //现在所在位置-最大可行驶距离 车库出来的车下一时刻就能出路口 除非道路是空的
-				    if(((space_offset+1-how_far)<0)&&(space_Condition.is_empty==true))
+				      //现在所在位置-最大可行驶距离 
+				    if(((space_offset-how_far)<0)&&(check_most_prior(car_garage[0],&road[sch_road_garage],&cross[sch_cross_garage])))
 				     {
-				       std::cout << cur_dup<<" "<<car_garage[0]<<" " <<"will run out "<< sch_road_garage<<" "<<T+1 ; 
+				       //检查是否是该道路优先级最高 是则将其信息发送到公共字段 否则不发
+// 				       std::cout << sch_cross_garage<<" "<<car_garage[0]<<" " <<"will run out "<< sch_road_garage<<" "<<T+1 ; 
 				       how_tonext to_next=next_road(&car[car_garage[0]],&road[sch_road_garage],cross,map);
-				       std::cout << " "<<to_next.next_road<<" ";
-// 				       if(p[0]==-1){
-// 					 car[car_garage[0]].move_ori =go_straight;
-// 					 car[car_garage[0]].next_road=sch_road_garage;
-// 					 std::cout << "Attention 1" <<std::endl;
-// 				       }
-// 					else{
-// 					  if(p[1]==-1){std::cout<<"Attetion 2"<<std::endl;}
-// 					   else{
-// 					     if(p[1]==-1) car[car_garage[0]].move_ori =go_straight ;
-// 					     else if(p[1]==1) car[car_garage[0]].move_ori =go_straight ;
-// 					     else if(p[1]==2) car[car_garage[0]].move_ori =turn_left ;
-// 					     else car[car_garage[1]].move_ori =turn_right ;
-// 					      car[car_garage[0]].next_road=p[0] ;
-// 					   }
-// 					}
+// 				       std::cout<<sch_cross_garage<<" "<< sch_road_garage<<" "<< car_garage[0]<<" ";
+// 				       std::cout << "run to "<<to_next.next_road<<" ";
+				       if(to_next.next_road==-1){
+					 car[car_garage[0]].move_ori =go_straight;
+					 car[car_garage[0]].next_road=sch_road_garage;
+					 std::cout << "Attention 1" <<std::endl;
+				       }
+					else{
+					  if(to_next.next_road==-1){std::cout<<"Attetion 2"<<std::endl;}
+					   else{
+						car[car_garage[0]].move_ori =to_next.direct ;
+					        car[car_garage[0]].next_road=to_next.next_road ;
+					   }
+					}
 				     }
 				     else{
 				       car[car_garage[0]].next_road= sch_road_garage;
@@ -447,7 +445,41 @@ int main(int argc,char** argv)
 	  }
 	
 /******************************车辆调度规则执行******************************/
-
+	      for(int tese_cross=min_cross_id;tese_cross<=max_cross_id;tese_cross++)
+	      {
+		std::cout<<"CROSS: "<<tese_cross;
+		/******需要调度的路口id升序存于cur_cross_road中    起始下标为 array_offset******/
+		int cur_cross_road[4];
+		std::memcpy(cur_cross_road,cross[tese_cross].road_id,sizeof(cross[tese_cross].road_id));
+		int array_offset=3;
+	      for(int i=0;i<4;i++)
+		if(cur_cross_road[i]!=-1)
+		  if(road[cur_cross_road[i]].flag_twoway!=1)                      //该道路为单向道，且该路口不是起点
+		    if(tese_cross!=road[cur_cross_road[i]].start)  cur_cross_road[i]=-1;
+		std::sort(cur_cross_road,cur_cross_road+4);    
+	      //去掉不存在的道路 或者不调度 不进入该交叉口的道路
+		for(;array_offset>=0;array_offset--)
+		{
+		  if((array_offset==0)&&(cur_cross_road[array_offset]!=-1)) break;
+		  if(cur_cross_road[array_offset]==-1) { array_offset+=1;  break;}
+		} 
+		for(int test_offset=array_offset;test_offset<4;test_offset++)
+	      { 
+		std::cout <<" ROAD: "<<cur_cross_road[test_offset]<<": "<<std::endl;
+		int test_road = cur_cross_road[test_offset];
+		for(int lane=0;lane<road[test_road].lane_num;lane++)
+		{
+		  for(int j=0;j<road[test_road].road_length;j++)
+		  { 
+		    std::cout<< road[test_road].load[(tese_cross==road[test_road].start)?0:1][lane][j]<<"  "; 
+		  }
+		}
+		
+		 std::cout<<std::endl;
+	      }
+	      
+	      std::cout<<std::endl;
+	      }
        
   print_time("End");
   return 0;

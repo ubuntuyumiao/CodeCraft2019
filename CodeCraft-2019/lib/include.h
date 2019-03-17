@@ -121,6 +121,10 @@ typedef struct MGraph
     int edges[MAX_ROAD][MAX_ROAD];//邻接矩阵，记录的是两点之间的距离，也就是权值 
     int n,e;//顶点数和边数
 }MG;
+
+
+//在调度车库时的检查  注意： 要与调度路口车辆区分
+bool check_most_prior(int car_id,Road* road_,Cross* cross_);
 //通过当前所在道路输出下一条道路 以及转向关系
 how_tonext next_road(Car* car_,Road* cur_road,Cross* cross_array_,Road map_[][MAX_CROSS]);
 // 将所有终止态的车改为等待态

@@ -8,52 +8,60 @@
 #else
 #define PRINT(...)
 #endif
-
-
-//通过当前所在道路输出下一条道路 以及转向关系转向
+//在调度车库时的检查  注意： 要与调度路口车辆区分
+bool check_most_prior(int car_id,Road* road_,Cross* cross_)
+{
+  for(int i=0;i<road_->lane_num;i++)
+    for(int j=0;j<road_->road_length;j++)
+    {
+      if(road_->load[(cross_->id==road_->start)?0:1][i][j]!=0)   //查询该车位是否有车
+      {
+	if(road_->load[(cross_->id==road_->start)?0:1][i][j]==car_id) return true;
+	  else { return false;} 
+      }
+    }
+    return true;
+}
+//通过当前所在道路输出下一条道路 以及转向关系转向  注意：调度车库与调度路口方向不同
 how_tonext next_road(Car* car_,Road* cur_road,Cross *cross_array_,Road map_[][MAX_CROSS])
 {
   how_tonext tonext;
   tonext.next_road=-1;
   tonext.direct=go_straight;
-  int cur_sub,next_sub;
+  int cur_corss,next_cross,last_cross;
   for(int i=0;i<MAX_CROSS;i++)
   {
     if(car_->cross_path[i+2]==0) {return tonext;break;}
+    //通过下个路口与下下个路口算出转换关系
     if(map_[car_->cross_path[i]][car_->cross_path[i+1]].id==cur_road->id)
     {
-      //cur_road 与这条道路算出转向关系 car_->cross_path[i+1]为两者的连接路口
+      //car_->cross_path[i+2]   car_->cross_path[i+1]
       tonext.next_road=map_[car_->cross_path[i+1]][car_->cross_path[i+2]].id;
-      for(int j=0;j<4;j++)
+      cur_corss=car_->cross_path[i] ;  next_cross=car_->cross_path[i+1] ; next_cross=car_->cross_path[i+2] ;
+      if(cur_corss==cross_array_[next_cross].up_cross_id) 
       {
-	if(cross_array_[car_->cross_path[i+1]].road_id[j]==cur_road->id) cur_sub=j;
-	if(cross_array_[car_->cross_path[i+1]].road_id[j]==tonext.next_road) next_sub=j;
+	 if(last_cross==cross_array_[next_cross].right_cross_id) {tonext.direct=turn_left;return tonext;}
+	 else if(last_cross==cross_array_[next_cross].down_cross_id) {tonext.direct=go_straight;return tonext;}
+         else if(last_cross==cross_array_[next_cross].left_cross_id) {tonext.direct=turn_right;return tonext;}
       }
-	    // 1:直行 2：左转 3：右转
-	    if(cur_sub==0)
-	    {
-	    if(next_sub==1) tonext.direct= turn_left;
-	    else if(next_sub==2) tonext.direct=go_straight;
-	    else if(next_sub==3) tonext.direct= turn_right;
-	    }
-	    else if(cur_sub==1)
-	    {
-	    if(next_sub==0) tonext.direct= turn_right;
-	    else if(next_sub==2) tonext.direct= turn_left;
-	    else if(next_sub==3) tonext.direct= go_straight;
-	    }
-	    else if(cur_sub==2)
-	    {
-	     if(next_sub==1) tonext.direct= turn_right;
-	    else if(next_sub==0) tonext.direct= go_straight;
-	    else if(next_sub==3) tonext.direct= turn_left;
-	    }
-	    else if(cur_sub==3)
-	    {
-	     if(next_sub==1) tonext.direct= go_straight;
-	    else if(next_sub==2) tonext.direct= turn_right;
-	    else if(next_sub==0) tonext.direct= turn_left;
-	    }
+      else if(cur_corss==cross_array_[next_cross].right_cross_id) 
+      { 
+	if(last_cross==cross_array_[next_cross].up_cross_id) {tonext.direct=turn_right;return tonext;}
+	 else if(last_cross==cross_array_[next_cross].down_cross_id) {tonext.direct=turn_left;return tonext;}
+         else if(last_cross==cross_array_[next_cross].left_cross_id) {tonext.direct=go_straight;return tonext;}
+      }
+      else if(cur_corss==cross_array_[next_cross].down_cross_id) 
+      {
+        if(last_cross=cross_array_[next_cross].right_cross_id) {tonext.direct=turn_right;return tonext;}
+	 else if(last_cross==cross_array_[next_cross].up_cross_id) {tonext.direct=go_straight;return tonext;}
+         else if(last_cross==cross_array_[next_cross].left_cross_id) {tonext.direct=turn_left;return tonext;}
+      }
+      else if(cur_corss==cross_array_[next_cross].left_cross_id) 
+      {
+         if(last_cross==cross_array_[next_cross].right_cross_id) {tonext.direct=go_straight;return tonext;}
+	 else if(last_cross==cross_array_[next_cross].down_cross_id) {tonext.direct=turn_right;return tonext;}
+         else if(last_cross==cross_array_[next_cross].left_cross_id) {tonext.direct=turn_left;return tonext;}
+      }
     }
   }
   return tonext;
@@ -218,6 +226,7 @@ road_space check_road_space(Cross *cur_cross_,Road *cur_road_)
          {
 	    if(cur_road_->load[(cur_cross_->id==cur_road_->start)?0:1][j][l]!=0)   //查询该车位是否有车
 	    {
+	      std::cout<<"here:" <<l;
 	       if(space_situation.is_empty) space_situation.is_empty=false;        break;
 	    }
            sub[j]++;
@@ -235,8 +244,8 @@ road_space check_road_space(Cross *cur_cross_,Road *cur_road_)
 	 if(sub[k]!=-1)   
 	 {
 	   space_situation.lane=k;
-	   if((sub[k]+1)>cur_road_->limit_speed) space_situation.offset= cur_road_->road_length-sub[k]-1;
-	     else space_situation.offset=cur_road_->road_length-cur_road_->limit_speed;
+	   if((sub[k]+1)>cur_road_->limit_speed){ space_situation.offset= cur_road_->road_length-cur_road_->limit_speed-1;}
+	     else {  space_situation.offset=cur_road_->road_length-sub[k]-1;}
 	   break; 
 	}           
        }

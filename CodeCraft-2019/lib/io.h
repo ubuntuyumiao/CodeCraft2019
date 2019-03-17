@@ -77,7 +77,7 @@ A_star::A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array
 {
   min_cross_id=mincross_id;
   max_cross_id=maxcross_id;
-  memcpy(weight_net,weight_,sizeof(weight_));
+  memcpy(weight_net,weight_,sizeof(weight_net));
   for(int i =mincross_id;i<max_cross_id+1;i++)
     memcpy(&cross[i],&cross_array[i],sizeof(Cross));
   for(int i =minroad_id;i<maxroad_id+1;i++)
