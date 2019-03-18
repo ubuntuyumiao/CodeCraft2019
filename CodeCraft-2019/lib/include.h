@@ -126,6 +126,21 @@ typedef struct MGraph
     int n,e;//顶点数和边数
 }MG;
 
+
+
+
+typedef struct pior_cross
+{
+  int road_id;
+  int dir;
+}pior_cross;
+int  campare_dir(const void * a, const void * b);
+int  campare_id(const void * a, const void * b);
+void quickSort(Car* car_list,int car_begin,int car_end);
+//路口优先级对比
+int compare_prior_sch(Car* car_array_,Cross* cross_,Road* road_array,Road* road_);
+
+
 //路口调度 获得对应道路等待态优先级最高的车（不含已调度过 wait_another的车）
 sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 		       int cur_road[],Cross *cross_array_,Road* road_array_,Road map_[][MAX_CROSS],std::vector<int> &wait_list_,std::vector<int> &block_list_);

@@ -8,6 +8,67 @@
 #define PRINT(...)
 #endif
 
+int  campare_dir(const void * a, const void * b)
+{
+ return (*(pior_cross *)a).dir > (*(pior_cross *)b).dir ? 1 : -1; 
+}
+int  campare_id(const void * a, const void * b)
+{
+ return (*(pior_cross *)a).road_id > (*(pior_cross *)b).road_id ? 1 : -1; 
+}
+void quickSort(Car* car_list,int car_begin,int car_end)
+{
+    qsort(car_list+car_begin, car_end-car_begin+1, sizeof(car_list[0]), campare_settime);
+}
+//路口优先级对比
+int compare_prior_sch(Car* car_array_,Cross* cross_,Road* road_array,Road* road_)
+{
+  //优先级对比 选出优先级最高的车道 1、方向 直行>左转>右转  2、道路id升序
+   if((cross_->prior_uproad==0)&&(cross_->prior_rightroad==0)
+     &&(cross_->prior_downroad==0)&&(cross_->prior_leftroad==0))   return road_->id ;
+
+   pior_cross prior[4];
+    if(cross_->prior_uproad==0) { prior[0].road_id=65535;prior[0].dir=65535;}
+      else{
+	prior[0].road_id=cross_->prior_uproad; 
+	 if(car_array_[prior[0].road_id].move_ori==go_straight) prior[0].dir=1;
+	  if(car_array_[prior[0].road_id].move_ori==turn_left) prior[0].dir=2;
+	   if(car_array_[prior[0].road_id].move_ori==turn_right) prior[0].dir=3;
+	    else std::cout<< "The Car"<<" "<<prior[0].road_id<<" " <<"has no DIR"<<std::endl;
+
+      }
+          if(cross_->prior_rightroad==0) { prior[1].road_id=65535;prior[1].dir=65535;}
+      else{
+	prior[1].road_id=cross_->prior_rightroad; 
+	 if(car_array_[prior[1].road_id].move_ori==go_straight) prior[1].dir=1;
+	  if(car_array_[prior[1].road_id].move_ori==turn_left) prior[1].dir=2;
+	   if(car_array_[prior[1].road_id].move_ori==turn_right) prior[1].dir=3;
+	    else std::cout<< "The Car"<<" "<<prior[1].road_id<<" " <<"has no DIR"<<std::endl;
+
+      }
+          if(cross_->prior_downroad==0) { prior[2].road_id=65535;prior[2].dir=65535;}
+      else{
+	prior[2].road_id=cross_->prior_downroad; 
+	 switch(car_array_[prior[2].road_id].move_ori)
+	 if(car_array_[prior[2].road_id].move_ori==go_straight) prior[2].dir=1;
+	  if(car_array_[prior[2].road_id].move_ori==turn_left) prior[2].dir=2;
+	   if(car_array_[prior[2].road_id].move_ori==turn_right) prior[2].dir=3;
+	    else std::cout<< "The Car"<<" "<<prior[2].road_id<<" " <<"has no DIR"<<std::endl;
+
+      }
+          if(cross_->prior_leftroad==0) { prior[3].road_id=65535;prior[3].dir=65535;}
+      else{
+	prior[3].road_id=cross_->prior_leftroad; 
+	 if(car_array_[prior[3].road_id].move_ori==go_straight) prior[3].dir=1;
+	  if(car_array_[prior[3].road_id].move_ori==turn_left) prior[3].dir=2;
+	   if(car_array_[prior[3].road_id].move_ori==turn_right) prior[3].dir=3;
+	    else std::cout<< "The Car"<<" "<<prior[3].road_id<<" " <<"has no DIR"<<std::endl;
+
+      }
+   qsort(car_array_, 4, sizeof(car_array_[0]), campare_dir);
+   qsort(car_array_, 4, sizeof(car_array_[0]), campare_id);
+   return car_array_[0].id;
+}
 //路口调度 获得对应道路等待态优先级最高的车（不含已调度过 wait_another的车）   起始偏移量     路口道路数组
 sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 		       int cur_road[],Cross *cross_array_,Road* road_array_,Road map_[][MAX_CROSS],
@@ -47,16 +108,19 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 			 int next_cross;
 			  if(cross_->id==road_->start) next_cross=road_->end;
 			   else next_cross=road_->start;
-			 if(car_array_[car_id].goal==next_cross) 
+			 if(next_cross==car_array_[car_id].goal) 
 			 {
 			   road_->load[(cross_->id==road_->end)?0:1][i][j]=0;
 			   car_array_[car_id].state=reached;
 			    check_and_delete(car_id,block_list_);
 			    check_and_delete(car_id,wait_list_);
 			   memset(huan,-1,sizeof(huan));front_car=0;
-			   break;
+			   i=0;j=0;continue;
 			 }
-			   else { std::cout<<"not car goal"<<std::endl;sch_most.block=true;return sch_most;}
+			   else {   
+			     std::cout<<"not car goal"<<std::endl;sch_most.block=true;return sch_most;
+			     
+			  }
 			 //不是终点 报错/return sch_most.block=true
 		       }
 		       else{
@@ -93,25 +157,24 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 				       car_array_[car_id].next_road= road_->id;
 				       car_array_[car_id].move_ori = go_straight;
 				     }
-			 memset(huan,-1,sizeof(huan));front_car=0;break;
+			 memset(huan,-1,sizeof(huan));front_car=0;i=0;j=0;continue;
 		       }
 		  }
 		  else{
-		    if(car_id==15845) //std::cout<<RED<<"arrive here" <<std::endl;
-		    {
-		      	     road_->load[(cross_->id==road_->end)?0:1][i][j]=0;
-			       road_->load[(cross_->id==road_->end)?0:1][i][0]=car_id;
-			       check_and_delete(car_id,block_list_);
-			       check_and_delete(car_id,wait_list_);
-			       car_array_[car_id].state=completed;
-			       car_array_[car_id].now_road=road_->id;
-			       car_array_[car_id].wait_anthor=false;
+		    int next_id= compare_prior_sch(car_array_,&cross_array_[cross_->id],
+		                                   road_array_,&road_array_[road_->id]);
+		    // next road！=当前道路 return sch_most.next road=next road 
+		    if(next_id==road_->id)
+		      { 
+			 //该道路优先级最高 该车准备过路口
+			
+			
+			  memset(huan,-1,sizeof(huan));front_car=0;i=0;j=0;continue;
+		      }
+		     else {
+			  sch_most.next_road=next_id;  return  sch_most;
+		      }
 		    }
-	          //next road 不是当前道路
-	              //对比路口公共非零字段 compare-prior-sch（） return next road
-			  //next road==当前道路 continue
-	    	          // next road！=当前道路 return sch_most.next road=next road  
-		  }
 	    }
 	     //不是front car
 	     else
@@ -140,7 +203,7 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 			       }
 			       else{
 				 block_list_.push_back(car_id);
-				 car_array_[car_id].wait_anthor=true; continue;
+				 car_array_[car_id].wait_anthor=true;i=0;j=0; continue;
 			      }
 			     }
 			     else if(car_array_[road_->load[(cross_->id==road_->end)?0:1][i][arrage]].state==completed)
@@ -155,7 +218,7 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 			       car_array_[car_id].wait_anthor=false;
 // 			       car_array_[car_id].next_road
 // 			       car_array_[car_id].move_ori
-// 			       memset(huan,-1,sizeof(huan));front_car=0;break;
+// 			      
 			     }
 			 }
 			 else{
@@ -168,6 +231,7 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 			       check_and_delete(car_id,block_list_);
 			       check_and_delete(car_id,wait_list_);
 			   }
+			    memset(huan,-1,sizeof(huan));front_car=0;i=0;j=0;continue;
 	     }
 	  }
       }

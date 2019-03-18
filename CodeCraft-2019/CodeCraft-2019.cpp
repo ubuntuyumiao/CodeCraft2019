@@ -309,11 +309,11 @@ int main(int argc,char** argv)
 					      cross, min_cross_id, max_cross_id,
 				road,garage,map,T,wait_list,block_list);
 		 if(block_flag) break;
-// 		  if(T==1) break;
+		  if(T==2)  break;
 	      }if(block_flag) break;
 	      //正常跳出while 表明 无车等待 尝试调度车库
               sch_allcross_garage(car,cross, min_cross_id, max_cross_id,road,garage,map,T);
-	      if(T==1) break;
+	      if(T==2) break;
 	  } 
 	  
 /******************************车辆调度规则执行******************************/
