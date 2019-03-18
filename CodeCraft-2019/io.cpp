@@ -130,7 +130,7 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 			  check_and_delete(car_id,block_list_);
 			  check_and_delete(car_id,wait_list_);
 			 car_array_[car_id].state=completed;
-			 
+			 //下一时刻可以过路口
 			 if((j-max_can-max_can)<0)
 			     {      
 			      //检查是否是该道路优先级最高 是则将其信息发送到公共字段 否则不发
@@ -166,8 +166,9 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 		    // next road！=当前道路 return sch_most.next road=next road 
 		    if(next_id==road_->id)
 		      { 
-			 //该道路优先级最高 该车准备过路口
-			
+			 //该道路优先级最高 该车准备过路口 
+			  //最大可行驶距离：   j-min(car_speed,next_road.limitspeed)  (>0 =0 <0)
+			  //检查去往道路的余量 ：  当前道路
 			
 			  memset(huan,-1,sizeof(huan));front_car=0;i=0;j=0;continue;
 		      }
