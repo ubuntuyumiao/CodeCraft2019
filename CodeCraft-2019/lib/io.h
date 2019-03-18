@@ -12,6 +12,7 @@
 #include<algorithm>
 #include<cmath>
 #include<string.h>
+#include <unistd.h>
 #include "include.h"
 
 

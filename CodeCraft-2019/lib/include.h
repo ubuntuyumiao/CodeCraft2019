@@ -56,6 +56,7 @@ typedef struct Car
     int cross_path[MAX_CROSS];
     int now_road;
     int next_road;
+    bool wait_anthor;
     drive_state state;  //调度状态 ： 等待出发态 等待调度态 终止态
     sche_direct move_ori;
 }Car;
@@ -68,7 +69,7 @@ typedef struct Road
     int start;
     int end;
     int flag_twoway;
-    int car_on_road;
+    bool completed;
     
     //定义： load[0]存放 start-->end方向道路 load[1]存放 end->start方向道路
     int load[2][MAX_LANE][MAX_LANE_LENGHT];
@@ -90,19 +91,22 @@ typedef struct Cross
     int down_cross_id;
     int left_cross_id;
     
-    bool up_cro_to_me_isempty;
-    bool right_cro_to_me_isempty;
-    bool down_cro_to_me_isempty;
-    bool left_cro_to_me_isempty;
+    bool uproad;
+    bool rightroad;
+    bool downroad;
+    bool leftroad;
     
     
 }Cross;
-typedef struct road_empty
+typedef struct sch_pos
 {
-    bool is_empty;// 是否空标志
-    int  lane;    // 非空的话优先级最高的有容量的车道
-    int  offset;    // 非空的话优先级最高的有容量的车道 的倒数第几个车位
-}road_empty;
+    int  road_completed; 
+    int  lane;    
+    int  offset;       //车辆所在车位下标  
+    int  next_road;
+    bool  block;
+}sch_pos; 
+
 typedef struct road_space
 {
     bool is_empty;// 是否空标志
@@ -122,27 +126,37 @@ typedef struct MGraph
     int n,e;//顶点数和边数
 }MG;
 
-
+//路口调度 获得对应道路等待态优先级最高的车（不含已调度过 wait_another的车）
+sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
+		       int cur_road[],Cross *cross_array_,Road* road_array_,Road map_[][MAX_CROSS],std::vector<int> &wait_list_,std::vector<int> &block_list_);
 //在调度车库时的检查  注意： 要与调度路口车辆区分
+//功能：检查该车是否为该道路优先级最高的车
 bool check_most_prior(int car_id,Road* road_,Cross* cross_);
 //通过当前所在道路输出下一条道路 以及转向关系
 how_tonext next_road(Car* car_,Road* cur_road,Cross* cross_array_,Road map_[][MAX_CROSS]);
 // 将所有终止态的车改为等待态
-void chang_completed_towait(int min_car_id_,int max_car_id_,Car *car_array_,std::vector<int> *wait_list_);
+void chang_completed_towait(int min_car_id_,int max_car_id_,Car *car_array_,std::vector<int>&wait_list_);
 //检查该道路的车是否都已是终止态，且返回非终止态车数量
 int* has_car_wait_inroad(Cross* cross_,Road* road_,Car *car_array_);
 // 如果该道路在位置上最靠前 且为终止态 ，且下一个时刻即将过路口，将其信息发送到其下一个路口公告字段
 void update_to_cross(Car* car_,Road* road_,Cross* cross_,Cross *cross_array_);
 //检查此车是否在等待列表中出现
-bool check_in_list(int car_id_,std::vector<int>wait_list_);
+bool check_in_list(int car_id_,std::vector<int> &wait_list_);
+//查找并删除
+bool check_and_delete(int car_id,std::vector<int> &wait_list_);
 //全局车辆的两种判断 1、所有车辆是否全是终止态 2、所有已上路车辆全是终止态 
 Global All_car_iscompleted(Car *car_array,int min_car_id_,int max_car_id_);
 //检查是否有车未到终点
 bool All_car_isreached(Car* car_array,int min_car_id_,int max_car_id_);
 //检查某道路是否为空 不为空 那最高优先级的有余量的车道是哪条 最优先车位的下标？  驶向路口
-road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_);
+// road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_);
 // 为进入该道路的车辆提供数据   注意： 此次检查发生在调度道路的车库 所以 车道为驶离路口
 road_space check_road_space(Cross *cur_cross_,Road *cur_road_);
+
+
+
+
+void init_waitanthor(Car* car_array,int min_car_id_,int max_car_id_);
 void print_time(const char * const head);
 //Astart寻路
 bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,Cross* cross_array_,int min_cross_id,int max_cross_id,int (*weight_)[MAX_CROSS]);
@@ -152,22 +166,25 @@ void quickSortOfCpp(Car* car_list,int car_begin,int car_end);
 bool cmp(int a,int b);
 int not_equal(int a,int b);
 int min(int a, int b);
+
+void out(std::string s);
+
 void debug_dir_leavecross(Road *road_array_,int min_cross_id,int max_cross_id,Cross *cross_array_);
+
+
 void debug_dir_tocross(Road *road_array_,int min_cross_id,int max_cross_id,Cross *cross_array_);
 
 
-
-
-
-
-bool sch_allcross_drive(Car* car_array,
-			 Cross* cross_array_,int min_cross_id,int max_cross_id,
+bool sch_allcross_drive(Car* car_array,int min_car_id,int max_car_id,
+			 Cross* cross_array,int min_cross_id,int max_cross_id,
 			 Road* road_array,
 			 Magic_garage* garage,
 			 Road map_[][MAX_CROSS],
 			 int T,
-			 std::vector<int> *wait_list_
+			 std::vector<int> &wait_list_,
+			 std::vector<int> &bloack_list_
 			);
+
 
 
 void sch_allcross_garage(Car* car_array,
