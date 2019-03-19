@@ -91,13 +91,7 @@ typedef struct Cross
     int right_cross_id;
     int down_cross_id;
     int left_cross_id;
-    
-    bool uproad;
-    bool rightroad;
-    bool downroad;
-    bool leftroad;
-    
-    
+
 }Cross;
 typedef struct sch_pos
 {
@@ -173,6 +167,9 @@ bool All_car_isreached(Car* car_array,int min_car_id_,int max_car_id_);
 road_space check_road_space(Cross *cur_cross_,Road *cur_road_);
 //输入参数 当前路口  目标道路
 drive_toroad check_road_drive_space(Cross *cur_cross_,Road *road_,int max_offset);
+// 注意：发车与调度也不一样
+void update_to_cross_drive(Car* car_,Road* road_,Cross* cross_);
+
 
 void init_waitanthor(Car* car_array,int min_car_id_,int max_car_id_);
 void print_time(const char * const head);

@@ -1,4 +1,84 @@
-
+  
+  
+  
+  
+  
+  
+  
+  
+//            //下一条路的可行驶距离大于0 
+//   int ii,jj;
+//   for(jj=road_array_[car_array_[car_id].next_road].road_length-1;jj>=road_array_[car_array_[car_id].next_road].road_length-max_can;jj--)
+//   {
+//     for(ii=0;ii<road_array_[car_array_[car_id].next_road].lane_num;ii++)  
+// 	{
+// 	  int next_road_car = road_array_[car_array_[car_id].next_road].load[(cross_->id==road_->start)?0:1][ii][jj];
+// 	  //i车道此范围有车：
+// 	  if(next_road_car!=0) {
+// 	    //此车为终止态
+// 	    if(car_array_[next_road_car].state==completed){
+// 		  //此车后面还有车位 尾随 删除等代表 自锁表 更新车道数组 车辆状态 continue;
+// 		  if(jj!=road_array_[car_array_[car_id].next_road].road_length-1){
+// 		    road_->load[(cross_->id==road_->end)?0:1][i][j]=0;
+// 		    road_->load[(cross_->id==road_array_[car_array_[car_id].next_road].start)?0:1][ii][jj]=car_id; 
+// 		    check_and_delete(car_id,block_list_);
+// 		    check_and_delete(car_id,wait_list_);
+// 		    car_array_[car_id].state=completed;
+// 		  //下一时刻可以过路口
+// 		  if((jj-min(car_array_[car_id].max_speed,road_array_[car_array_[car_id].next_road].limit_speed))<0)
+// 		      {      
+// 			    how_tonext to_next=next_road(&car_array_[car_id],
+// 						    &road_array_[car_array_[car_id].next_road],
+// 						      cross_array_,map_);
+// // 				       std::cout<<sch_cross_garage<<" "<< sch_road_garage<<" "<< car_garage[0]<<" ";
+// // 				       std::cout << "run to "<<to_next.next_road<<" ";
+// 			if(to_next.next_road==-1){ 
+// 			  car_array_[car_id].move_ori =go_straight;
+// 			  car_array_[car_id].next_road=car_array_[car_id].next_road;
+// 			  
+// 			}
+// 			else{
+// 			car_array_[car_id].move_ori =to_next.direct ;
+// 			car_array_[car_id].next_road=to_next.next_road ;
+// 			//是最高优先级才将其信息发到公共字段
+// 			  update_to_cross(&car_array_[car_id],&road_array_[car_array_[car_id].next_road],
+// 					  &cross_array_[cross_->id],cross_array_);
+// 			}
+// 			      }
+// 			      else{
+// 				car_array_[car_id].next_road= car_array_[car_id].next_road;
+// 				car_array_[car_id].move_ori = go_straight;
+// 			      }
+// 		  memset(huan,-1,sizeof(huan));front_car=0;i=0;j=0;back_head=true;break;
+// 		    
+// 		  }
+// 		  //此车后面没有车位 查看下一车道情况 i++ continue
+// 		    else{
+// 		      continue ;
+// 		    }
+// 	    }
+// 	    else if(car_array_[next_road_car].state==wait_schedule){
+// 	      //此车为等待态
+// 		  //车子改为等待态 waitanthor=true 
+// 		    if(check_in_list(car_id,block_list_)) {
+// 		      sch_most.block=true; return sch_most;
+// 		    } 
+// 		    block_list_.push_back(car_id);
+// 		    car_array_[car_id].state=wait_schedule;
+// 		    car_array_[car_id].wait_anthor=true;
+// 		      //在自锁表  return block=true;
+// 		      //不在检锁表  加入检锁表
+// 	    }
+// 	    else {
+// 	      std::cout<<RED<<"THIS CAR NOT STADARD STATE"<<std::endl;
+// 	      std::cout<<"THIS CAR NOT STADARD STATE"<<std::endl;
+// 	    }
+// 	  }
+// 	      if(ii!=road_array_[car_array_[car_id].next_road].lane_num) break;
+// 	}
+//   }
+//   //
+// 	if(ii!=road_array_[car_array_[car_id].next_road].lane_num) ;
      for(int i=min_car_id;i<=max_car_id;i++)
      {
        int road_path,ga_roadpath;

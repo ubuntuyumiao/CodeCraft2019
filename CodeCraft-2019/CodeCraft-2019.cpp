@@ -118,10 +118,6 @@ int main(int argc,char** argv)
 	    cross_sorted[Subscript] =cross[Subscript] = cross[0];
 	  } 
 	cross_sorted[Subscript] =cross[Subscript];
-	cross[Subscript].uproad=cross_sorted[Subscript].road_id[0];
-	cross[Subscript].rightroad=cross_sorted[Subscript].road_id[1];
-	cross[Subscript].downroad=cross_sorted[Subscript].road_id[2];
-	cross[Subscript].leftroad=cross_sorted[Subscript].road_id[3];
 	Subscript++;
 	count++;
          }
@@ -310,11 +306,11 @@ int main(int argc,char** argv)
 	      while(!wait_list.empty())
 	      {
 // 		sleep(1);
-		std::cout<<"Wait Size: "<<wait_list.size() << std::endl<<std::endl;
 		block_flag=sch_allcross_drive(car,min_car_id,max_car_id,
 					      cross, min_cross_id, max_cross_id,
 				road,garage,map,T,wait_list,block_list);
 		 if(block_flag) break;
+		 std::cout<<"Wait Size: "<<wait_list.size() << std::endl<<std::endl;
 		  if(T==2)  break;
 	      }
 	      if(block_flag){ std::cout<<"SCH out block!!!"<<std::endl;  break;} 
