@@ -98,7 +98,8 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 	    int car_id = car_array_[road_->load[(cross_->id==road_->end)?0:1][i][j]].id;
 	     //是front_car
 	    if(car_id==front_car)
-	    {      
+	    {       
+	   
 	      //next_road 是当前道路
 	        if(car_array_[car_id].next_road==road_->id){
 	              //min（carspeed，roadspeed）移动后小于零 
@@ -133,9 +134,7 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 			 //下一时刻可以过路口
 			 if((j-max_can-max_can)<0)
 			     {      
-			      //检查是否是该道路优先级最高 是则将其信息发送到公共字段 否则不发
-// 				       std::cout << sch_cross_garage<<" "<<car_garage[0]<<" " <<"will run out "<< sch_road_garage<<" "<<T+1 ; 
-			      how_tonext to_next=next_road(&car_array_[car_id],
+				  how_tonext to_next=next_road(&car_array_[car_id],
 							  &road_array_[road_->id],
 							    cross_array_,map_);
 // 				       std::cout<<sch_cross_garage<<" "<< sch_road_garage<<" "<< car_garage[0]<<" ";
@@ -161,20 +160,48 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 		       }
 		  }
 		  else{
-		    int next_id= compare_prior_sch(car_array_,&cross_array_[cross_->id],
-		                                   road_array_,&road_array_[road_->id]);
-		    // next road！=当前道路 return sch_most.next road=next road 
-		    if(next_id==road_->id)
-		      { 
-			 //该道路优先级最高 该车准备过路口 
-			  //最大可行驶距离：   j-min(car_speed,next_road.limitspeed)  (>0 =0 <0)
-			  //检查去往道路的余量 ：  当前道路
-			
-			  memset(huan,-1,sizeof(huan));front_car=0;i=0;j=0;continue;
-		      }
-		     else {
-			  sch_most.next_road=next_id;  return  sch_most;
-		      }
+// 		    int next_id= compare_prior_sch(car_array_,&cross_array_[cross_->id],
+// 		                                   road_array_,&road_array_[road_->id]);
+// 		    // next road！=当前道路 return sch_most.next road=next road 
+// 		    if(next_id==road_->id)
+// 		      { 
+// 			 //该道路优先级最高 该车准备过路口 
+// 			  //最大可行驶距离：   j-min(car_speed,next_road.limitspeed)  (>0 =0 <0)
+// 			  //检查去往道路的余量 ：  当前道路
+// 			int max_can=min(car_array_[car_id].max_speed,road_array_[next_id].limit_speed)-j;
+// 			if(max_can<=0)
+// 			{
+// 			 road_->load[(cross_->id==road_->end)?0:1][i][j]=0;
+// 			 road_->load[(cross_->id==road_->end)?0:1][i][0]=car_id;
+// 			  check_and_delete(car_id,block_list_);
+// 			  check_and_delete(car_id,wait_list_);
+// 			  car_array_[car_id].state=completed;
+// 			 //下一时刻可以过路口    
+// 				  how_tonext to_next=next_road(&car_array_[car_id],
+// 							  &road_array_[road_->id],
+// 							    cross_array_,map_);
+// 			      if(to_next.next_road==-1){ 
+// 				car_array_[car_id].move_ori =go_straight;
+// 				car_array_[car_id].next_road=road_->id;
+// 				std::cout << "Attention 1" <<std::endl;
+// 			      }
+// 			      else{
+// 			      car_array_[car_id].move_ori =to_next.direct ;
+// 			      car_array_[car_id].next_road=to_next.next_road ;
+// 			      //是最高优先级才将其信息发到公共字段
+// 				update_to_cross(&car_array_[car_id],&road_array_[road_->id],
+// 						&cross_array_[cross_->id],cross_array_);
+// 			      }
+// 			}
+// 			  else {   
+// 
+// 			    
+// 			  }
+// 			  memset(huan,-1,sizeof(huan));front_car=0;i=0;j=0;continue;
+// 		      }
+// 		     else {
+// 			  sch_most.next_road=next_id;  return  sch_most;
+// 		      }
 		    }
 	    }
 	     //不是front car
@@ -485,7 +512,44 @@ road_space check_road_space(Cross *cur_cross_,Road *cur_road_)
       
 return space_situation; 
 }
-
+drive_toroad_ check_road_drive_space(Cross *cur_cross_,Road *cur_road_,int max_pos)
+{
+       drive_toroad_ space_situation;
+       space_situation.can_drive=true;
+       space_situation.lane=-1;     //-1 代表该道路无车位
+       space_situation.offset=-1;
+       bool this_line_findcar=false;
+       int sub[10]={-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};  //存放每个车道最末尾的车
+       for(int j=0;j<cur_road_->lane_num;j++)
+	for(int l=cur_road_->road_length-1;l>=0;l--)
+         {
+	    if(cur_road_->load[(cur_cross_->id==cur_road_->start)?0:1][j][l]!=0)   //查询该车位是否有车
+	    {
+	       if(space_situation.can_drive) space_situation.can_drive=false;        break;
+	    }
+           sub[j]++;
+         }         
+       if(space_situation.can_drive) 
+       {       
+	 space_situation.lane=0;    
+         space_situation.offset=0;  
+	 return space_situation; 
+      }
+       //路上一定有车
+       for(int k=0;k<cur_road_->lane_num;k++)
+       {
+	 //该行有空位
+	 if(sub[k]!=-1)   
+	 {
+	   space_situation.lane=k;
+	   if((sub[k]+1)>cur_road_->limit_speed){ space_situation.offset= cur_road_->road_length-cur_road_->limit_speed-1;}
+	     else {  space_situation.offset=cur_road_->road_length-sub[k]-1;}
+	   break; 
+	}           
+       }
+      
+return space_situation; 
+}
 /******************************车辆调度规则执行******************************/
 
 

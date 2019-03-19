@@ -109,10 +109,17 @@ typedef struct sch_pos
 
 typedef struct road_space
 {
-    bool is_empty;// 是否空标志
-    int  lane;    // 非空的话优先级最高的有容量的车道
+    bool is_empty;  // 是否空标志
+    int  lane;      // 非空的话优先级最高的有容量的车道
     int  offset;    // 非空的话优先级最高的有容量的车道 的倒数第几个车位
 }road_space;
+
+typedef struct drive_toroad_
+{
+    bool can_drive;  // 是否空标志
+    int  lane;      // 非空的话优先级最高的有容量的车道
+    int  offset;    // 非空的话优先级最高的有容量的车道 的倒数第几个车位
+}drive_toroad_;
 
 typedef struct Global
 {
@@ -120,11 +127,7 @@ typedef struct Global
     bool car_inroad_iscompleted;    // 非空的话优先级最高的有容量的车道
 }Global;
 
-typedef struct MGraph
-{
-    int edges[MAX_ROAD][MAX_ROAD];//邻接矩阵，记录的是两点之间的距离，也就是权值 
-    int n,e;//顶点数和边数
-}MG;
+
 
 
 
