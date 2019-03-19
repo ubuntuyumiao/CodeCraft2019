@@ -2,6 +2,7 @@
 #define __INCLUDE__H__
 
 
+
 #include <stdio.h>
 #include <queue>
 #include <fstream>
@@ -141,7 +142,7 @@ int  campare_dir(const void * a, const void * b);
 int  campare_id(const void * a, const void * b);
 void quickSort(Car* car_list,int car_begin,int car_end);
 //路口优先级对比
-int compare_prior_sch(Car* car_array_,Cross* cross_,Road* road_array,Road* road_);
+int compare_prior_sch(Car* car_array_,Cross* cross_,Road* road_array,Road* road_,Cross *cross_array);
 
 
 //路口调度 获得对应道路等待态优先级最高的车（不含已调度过 wait_another的车）
@@ -172,8 +173,6 @@ bool All_car_isreached(Car* car_array,int min_car_id_,int max_car_id_);
 road_space check_road_space(Cross *cur_cross_,Road *cur_road_);
 //输入参数 当前路口  目标道路
 drive_toroad check_road_drive_space(Cross *cur_cross_,Road *road_,int max_offset);
-
-
 
 void init_waitanthor(Car* car_array,int min_car_id_,int max_car_id_);
 void print_time(const char * const head);

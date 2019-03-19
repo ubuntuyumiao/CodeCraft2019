@@ -9,6 +9,8 @@
 /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/CodeCraft-2019.cpp
 iostream
 -
+unistd.h
+-
 include.h
 /home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019/include.h
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unistd.h>
 #include "include.h"
 Road road[MAX_ROAD],road_sorted[MAX_ROAD];
 Car  car[MAX_CAR],car_sorted[MAX_CAR];
@@ -147,11 +148,14 @@ int main(int argc,char** argv)
        //初始化地图 将所有路口连接置为-1 表示无连接 共有1～(cross_num-1) 个路口
        //数组以0下表开始 直观起见 map[i][j]直接指第i个路口到第j个路口信息
        
-       for(int i=1;i<cross_num+1;i++)
+       for(int i=min_cross_id;i<=max_cross_id;i++)
        {
 	 //初始化路口的十字连通关系
-	 cross[min_cross_id+i-1].up_cross_id = cross[min_cross_id+i-1].right_cross_id =cross[min_cross_id+i-1].down_cross_id =cross[min_cross_id+i-1].left_cross_id=-1;
-	 for(int j=1;j<cross_num+1;j++)         
+	 cross[min_cross_id+i-1].up_cross_id = 
+	    cross[min_cross_id+i-1].right_cross_id =
+	      cross[min_cross_id+i-1].down_cross_id =
+		cross[min_cross_id+i-1].left_cross_id=-1;
+	 for(int j=min_cross_id;j<=max_cross_id;j++)         
 	    map[i][j].id= -1;
        }
 /*********************************将所有路口与道路信息以邻接矩阵表示*********************************/
@@ -212,6 +216,7 @@ int main(int argc,char** argv)
 	      }
 	 }
        }
+       
 /*********************************将所有路口与道路信息以邻接矩阵表示*********************************/      
        
    
@@ -270,21 +275,21 @@ int main(int argc,char** argv)
      
 /*********************************A-Star算法  + 神奇车库*********************************/
 /*********************************神奇车库  测试输出*********************************/
-     for(int i=5005;i<=5005;i++)
-     {
-       for(int j=0;j<=1;j++)
-       {
-	std::vector<int>  copy_garage(garage[i].garage[j]);
-	 if(j==0) printf(" 道路 %d 正向出发的车： ",i );
-  	  else  printf("      反向出发的车： ");
-      while(copy_garage.size()>0)
-	  {
-	   std::cout<<copy_garage[0]<< "  ";
-	    copy_garage.erase(copy_garage.begin());
-	  }
-       }
-       	    std::cout<<std::endl;
-     }
+//      for(int i=5005;i<=5005;i++)
+//      {
+//        for(int j=0;j<=1;j++)
+//        {
+// 	std::vector<int>  copy_garage(garage[i].garage[j]);
+// 	 if(j==0) printf(" 道路 %d 正向出发的车： ",i );
+//   	  else  printf("      反向出发的车： ");
+//       while(copy_garage.size()>0)
+// 	  {
+// 	   std::cout<<copy_garage[0]<< "  ";
+// 	    copy_garage.erase(copy_garage.begin());
+// 	  }
+//        }
+//        	    std::cout<<std::endl;
+//      }
 /*********************************神奇车库*********************************/
 
 /******************************车辆调度规则执行******************************/
@@ -304,23 +309,26 @@ int main(int argc,char** argv)
 	    //调度全地图等待车车 直到等待表为空
 	      while(!wait_list.empty())
 	      {
-		
+// 		sleep(1);
+		std::cout<<"Wait Size: "<<wait_list.size() << std::endl<<std::endl;
 		block_flag=sch_allcross_drive(car,min_car_id,max_car_id,
 					      cross, min_cross_id, max_cross_id,
 				road,garage,map,T,wait_list,block_list);
 		 if(block_flag) break;
 		  if(T==2)  break;
-	      }if(block_flag) break;
+	      }
+	      if(block_flag){ std::cout<<"SCH out block!!!"<<std::endl;  break;} 
+	      if(T==2) break;
 	      //正常跳出while 表明 无车等待 尝试调度车库
               sch_allcross_garage(car,cross, min_cross_id, max_cross_id,road,garage,map,T);
-	      if(T==2) break;
+	     
 	  } 
 	  
 /******************************车辆调度规则执行******************************/
 	//调试发车时 驶离开路口道路信息
 // 	debug_dir_leavecross(road,min_cross_id,max_cross_id,cross);
 	//调试路口调度时 驶向路口道路信息
-	debug_dir_tocross(road,min_cross_id,max_cross_id,cross);  
+// 	debug_dir_tocross(road,min_cross_id,max_cross_id,cross);  
 
 
       print_time("End");
