@@ -114,12 +114,12 @@ typedef struct road_space
     int  offset;    // 非空的话优先级最高的有容量的车道 的倒数第几个车位
 }road_space;
 
-typedef struct drive_toroad_
+typedef struct drive_toroad
 {
-    bool can_drive;  // 是否空标志
-    int  lane;      // 非空的话优先级最高的有容量的车道
-    int  offset;    // 非空的话优先级最高的有容量的车道 的倒数第几个车位
-}drive_toroad_;
+    bool no_drive;  
+    int  lane;      
+    int  offset;    
+}drive_toroad;
 
 typedef struct Global
 {
@@ -170,7 +170,8 @@ bool All_car_isreached(Car* car_array,int min_car_id_,int max_car_id_);
 // road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_);
 // 为进入该道路的车辆提供数据   注意： 此次检查发生在调度道路的车库 所以 车道为驶离路口
 road_space check_road_space(Cross *cur_cross_,Road *cur_road_);
-
+//输入参数 当前路口  目标道路
+drive_toroad check_road_drive_space(Cross *cur_cross_,Road *road_,int max_offset);
 
 
 
