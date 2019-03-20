@@ -311,13 +311,13 @@ int main(int argc,char** argv)
 				road,garage,map,T,wait_list,block_list);
 		 if(block_flag) break;
 		 std::cout<<"Wait Size: "<<wait_list.size() << std::endl<<std::endl;
-		  if(T==2)  break;
+// 		  if(T==2)  break;
 	      }
 	      if(block_flag){ std::cout<<"SCH out block!!!"<<std::endl;  break;} 
-	      if(T==2) break;
+// 	      if(T==2) break;
 	      //正常跳出while 表明 无车等待 尝试调度车库
               sch_allcross_garage(car,cross, min_cross_id, max_cross_id,road,garage,map,T);
-	     
+// 	     if(T==2) debug_dir_tocross(road,min_cross_id,max_cross_id,cross);
 	  } 
 	  
 /******************************车辆调度规则执行******************************/

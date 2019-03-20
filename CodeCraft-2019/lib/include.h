@@ -141,7 +141,8 @@ int compare_prior_sch(Car* car_array_,Cross* cross_,Road* road_array,Road* road_
 
 //路口调度 获得对应道路等待态优先级最高的车（不含已调度过 wait_another的车）
 sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
-		       int cur_road[],Cross *cross_array_,Road* road_array_,Road map_[][MAX_CROSS],std::vector<int> &wait_list_,std::vector<int> &block_list_);
+		       int cur_road[],Cross *cross_array_,Road* road_array_,Road map_[][MAX_CROSS],
+		       std::vector<int> &wait_list_,std::vector<int> &block_list_,int T_);
 //在调度车库时的检查  注意： 要与调度路口车辆区分
 //功能：检查该车是否为该道路优先级最高的车
 bool check_most_prior(int car_id,Road* road_,Cross* cross_);
