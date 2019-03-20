@@ -111,9 +111,9 @@ typedef struct road_space
 
 typedef struct drive_toroad
 {
-    bool no_drive;  
-    int  lane;      
-    int  offset;    
+    int  no_drive;    //  0:被等待态车阻挡  1：被终止钛车阻挡
+    int  lane;      //被终止态车阻挡的话  是否能有余量进入该道路   -1：没有   非-1：有 对应车道
+    int  offset;    //对应下一条路的
 }drive_toroad;
 
 typedef struct Global
@@ -139,10 +139,7 @@ void quickSort(Car* car_list,int car_begin,int car_end);
 int compare_prior_sch(Car* car_array_,Cross* cross_,Road* road_array,Road* road_,Cross *cross_array);
 
 
-//路口调度 获得对应道路等待态优先级最高的车（不含已调度过 wait_another的车）
-sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
-		       int cur_road[],Cross *cross_array_,Road* road_array_,Road map_[][MAX_CROSS],
-		       std::vector<int> &wait_list_,std::vector<int> &block_list_,int T_);
+
 //在调度车库时的检查  注意： 要与调度路口车辆区分
 //功能：检查该车是否为该道路优先级最高的车
 bool check_most_prior(int car_id,Road* road_,Cross* cross_);
@@ -154,28 +151,29 @@ void chang_completed_towait(int min_car_id_,int max_car_id_,Car *car_array_,std:
 int* has_car_wait_inroad(Cross* cross_,Road* road_,Car *car_array_);
 // 如果该道路在位置上最靠前 且为终止态 ，且下一个时刻即将过路口，将其信息发送到其下一个路口公告字段
 void update_to_cross(Car* car_,Road* road_,Cross* cross_,Cross *cross_array_);
+void clear_cross_proir(Car* car_,Road* road_,Cross* cross_);
 //检查此车是否在等待列表中出现
-bool check_in_list(int car_id_,std::vector<int> &wait_list_);
+bool check_in_list(int car_id_,std::vector<int> &wait_list_); 
 //查找并删除
 bool check_and_delete(int car_id,std::vector<int> &wait_list_);
 //全局车辆的两种判断 1、所有车辆是否全是终止态 2、所有已上路车辆全是终止态 
 Global All_car_iscompleted(Car *car_array,int min_car_id_,int max_car_id_);
 //检查是否有车未到终点
 bool All_car_isreached(Car* car_array,int min_car_id_,int max_car_id_);
-//检查某道路是否为空 不为空 那最高优先级的有余量的车道是哪条 最优先车位的下标？  驶向路口
-// road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_);
+
 // 为进入该道路的车辆提供数据   注意： 此次检查发生在调度道路的车库 所以 车道为驶离路口
 road_space check_road_space(Cross *cur_cross_,Road *cur_road_);
 //输入参数 当前路口  目标道路
-drive_toroad check_road_drive_space(Cross *cur_cross_,Road *road_,int max_offset);
+drive_toroad check_road_drive_space(Cross *cur_cross_,Road *road_,Car* car_array_, int max_offset);
 // 注意：发车与调度也不一样
 void update_to_cross_drive(Car* car_,Road* road_,Cross* cross_);
 
 
-void init_waitanthor(Car* car_array,int min_car_id_,int max_car_id_);
+void init_waitanthor(Car* car_array,int min_car_id_,int max_car_id_,Road* road_array_,int min_road_id_,int max_road_id_);
 void print_time(const char * const head);
 //Astart寻路
-bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,Cross* cross_array_,int min_cross_id,int max_cross_id,int (*weight_)[MAX_CROSS]);
+bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,
+		  Cross* cross_array_,int min_cross_id,int max_cross_id,int (*weight_)[MAX_CROSS],Road map_[][MAX_CROSS]);
 int campare_settime(const void * a, const void * b);
 //发车排序
 void quickSortOfCpp(Car* car_list,int car_begin,int car_end);
@@ -190,9 +188,13 @@ void debug_dir_leavecross(Road *road_array_,int min_cross_id,int max_cross_id,Cr
 
 void debug_dir_tocross(Road *road_array_,int min_cross_id,int max_cross_id,Cross *cross_array_);
 
+//路口调度 获得对应道路等待态优先级最高的车（不含已调度过 wait_another的车）
+sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
+		       int cur_road[],Cross *cross_array_,Road* road_array_,Road map_[][MAX_CROSS],
+		       std::vector<int> &wait_list_,std::vector<int> &block_list_,int T_);
 
 bool sch_allcross_drive(Car* car_array,int min_car_id,int max_car_id,
-			 Cross* cross_array,int min_cross_id,int max_cross_id,
+			 Cross* cross_array,int min_cross_id,int max_cross_id,int min_road_id_,int max_road_id_,
 			 Road* road_array,
 			 Magic_garage* garage,
 			 Road map_[][MAX_CROSS],

@@ -222,7 +222,7 @@ int main(int argc,char** argv)
       quickSortOfCpp(car_sorted,min_car_id,max_car_id);
      for(int i=min_car_id;i<max_car_id+1;i++)
      {
-       if( Astar_search(&car[i], road,min_road_id,max_road_id,cross,min_cross_id,max_cross_id,weight_net))
+       if( Astar_search(&car[i], road,min_road_id,max_road_id,cross,min_cross_id,max_cross_id,weight_net,map))
            has_find++;
      }
       std::ofstream fout(argv[4], std::ios::app);
@@ -307,17 +307,15 @@ int main(int argc,char** argv)
 	      {
 // 		sleep(1);
 		block_flag=sch_allcross_drive(car,min_car_id,max_car_id,
-					      cross, min_cross_id, max_cross_id,
-				road,garage,map,T,wait_list,block_list);
-		 if(block_flag) break;
-		 std::cout<<"Wait Size: "<<wait_list.size() << std::endl<<std::endl;
-// 		  if(T==2)  break;
+					      cross, min_cross_id, max_cross_id,min_road_id,max_road_id,
+				              road,garage,map,T,wait_list,block_list);
+		if(block_flag) break;
 	      }
 	      if(block_flag){ std::cout<<"SCH out block!!!"<<std::endl;  break;} 
 // 	      if(T==2) break;
 	      //正常跳出while 表明 无车等待 尝试调度车库
               sch_allcross_garage(car,cross, min_cross_id, max_cross_id,road,garage,map,T);
-// 	     if(T==2) debug_dir_tocross(road,min_cross_id,max_cross_id,cross);
+//               if(T==2) debug_dir_tocross(road,min_cross_id,max_cross_id,cross);
 	  } 
 	  
 /******************************车辆调度规则执行******************************/

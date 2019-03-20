@@ -57,7 +57,8 @@ public:
     node *end; 
     vector<node*> openlist;//open表，存遍历到的节点
     vector<node*> closelist;//close表，存访问过的节点
-    A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array,int mincross_id,int maxcross_id,int (*weight_)[MAX_CROSS]);
+    A_star(Car *car_,Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array,
+	   int mincross_id,int maxcross_id,int (*weight_)[MAX_CROSS],Road map_[][MAX_CROSS]);
     ~A_star();
  
     void search(node* start,node* end);
@@ -66,6 +67,7 @@ public:
     int finding(vector<node*>* nodelist,int x,int y);
     static bool compare(node* n1,node* n2);
     void print(node* current);
+    Road change_weight();
     int min_cross_id=-1,max_cross_id=-1;
     Road road[MAX_ROAD];
     Cross cross[MAX_CROSS];
@@ -74,7 +76,8 @@ public:
     int weight_net[MAX_CROSS][MAX_CROSS];
 };
 
-A_star::A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array,int mincross_id,int maxcross_id,int (*weight_)[MAX_CROSS])
+A_star::A_star(Car *car_,Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array,
+	       int mincross_id,int maxcross_id,int (*weight_)[MAX_CROSS],Road map_[][MAX_CROSS])
 {
   min_cross_id=mincross_id;
   max_cross_id=maxcross_id;
@@ -83,7 +86,6 @@ A_star::A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array
     memcpy(&cross[i],&cross_array[i],sizeof(Cross));
   for(int i =minroad_id;i<maxroad_id+1;i++)
     memcpy(&road[i],&road_array[i],sizeof(Road));
-
 }
 A_star::~A_star()
 {
@@ -118,8 +120,14 @@ void A_star::search(node* start,node* end)
         sort(openlist.begin(),openlist.end(),compare);//根据f值从小到大排序
     }
 }
+Road A_star::change_weight()
+{
+  
+}
+//核心 怎么动态化网格权重
 void A_star::nextstep(node* current)
 { 
+    change_weight();
     check(cross[current->cross_id].down_cross_id,current,weight_net[cross[current->cross_id].down_cross_id][current->cross_id]);
     //下
     check(cross[current->cross_id].up_cross_id,current,weight_net[cross[current->cross_id].up_cross_id][current->cross_id]);
