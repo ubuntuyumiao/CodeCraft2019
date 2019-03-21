@@ -28,7 +28,6 @@ int main(int argc,char** argv)
 /*********************************将所有路口与道路信息以邻接矩阵表示*********************************/
       map_matrix(cross,min_cross_id,max_cross_id,weight_net,road,map);    
        
-
 /*********************************A-Star算法  + 神奇车库*********************************/ 
       int has_find=0; 
       quickSortOfCpp(car_sorted,min_car_id,max_car_id);
@@ -40,7 +39,7 @@ int main(int argc,char** argv)
      //安排神奇车库
      ready_garage( min_car_id, max_car_id,garage,road,car, car_sorted, map);
      printf("\nget %d solution of %d car\n\n",has_find,max_car_id-min_car_id+1);
-
+     if(!write_output(argv[4],car, min_car_id, max_car_id,map)) return 0;
 /*********************************A-Star算法  + 神奇车库*********************************/
 
 /*********************************神奇车库  测试输出*********************************/
@@ -78,11 +77,11 @@ int main(int argc,char** argv)
 	    //调度全地图等待车车 直到等待表为空
 	      while(!wait_list.empty())
 	      {
-// 		if(wait_list.size()==car_num)
-// 		{
-// 		  write_output(argv[4],car, min_car_id, max_car_id,map);
-// 		  return 0;
-// 		}
+		if(wait_list.size()==car_num)
+		{
+		  write_output(argv[4],car, min_car_id, max_car_id,map);
+		  return 0;
+		}
 // 		sleep(1);
 		block_flag=sch_allcross_drive(car,min_car_id,max_car_id,
 					      cross, min_cross_id, max_cross_id,min_road_id,max_road_id,
@@ -101,7 +100,7 @@ int main(int argc,char** argv)
 	//调试路口调度时 驶向路口道路信息
 // 	debug_dir_tocross(road,min_cross_id,max_cross_id,cross);  
       //写输出文件
-      //  if(!write_output(argv[4],car, min_car_id, max_car_id,map)) return 0;
+      if(!write_output(argv[4],car, min_car_id, max_car_id,map)) return 0;
       print_time("End");
       return 0;
 }
