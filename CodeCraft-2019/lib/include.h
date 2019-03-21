@@ -30,13 +30,13 @@ typedef enum drive_state
   wait_schedule, //某时刻在路上等待调度
   completed,     //某时刻已经调度完成
   reached        //到达终点
-};
+}drive_state;
 typedef enum sche_direct
 {
   go_straight, 
   turn_left,
   turn_right
-};
+}sche_direct;
 typedef struct how_tonext
 {
   int next_road;
@@ -144,11 +144,10 @@ int compare_prior_sch(Car* car_array_,Cross* cross_,Road* road_array,Road* road_
 //功能：检查该车是否为该道路优先级最高的车
 bool check_most_prior(int car_id,Road* road_,Cross* cross_);
 //通过当前所在道路输出下一条道路 以及转向关系
-how_tonext next_road(Car* car_,Road* cur_road,Cross* cross_array_,Road map_[][MAX_CROSS]);
+how_tonext next_road(Car* car_,Road* cur_road,Cross* cross_array_,Cross* cross_,Road map_[][MAX_CROSS]);
 // 将所有终止态的车改为等待态
 void chang_completed_towait(int min_car_id_,int max_car_id_,Car *car_array_,std::vector<int>&wait_list_);
-//检查该道路的车是否都已是终止态，且返回非终止态车数量
-int* has_car_wait_inroad(Cross* cross_,Road* road_,Car *car_array_);
+
 // 如果该道路在位置上最靠前 且为终止态 ，且下一个时刻即将过路口，将其信息发送到其下一个路口公告字段
 void update_to_cross(Car* car_,Road* road_,Cross* cross_,Cross *cross_array_);
 void clear_cross_proir(Car* car_,Road* road_,Cross* cross_);
@@ -181,7 +180,7 @@ void map_matrix(Cross* cross_array_,int min_cross_id,int max_cross_id
   ,int (*weight_)[MAX_CROSS],Road* road_array_,Road map_[][MAX_CROSS]);
 bool write_output(std::string path,Car *car_array_,int min_car_id_,int max_car_id_,Road map_[][MAX_CROSS]);
 //Astart寻路
-void ready_garage(int min_car_id_,int max_Car_id_,Magic_garage* garage_,
+void ready_garage(int min_car_id_,int max_car_id_,Magic_garage* garage_,
 		  Road* road_array_,Car *car_array_,Car *car_sortedarray_,Road map_[][MAX_CROSS]);
 bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,
 		  Cross* cross_array_,int min_cross_id,int max_cross_id,int (*weight_)[MAX_CROSS],Road map_[][MAX_CROSS]);

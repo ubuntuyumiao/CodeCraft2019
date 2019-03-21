@@ -22,6 +22,9 @@ int main(int argc,char** argv)
 	          argv[2],road,road_sorted,&min_road_id,&max_road_id,
                  argv[1],car,car_sorted,&min_car_id,&max_car_id,
 	          map))    return 0;
+      road_num=max_road_id-min_road_id+1,
+      cross_num=max_cross_id-min_cross_id+1,
+      car_num=max_car_id-min_car_id+1;
 /*********************************将所有路口与道路信息以邻接矩阵表示*********************************/
       map_matrix(cross,min_cross_id,max_cross_id,weight_net,road,map);    
        
@@ -41,21 +44,21 @@ int main(int argc,char** argv)
 /*********************************A-Star算法  + 神奇车库*********************************/
 
 /*********************************神奇车库  测试输出*********************************/
-     for(int i=5005;i<=5005;i++)
-     {
-       for(int j=0;j<=1;j++)
-       {
-	std::vector<int>  copy_garage(garage[i].garage[j]);
-	 if(j==0) printf(" 道路 %d 正向出发的车： ",i );
-  	  else  printf("      反向出发的车： ");
-      while(copy_garage.size()>0)
-	  {
-	   std::cout<<copy_garage[0]<< "  ";
-	    copy_garage.erase(copy_garage.begin());
-	  }
-       }
-       	    std::cout<<std::endl;
-     }
+//      for(int i=5005;i<=5005;i++)
+//      {
+//        for(int j=0;j<=1;j++)
+//        {
+// 	std::vector<int>  copy_garage(garage[i].garage[j]);
+// 	 if(j==0) printf(" 道路 %d 正向出发的车： ",i );
+//   	  else  printf("      反向出发的车： ");
+//       while(copy_garage.size()>0)
+// 	  {
+// 	   std::cout<<copy_garage[0]<< "  ";
+// 	    copy_garage.erase(copy_garage.begin());
+// 	  }
+//        }
+//        	    std::cout<<std::endl;
+//      }
 /*********************************神奇车库*********************************/
 
 /******************************车辆调度规则执行******************************/
@@ -75,6 +78,11 @@ int main(int argc,char** argv)
 	    //调度全地图等待车车 直到等待表为空
 	      while(!wait_list.empty())
 	      {
+// 		if(wait_list.size()==car_num)
+// 		{
+// 		  write_output(argv[4],car, min_car_id, max_car_id,map);
+// 		  return 0;
+// 		}
 // 		sleep(1);
 		block_flag=sch_allcross_drive(car,min_car_id,max_car_id,
 					      cross, min_cross_id, max_cross_id,min_road_id,max_road_id,
