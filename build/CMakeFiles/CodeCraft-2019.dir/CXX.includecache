@@ -1,4 +1,4 @@
-#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
 
 #IncludeRegexScan: ^.*$
 
@@ -6,21 +6,19 @@
 
 #IncludeRegexTransform: 
 
-/home/robotyu/CodeCraft2019/CodeCraft-2019/CodeCraft-2019.cpp
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019.cpp
 iostream
 -
 unistd.h
 -
 include.h
-/home/robotyu/CodeCraft2019/CodeCraft-2019/include.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/include.h
 
-/home/robotyu/CodeCraft2019/CodeCraft-2019/algrithm_test.cpp
-
-/home/robotyu/CodeCraft2019/CodeCraft-2019/io.cpp
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/io.cpp
 io.h
-/home/robotyu/CodeCraft2019/CodeCraft-2019/io.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/io.h
 
-/home/robotyu/CodeCraft2019/CodeCraft-2019/lib/include.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/include.h
 stdio.h
 -
 queue
@@ -36,7 +34,7 @@ vector
 algorithm
 -
 
-/home/robotyu/CodeCraft2019/CodeCraft-2019/lib/io.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/io.h
 iostream
 -
 fstream
@@ -62,5 +60,5 @@ string.h
 unistd.h
 -
 include.h
-/home/robotyu/CodeCraft2019/CodeCraft-2019/lib/include.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/include.h
 

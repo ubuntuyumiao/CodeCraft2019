@@ -169,9 +169,20 @@ drive_toroad check_road_drive_space(Cross *cur_cross_,Road *road_,Car* car_array
 void update_to_cross_drive(Car* car_,Road* road_,Cross* cross_);
 
 
+
+
+
 void init_waitanthor(Car* car_array,int min_car_id_,int max_car_id_,Road* road_array_,int min_road_id_,int max_road_id_);
 void print_time(const char * const head);
+bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedarray_,int* min_cross_id_,int* max_cross_id_,
+	       std::string road_path, Road *road_array_,Road *road_sortedarray_,int* min_road_id_,int* max_road_id,
+	       std::string car_path,Car *car_array_,Car *car_sortedarray_,int* min_car_id_,int* max_car_id_,Road map_[][MAX_CROSS]);
+void map_matrix(Cross* cross_array_,int min_cross_id,int max_cross_id
+  ,int (*weight_)[MAX_CROSS],Road* road_array_,Road map_[][MAX_CROSS]);
+bool write_output(std::string path,Car *car_array_,int min_car_id_,int max_car_id_,Road map_[][MAX_CROSS]);
 //Astart寻路
+void ready_garage(int min_car_id_,int max_Car_id_,Magic_garage* garage_,
+		  Road* road_array_,Car *car_array_,Car *car_sortedarray_,Road map_[][MAX_CROSS]);
 bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,
 		  Cross* cross_array_,int min_cross_id,int max_cross_id,int (*weight_)[MAX_CROSS],Road map_[][MAX_CROSS]);
 int campare_settime(const void * a, const void * b);
