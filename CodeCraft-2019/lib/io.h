@@ -92,7 +92,10 @@ A_star::~A_star()
 }
 void A_star::search(node* start,node* end)
 {
-    if(start->cross_id<min_cross_id||start->cross_id>max_cross_id||end->cross_id<min_cross_id||end->cross_id>max_cross_id)
+    if(start->cross_id<min_cross_id
+      ||start->cross_id>max_cross_id
+      ||end->cross_id<min_cross_id
+      ||end->cross_id>max_cross_id)
     {
 //         std::cout << "io.h ERROR : no this cross id " << std::endl;
         return;//如果路口ID不在范围内直接返回
@@ -140,15 +143,13 @@ void A_star::nextstep(node* current)
 void A_star::check(int cross_id_neighbor,node* father,int g)
 //用来访问节点
 {
+  //如果路口ID不在范围内直接返回
     int j=0,in_list=0;
-    if(cross_id_neighbor<min_cross_id||cross_id_neighbor>max_cross_id||father->cross_id<min_cross_id||father->cross_id>max_cross_id) //如果路口ID不在范围内直接返回
-    { 
-//       cout << "cross_id_neighbor: "<<cross_id_neighbor << " cross_id_neighbor: "<<father->cross_id <<std::endl;
-//        std::cout << "io.h ERROR : no this cross id " << std::endl; 
-      return ;
-    }
-//     if(map1[x][y]==1)//如果是障碍物，也直接返回
-//         return ;
+    if(cross_id_neighbor<min_cross_id
+      ||cross_id_neighbor>max_cross_id
+      ||father->cross_id<min_cross_id
+      ||father->cross_id>max_cross_id) 
+                return ;
   
     for(size_t i=0;i<closelist.size();i++)
     {
@@ -158,42 +159,36 @@ void A_star::check(int cross_id_neighbor,node* father,int g)
             break;
         }
     }
-   if(in_list==1)
-      //如果是close表中的，也直接返回
-        { //std::cout << "io.h Output : this cross is in closelist " << std::endl; 
-	  return ; }
+   if(in_list==1) return ; 
     in_list=0;
    
-       for(size_t i=0;i<openlist.size();i++)
-    {
+   for(size_t i=0;i<openlist.size();i++)
         if(openlist.at(i)->cross_id==cross_id_neighbor)
         {
-	    j=i;
-	    in_list=1;
+	    j=i;   in_list=1;
             break;
         }
-    }
     
     if(in_list==1)
   //如果在open表中的，则需比较f值，如果当前的f值小，就替换成当前的节点
     {
         node* p=openlist[j];
-        if(father->f + g < p->f )   //!!!!!!!!!!!!!!!!!!!!!!!!!此处g 要做处理
-	  //这个我用了估算，最精确的是把当前节点的f值算出来和在open表中的拿来比较，但是算f值比较麻烦，我这里就用father->f+g来代替当前节点的f
-        {
+        if(father->f + g < p->f )  
+	 {
             p->father=father;
             p->g=father->g+g;
             p->f=p->g+p->h;
-        }
+         }
     }
-    //!!!!!!!!!!!!!!!!!!!!!!!!!此处 H 要做处理
     else//如果两个表都不在就计算一下f值，存到open表中
     {
         node* p=new node(cross_id_neighbor,father);
-//         p->h=abs(p->x- end->x)*weightW+abs(p->y-end->y)*weightW; 
 	p->h=abs(cross[p->cross_id].right_cross_id- cross[end->cross_id].right_cross_id)*weightW; 
+	
         p->g=p->father->g+g;
+	
         p->f=p->g+p->h;
+	
         openlist.push_back(p);
     }
 }

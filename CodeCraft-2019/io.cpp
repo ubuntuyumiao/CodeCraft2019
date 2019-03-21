@@ -168,7 +168,6 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 					);
 			           check_and_delete(car_id,block_list_);
 			           check_and_delete(car_id,wait_list_);
-				   std::cout<<"Car: "<< car_id<<"Reached!!!!!!!!!!!!!!"<<std::endl;
 			           memset(huan,-1,sizeof(huan));front_car=0;
 			            i=0;j=0;break;
 			         }
@@ -847,12 +846,12 @@ void map_matrix(Cross* cross_array_,int min_cross_id,int max_cross_id
 	 {
 	   if((cross_array_[i].road_id[0]!=-1)&&(cross_array_[i].road_id[0]==cross_array_[j].road_id[2])) 
 	      {
-		weight_[i][j]=10;                              
+		weight_[i][j]=init_weight;                              
 		//先初始化所有权重为10
 		map_[i][j]=road_array_[cross_array_[i].road_id[0]];
 		cross_array_[i].up_cross_id=j;
 		if(road_array_[cross_array_[i].road_id[0]].flag_twoway==1) {   
-		  weight_[j][i]=10;
+		  weight_[j][i]=init_weight;
 		  //如果是双向道路 （j,i）元素值与(i,j)处相等 下同
 		  map_[j][i]=road_array_[cross_array_[i].road_id[0]];
 		  cross_array_[j].down_cross_id=i;
@@ -860,35 +859,35 @@ void map_matrix(Cross* cross_array_,int min_cross_id,int max_cross_id
 	      }
 	   if((cross_array_[i].road_id[1]!=-1)&&(cross_array_[i].road_id[1]==cross_array_[j].road_id[3]))
 	      { 
-		weight_[i][j]=10;                              
+		weight_[i][j]=init_weight;                              
 		//先初始化所有权重为10
 		map_[i][j]=road_array_[cross_array_[i].road_id[1]];
 		cross_array_[i].right_cross_id=j;
 		if(road_array_[cross_array_[i].road_id[1]].flag_twoway==1){
-		  weight_[j][i]=10;
+		  weight_[j][i]=init_weight;
 		  map_[j][i]=road_array_[cross_array_[i].road_id[1]];
 		  cross_array_[j].left_cross_id=i;
 		}
 	      }
 	   if((cross_array_[i].road_id[2]!=-1)&&(cross_array_[i].road_id[2]==cross_array_[j].road_id[0])) 
 	      {
-		weight_[i][j]=10;                              
+		weight_[i][j]=init_weight;                              
 		//先初始化所有权重为10
 		map_[i][j]=road_array_[cross_array_[i].road_id[2]];
 		cross_array_[i].down_cross_id=j;
 		if(road_array_[cross_array_[i].road_id[2]].flag_twoway==1){
-		  weight_[j][i]=10;
+		  weight_[j][i]=init_weight;
 		  map_[j][i]=road_array_[cross_array_[i].road_id[2]];
 		  cross_array_[j].up_cross_id=i;
 		}
 	      }
 	   if((cross_array_[i].road_id[3]!=-1)&&(cross_array_[i].road_id[3]==cross_array_[j].road_id[1])) 
 	      { 
-		weight_[i][j]=10;                              
+		weight_[i][j]=init_weight;                              
 		//先初始化所有权重为10
 		map_[i][j]=road_array_[cross_array_[i].road_id[3]];
 		if(road_array_[cross_array_[i].road_id[3]].flag_twoway==1){
-		  weight_[j][i]=10;
+		  weight_[j][i]=init_weight;
 		  cross_array_[i].left_cross_id=j;
 		  map_[j][i]=road_array_[cross_array_[i].road_id[3]];
 		  cross_array_[j].right_cross_id=i;
@@ -1071,9 +1070,6 @@ int min(int a, int b)
   if(a>b) return b;
      return a;
 }
-
-
-
 bool sch_allcross_drive(Car* car_array,int min_car_id,int max_car_id,
 			 Cross* cross_array,int min_cross_id,int max_cross_id,
 			 int min_road_id_,int max_road_id_,Road* road_array,
@@ -1083,6 +1079,7 @@ bool sch_allcross_drive(Car* car_array,int min_car_id,int max_car_id,
 			 std::vector<int> &wait_list_,std::vector<int> &bloack_list_
 			)
 {    
+          
           bloack_list_.erase(bloack_list_.begin(),bloack_list_.end());
            if(T==3)std::cout<<"!!! Research !!!"<<std::endl; 
 	   init_waitanthor(car_array,min_car_id,max_car_id,road_array,min_road_id_,max_road_id_);
@@ -1152,16 +1149,13 @@ bool sch_allcross_drive(Car* car_array,int min_car_id,int max_car_id,
 		         sch_road_drive_offset++;
 		         if(sch_road_drive_offset>=4) break;
 		       }
-		     }	
-                       if(T>=3)
+		     }
+#ifdef DEBUG
+                       if(T>=1)
 	                   {
 	                   std::cout<<"Cross: "<<sch_cross_drive<<" "
-	                   <<"Road: "  <<sch_car_road.next_road<<" " 
-			   <<wait_list_.size()<<" " <<T<<" ";
-		           if(!wait_list_.empty())
-		            std::cout<<wait_list_.size()<<" " <<car_array[wait_list_[0]].id
-			   <<" " <<car_array[wait_list_[1]].id
-			   <<" " <<car_array[wait_list_[2]].id
+	                   <<"Road: "  <<sch_car_road.next_road<<"  " 
+			   <<wait_list_.size()<<" || " <<T<<" || "<<wait_list_.size()<<" " 
 			   <<std::endl;	 
 // 			  if((sch_cross_drive==19)&&(sch_car_road.next_road==5021)&&(T==3))
 // 			    {	 
@@ -1170,6 +1164,7 @@ bool sch_allcross_drive(Car* car_array,int min_car_id,int max_car_id,
 // 		             debug_dir_tocross(road_array,28,28,cross_array); out("here");
 // 			      sleep(1);
 			    }
+#endif
 	         }
 	         for(int k=array_offset;k<4;k++) 
 		   if(road_complete[k]==1)  road_array[cur_cross_road[k]].completed=true;

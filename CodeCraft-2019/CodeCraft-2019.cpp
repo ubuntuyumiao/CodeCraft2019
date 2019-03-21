@@ -43,21 +43,21 @@ int main(int argc,char** argv)
 /*********************************A-Star算法  + 神奇车库*********************************/
 
 /*********************************神奇车库  测试输出*********************************/
-//      for(int i=5005;i<=5005;i++)
-//      {
-//        for(int j=0;j<=1;j++)
-//        {
-// 	std::vector<int>  copy_garage(garage[i].garage[j]);
-// 	 if(j==0) printf(" 道路 %d 正向出发的车： ",i );
-//   	  else  printf("      反向出发的车： ");
-//       while(copy_garage.size()>0)
-// 	  {
-// 	   std::cout<<copy_garage[0]<< "  ";
-// 	    copy_garage.erase(copy_garage.begin());
-// 	  }
-//        }
-//        	    std::cout<<std::endl;
-//      }
+     for(int i=min_road_id;i<=max_road_id;i++)
+     {
+       for(int j=0;j<=1;j++)
+       {
+	std::vector<int>  copy_garage(garage[i].garage[j]);
+	 if(j==0) printf(" 道路 %d 正向出发的车： ",i );
+  	  else  printf("      反向出发的车： ");
+      while(copy_garage.size()>0)
+	  {
+	   std::cout<<copy_garage[0]<< "  ";
+	    copy_garage.erase(copy_garage.begin());
+	  }
+       }
+       	    std::cout<<std::endl;
+     }
 /*********************************神奇车库*********************************/
 
 /******************************车辆调度规则执行******************************/
