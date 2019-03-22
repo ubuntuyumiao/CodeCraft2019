@@ -25,15 +25,25 @@
 #define road_to_sub(x)   (x-OFFSET_ROAD)
 #define sub_to_road(x)   (x+OFFSET_ROAD)
 
+/* 以下参数含义为：
+ * 
+ * 偏置项 固定值
+ * 道路存在最大的行驶车辆
+ * A星算法的 该点到终点距离权值
+ * 每一条路 与该车的速度相近权值
+ * 每一条路的空间/限速
+ * 每辆车给道路留下的信息熵浓度  以及衰减值
+ * 
+ */
 
 
-
-#define init_weight 20
-#define max_car_road  1100
-
-
-
-
+#define init_weight 5
+#define max_car_road  400
+#define Astar_h_w    10
+#define speed_near_w 5
+#define space_plus_speed 10.5
+#define Entropy  20
+#define dacay    3
 
 
 typedef enum drive_state

@@ -1,6 +1,6 @@
 #include "io.h"
 
-#define _DEBUG
+#define DEBUG
 
 #ifdef _DEBUG
 #define PRINT   printf
@@ -1010,24 +1010,29 @@ bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,Cr
     int  from=  car_->set  ;
     int	 to=  car_->goal     ;
     int i=0;
-    A_star *a=new A_star(car_,road_array_, min_road_id, max_road_id,cross_array_,min_cross_id, max_cross_id,weight_,map_);
+    A_star *a=new A_star(road_array_, min_road_id, max_road_id,cross_array_,min_cross_id, max_cross_id);
     
     
     node *start=new node(from);
     node *end=new node(to);
-    
-    a->search(start,end);
+    int pre=start->cross_id,now=0,iter=0;
+    a->search(car_,start,end,
+              cross_array_,map_,weight_
+    );
     if(a->find_path==true){
     while(!a->route_stack.empty()){
         car_->cross_path[i]= a->route_stack.top() ;
-//	if(a->route_stack.top()!=to) std::cout<< a->route_stack.top()"--->";
-	//打印栈顶元素，实现了顶点的逆序打印
+        now=car_->cross_path[i];
 	a->route_stack.pop();      
 	i++;
+	iter++;
+	weight_[pre][now] += (Entropy- dacay*iter);
+	pre=now;
 	//出栈
     }
     }
-//     std::cout << std::endl<<std::endl;
+    
+    
     return a->find_path;
 
 }
@@ -1168,21 +1173,15 @@ bool sch_allcross_drive(Car* car_array,int min_car_id,int max_car_id,
 		         if(sch_road_drive_offset>=4) break;
 		       }
 		     }
-// #ifdef DEBUG
+#ifdef DEBUG
                        if(T>=1)
 	                   {
 	                   std::cout<<"Cross: "<<sch_cross_drive<<" "
 	                   <<"Road: "  <<sch_car_road.next_road<<"  " 
 			   <<wait_list_.size()<<" || " <<T<<" || "<<wait_list_.size()<<" " 
 			   <<std::endl;	 
-// 			  if((sch_cross_drive==19)&&(sch_car_road.next_road==5021)&&(T==3))
-// 			    {	 
-			     	  
-// 			    }
-// 		             debug_dir_tocross(road_array,28,28,cross_array); out("here");
-// 			      sleep(1);
-			    }
-// #endif
+			   }
+#endif
 	         }
 	         for(int k=array_offset;k<4;k++) 
 		   if(road_complete[k]==1)  road_array[road_to_sub(cur_cross_road[k])].completed=true;
