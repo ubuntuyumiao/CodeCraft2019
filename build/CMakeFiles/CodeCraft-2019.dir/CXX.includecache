@@ -37,15 +37,11 @@ algorithm
 /home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/io.h
 iostream
 -
-fstream
--
 stdlib.h
 -
 stdio.h
 -
 time.h
--
-stdio.h
 -
 vector
 -
@@ -56,8 +52,6 @@ algorithm
 cmath
 -
 string.h
--
-unistd.h
 -
 include.h
 /home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/include.h
