@@ -1,5 +1,5 @@
 #include "io.h"
-
+#include "small_func.h"
 #define DEBUG
 
 #ifdef _DEBUG
@@ -7,27 +7,20 @@
 #else
 #define PRINT(...)
 #endif
-
-int  campare_dir(const void * a, const void * b)
-{
- return (*(pior_cross *)a).dir > (*(pior_cross *)b).dir ? 1 : -1; 
-}
-int  campare_id(const void * a, const void * b)
-{
- return (*(pior_cross *)a).road_id > (*(pior_cross *)b).road_id ? 1 : -1; 
-}
-void quickSort(Car* car_list,int car_begin,int car_end)
-{
-    qsort(car_list+car_begin, car_end-car_begin+1, sizeof(car_list[0]), campare_settime);
-}
 //路口优先级对比
+void quickSortOfCpp(Car* car_list,int car_num_)
+{
+//     qsort(car_list, car_num_, sizeof(car_list[0]), campare_settime);
+       qsort(car_list, car_num_, sizeof(car_list[0]), campare_speed);
+       qsort(car_list, car_num_, sizeof(car_list[0]), campare_carid);
+}
 int compare_prior_sch(Car* car_array_,Cross* cross_,Road* road_array,Road* road_,Cross *cross_array)
 {
   //优先级对比 选出优先级最高的车道 1、方向 直行>左转>右转  2、道路id升序
    if((cross_->prior_uproad==0)&&(cross_->prior_rightroad==0)
      &&(cross_->prior_downroad==0)&&(cross_->prior_leftroad==0))   return road_->id ;
 
-   pior_cross prior[4];
+    pior_cross prior[4];
 
  if((cross_->prior_uproad==0)||(cross_->prior_uproad==-1)) { prior[0].road_id=65535;prior[0].dir=65535;}
       else{
@@ -89,7 +82,7 @@ int compare_prior_sch(Car* car_array_,Cross* cross_,Road* road_array,Road* road_
 //路口调度 获得对应道路等待态优先级最高的车（不含已调度过 wait_another的车）   起始偏移量     路口道路数组
 sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 		       int cur_road[],Cross *cross_array_,Road* road_array_,Road map_[][MAX_CROSS],
-		       std::vector<int> &wait_list_,std::vector<int> &block_list_,int T_
+		       std::vector<int> &wait_list_,std::vector<int> &block_list_,int T_,int *reached_car_
 		      )
 {	      
 	    sch_pos sch_most;
@@ -163,6 +156,7 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
 			         {
 			           road_->load[(cross_->id==road_->end)?0:1][i][j]=0;
 			           car_array_[car_to_sub(car_id)].state=reached;
+				   *reached_car_++;
 				   clear_cross_proir(&car_array_[car_to_sub(car_id)],&road_array_[road_to_sub(road_->id)],
 					  &cross_array_[cross_->id]
 					);
@@ -401,39 +395,8 @@ sch_pos sch_most_prior(Car *car_array_,Road* road_,Cross* cross_,int offset,
     sch_most.road_completed=true;
     return sch_most;
 }
-//将其从等代表中删除
-bool check_and_delete(int car_id,std::vector<int> &wait_list_)
-{
-    if(wait_list_.empty()) return false;
-  std::vector<int>::iterator it;
-  it =find(wait_list_.begin(),wait_list_.end(),car_id);
-  if (it!=wait_list_.end())  wait_list_.erase(it); 
-     else return false;
-  return true;
-}
-//检查此车是否在检锁列表中出现
-bool check_in_list(int car_id_,std::vector<int> &wait_list_)
-{
-  if(wait_list_.empty()) { return false; }
-  std::vector<int>::iterator it;
-  it =find(wait_list_.begin(),wait_list_.end(),car_id_);
-  if (it!=wait_list_.end()) return true;
-    else  return false;
-}
-//在调度车库时的检查  注意： 要与调度路口车辆区分
-bool check_most_prior(int car_id,Road* road_,Cross* cross_)
-{
-  for(int i=0;i<road_->road_length;i++)
-    for(int j=0;j<road_->lane_num;j++)
-    {
-      if(road_->load[(cross_->id==road_->start)?0:1][i][j]!=0)   //查询该车位是否有车
-      {
-	if(road_->load[(cross_->id==road_->start)?0:1][i][j]==car_id) return true;
-	  else { return false;} 
-      }
-    }
-    return true;
-}
+
+
 //通过当前所在道路输出下一条道路 以及转向关系转向  注意：调度车库与调度路口方向不同
 how_tonext next_road(Car* car_,Road* cur_road,Cross *cross_array_,Cross* cross_,Road map_[][MAX_CROSS])
 {
@@ -489,10 +452,10 @@ how_tonext next_road(Car* car_,Road* cur_road,Cross *cross_array_,Cross* cross_,
 
 // 将所有终止态的车改为等待态
 
-void chang_completed_towait(int min_car_id_,int max_car_id_,Car *car_array_,std::vector<int> &wait_list_)
+void chang_completed_towait(Car *car_array_,int car_num_,std::vector<int> &wait_list_)
 {
 
-  for(int sub=min_car_id_;sub<=max_car_id_;sub++)
+  for(int sub=0;sub<car_num_;sub++)
   {
     if(car_array_[sub].state==completed)
     {
@@ -534,33 +497,12 @@ void clear_cross_proir(Car* car_,Road* road_,Cross* cross_)
 	  else if(road_->id==cross_->road_id[3]) cross_->prior_leftroad=0;
 	    else if(road_->id==cross_->road_id[1]) cross_->prior_rightroad=0;
 }
-//全局车辆的两种判断 1、所有车辆是否全是终止态 2、所有已上路车辆全是终止态  
-Global All_car_iscompleted(Car* car_array,int min_car_id_,int max_car_id_)
-{
-  Global global;
-  global.all_car_iscompleted=true;
-  global.car_inroad_iscompleted=true;
-   for(int i=min_car_id_;i<=max_car_id_;i++)
-    {
-      //路上还有车等待调度
-      if(car_array[i].state==wait_schedule)  
-      { 
-	global.car_inroad_iscompleted=false;
-      }
-      //所有车辆未调度完
-     if((car_array[i].state==still_stored) ||(car_array[i].state==wait_schedule))
-      { 
-	global.all_car_iscompleted=false;
-      }
-      if((!global.car_inroad_iscompleted)&&(!global.car_inroad_iscompleted)) break;
-    }
-return global;
-}
+
 //检查是否有车未到终点 
-bool All_car_isreached(Car* car_array,int min_car_id_,int max_car_id_)
+bool All_car_isreached(Car* car_array,int car_num_)
 {
   bool all_car_isreached=true;
-   for(int i=min_car_id_;i<=max_car_id_;i++)
+   for(int i=0;i<car_num_;i++)
     {
       //路上还有车等待调度
       if(car_array[i].state!=reached)  
@@ -572,37 +514,7 @@ bool All_car_isreached(Car* car_array,int min_car_id_,int max_car_id_)
     }
 return all_car_isreached;
 }
-/******************************检查某道路是否为空 不为空 那最高优先级的有余量的车道是哪条 最优先车位的下标？******************************/
-// 为进入该道路的车辆提供数据   注意： 此次检查发生在调度路上车辆 所以 车道为指向路口
-// 0316增加： 若非空 返回优先级最高的车的id
-// road_empty check_road_empty(Cross *cur_cross_,Road *cur_road_)
-// {
-//        road_empty road_situation;
-//        road_situation.is_empty=true;
-//        road_situation.lane=-1;
-//        road_situation.offset=-1;
-//        bool this_line_findcar=false;
-//        int sub[10]={-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};  //存放每个车道最末尾的车
-//        for(int j=0;j<cur_road_->lane_num;j++)
-// 	for(int l=cur_road_->road_length-1;l>=0;l--)
-//          {
-// 	    if(cur_road_->load[(cur_cross_->id==cur_road_->end)?0:1][j][l]!=0)   //查询该车位是否有车
-// 	    {
-// 	       if(road_situation.is_empty) road_situation.is_empty=false;
-// 	       break;
-// 	    }
-// 	    sub[j]++;
-//          }         
-//        if(road_situation.is_empty)  return road_situation;
-//        //路上一定有车
-//        for(int k=0;k<cur_road_->lane_num;k++)
-//        {
-// 	 //该行有空位
-// 	 if(sub[k]!=-1)   {road_situation.lane=k;road_situation.offset=cur_road_->road_length-sub[k]-1;break; }           
-//        }
-//        
-// return road_situation; 
-// }
+
 // 为进入该道路的车辆提供数据   注意： 此次检查发生在调度道路的车库 所以 方向为驶离路口
 // 0316 修正 ： 如果偏移量大于该段道路限速则等于限速
 road_space check_road_space(Cross *cur_cross_,Road *cur_road_)
@@ -705,12 +617,13 @@ return road_situ;
 }
 bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedarray_,int* min_cross_id_,int* max_cross_id_,
 	       std::string road_path, Road *road_array_,Road *road_sortedarray_,int* min_road_id_,int* max_road_id,
-	       std::string car_path,Car *car_array_,Car *car_sortedarray_,int* min_car_id_,int* max_car_id_,Road map_[][MAX_CROSS])
+	       std::string car_path,Car *car_array_,Car *car_sortedarray_,int* min_car_id_,int* max_car_id_,Road map_[][MAX_CROSS]
+	      ,std::vector<int>&car_dict_,std::vector<int>&road_dict_,std::vector<int>&cross_dict_)
 {
   
   
   
-   std::ifstream fin_car(car_path);
+    std::ifstream fin_car(car_path);
     std::ifstream fin_road(road_path);
     std::ifstream fin_cross(cross_path);
     
@@ -746,6 +659,7 @@ bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedar
 	    *min_road_id_= road_array_[0].id;
 	    road_sortedarray_[0] = road_array_[0]=road_array_[0];
 	  }
+	road_dict_.push_back(road_array_[Subscript].id);
 	road_array_[Subscript].completed=false;
 	road_sortedarray_[Subscript] = road_array_[Subscript];
 	Subscript++;
@@ -775,7 +689,8 @@ bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedar
 	    first_line=false; 
 	    *min_car_id_ = car_array_[0].id;;
 	    car_sortedarray_[0] = car_array_[0] = car_array_[0];
-	  } 
+	  }
+	car_dict_.push_back(car_array_[Subscript].id);
 	car_sortedarray_[Subscript] = car_array_[Subscript];
 	car_array_[Subscript].state = still_stored;
 	car_array_[Subscript].wait_anthor =false;
@@ -808,6 +723,7 @@ bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedar
 	    *min_cross_id_ = Subscript;
 	    cross_sortedarray_[Subscript] =cross_array_[Subscript] = cross_array_[0];
 	  } 
+	cross_dict_.push_back(cross_array_[Subscript].id);
 	cross_sortedarray_[Subscript] =cross_array_[Subscript];
 	Subscript++;
 	count++;
@@ -819,6 +735,9 @@ bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedar
        
        //初始化地图 将所有路口连接置为-1 表示无连接 共有1～(cross_num-1) 个路口
        //数组以0下表开始 直观起见 map[i][j]直接指第i个路口到第j个路口信息
+       sort(car_dict_.begin(),car_dict_.end());
+       sort(road_dict_.begin(),road_dict_.end());
+       sort(cross_dict_.begin(),cross_dict_.end());
        
        for(int i=*min_cross_id_;i<=*max_cross_id_;i++)
        {
@@ -830,79 +749,83 @@ bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedar
 	 for(int j=*min_cross_id_;j<=*max_cross_id_;j++)         
 	    map_[i][j].id= -1;
        }
-              std::cout<<"Car: "<< *max_car_id_-*min_car_id_+1
-                   <<"Road: "<< *max_road_id-*min_road_id_+1
-                   <<"Cross: "<< *max_cross_id_-*min_cross_id_+1<<std::endl;
+
        return true;
 }
 
-void map_matrix(Cross* cross_array_,int min_cross_id,int max_cross_id
+void map_matrix(Cross* cross_array_,int cross_num,std::vector<int>&road_dict_
   ,int (*weight_)[MAX_CROSS],Road* road_array_,Road map_[][MAX_CROSS])
 {
-  for(int i=min_cross_id;i<max_cross_id+1;i++)
+ 
+  for(int i=1;i<cross_num+1;i++)
        {
 	  weight_[i][i]=INF;
-	 for(int j=i+1;j<max_cross_id+1;j++)
+	 for(int j=i+1;j<cross_num+1;j++)
 	 {
 	   if((cross_array_[i].road_id[0]!=-1)&&(cross_array_[i].road_id[0]==cross_array_[j].road_id[2])) 
 	      {
+		int road_sub=road_tosub(cross_array_[i].road_id[0],road_dict_);
 		weight_[i][j]=init_weight;                              
 		//先初始化所有权重为10
-		map_[i][j]=road_array_[road_to_sub(cross_array_[i].road_id[0])];
+		map_[i][j]=road_array_[road_sub];
 		cross_array_[i].up_cross_id=j;
-		if(road_array_[road_to_sub(cross_array_[i].road_id[0])].flag_twoway==1) {   
+		if(road_array_[road_sub].flag_twoway==1) {   
 		  weight_[j][i]=init_weight;
 		  //如果是双向道路 （j,i）元素值与(i,j)处相等 下同
-		  map_[j][i]=road_array_[road_to_sub(cross_array_[i].road_id[0])];
+		  map_[j][i]=road_array_[road_sub];
 		  cross_array_[j].down_cross_id=i;
 		}
 	      }
 	   if((cross_array_[i].road_id[1]!=-1)&&(cross_array_[i].road_id[1]==cross_array_[j].road_id[3]))
 	      { 
+		int road_sub=road_tosub(cross_array_[i].road_id[1],road_dict_);
 		weight_[i][j]=init_weight;                              
 		//先初始化所有权重为10
-		map_[i][j]=road_array_[road_to_sub(cross_array_[i].road_id[1])];
+		map_[i][j]=road_array_[road_sub];
 		cross_array_[i].right_cross_id=j;
-		if(road_array_[road_to_sub(cross_array_[i].road_id[1])].flag_twoway==1){
+		if(road_array_[road_sub].flag_twoway==1){
 		  weight_[j][i]=init_weight;
-		  map_[j][i]=road_array_[road_to_sub(cross_array_[i].road_id[1])];
+		  map_[j][i]=road_array_[road_sub];
 		  cross_array_[j].left_cross_id=i;
 		}
 	      }
 	   if((cross_array_[i].road_id[2]!=-1)&&(cross_array_[i].road_id[2]==cross_array_[j].road_id[0])) 
 	      {
+		int road_sub=road_tosub(cross_array_[i].road_id[2],road_dict_);
 		weight_[i][j]=init_weight;                              
 		//先初始化所有权重为10
-		map_[i][j]=road_array_[road_to_sub(cross_array_[i].road_id[2])];
+		map_[i][j]=road_array_[road_sub];
 		cross_array_[i].down_cross_id=j;
-		if(road_array_[road_to_sub(cross_array_[i].road_id[2])].flag_twoway==1){
+		if(road_array_[road_sub].flag_twoway==1){
 		  weight_[j][i]=init_weight;
-		  map_[j][i]=road_array_[road_to_sub(cross_array_[i].road_id[2])];
+		  map_[j][i]=road_array_[road_sub];
 		  cross_array_[j].up_cross_id=i;
 		}
 	      }
 	   if((cross_array_[i].road_id[3]!=-1)&&(cross_array_[i].road_id[3]==cross_array_[j].road_id[1])) 
 	      { 
+		int road_sub=road_tosub(cross_array_[i].road_id[2],road_dict_);
 		weight_[i][j]=init_weight;                              
 		//先初始化所有权重为10
-		map_[i][j]=road_array_[road_to_sub(cross_array_[i].road_id[3])];
-		if(road_array_[road_to_sub(cross_array_[i].road_id[3])].flag_twoway==1){
+		map_[i][j]=road_array_[road_sub];
+		if(road_array_[road_sub].flag_twoway==1){
 		  weight_[j][i]=init_weight;
 		  cross_array_[i].left_cross_id=j;
-		  map_[j][i]=road_array_[road_to_sub(cross_array_[i].road_id[3])];
+		  map_[j][i]=road_array_[road_sub];
 		  cross_array_[j].right_cross_id=i;
 		}
 	      }
 	 }
        }
 }
-bool write_output(std::string path,Car *car_array_,int min_car_id_,int max_car_id_,Road map_[][MAX_CROSS])
+
+bool write_output(std::string path,Car *car_array_,int car_num_,Road map_[][MAX_CROSS])
 {
        std::ofstream fout(path, std::ios::app);
       if(!fout.is_open()) { std::cout<< "No output file" <<std::endl; return false;}
       std::fstream file(path, std::ios::out);
       fout <<"#(carId,StartTime,road...)"<<std::endl;
-       for(int i=min_car_id_;i<=max_car_id_;i++)
+       for(int i=0;i<car_num_;i++)
      {
        int road_path;
        fout <<"("<<car_array_[i].id<<","<<car_array_[i].set_time<<",";          
@@ -926,9 +849,6 @@ bool write_output(std::string path,Car *car_array_,int min_car_id_,int max_car_i
       std::cout <<"Write ok!!!"<<std::endl;
       return true;
       
-      
-      
-        
   
   /*
        std::ofstream fout(path, std::ios::app);
@@ -968,49 +888,51 @@ bool write_output(std::string path,Car *car_array_,int min_car_id_,int max_car_i
 	fout <<std::endl;}
       }	fout.close();*/
 }
-void ready_garage(int min_car_id_,int max_car_id_,Magic_garage* garage_,
-		  Road* road_array_,Car *car_array_,Car *car_sortedarray_,Road map_[][MAX_CROSS])
+
+
+void ready_garage(int car_num,std::vector<int>&car_dict_,int road_num_,std::vector<int>&road_dict_,
+		   Magic_garage* garage_,Road* road_array_,Car *car_array_,Car *car_sortedarray_,Road map_[][MAX_CROSS])
 {
-      for(int i=min_car_id_;i<=max_car_id_;i++)
+      for(int i=0;i<car_num;i++)
      {
-       int ga_roadpath,cur_dup;    
+       int ga_roadpath,cur_dup;   
 	 //为考虑特殊情况 就一条路径？？
 	 if(car_array_[i].cross_path[1]==0)
-	 {  
-	   std::cout<<"The: "<<i<<"Has no path"<<std::endl;    break;}
-	 
-	    ga_roadpath = map_[car_array_[car_to_sub(car_sortedarray_[i].id)].cross_path[0]]
-	                            [car_array_[car_to_sub(car_sortedarray_[i].id)].cross_path[1]].id;
-	    cur_dup = not_equal(car_array_[car_to_sub(car_sortedarray_[i].id)].set,
-				road_array_[road_to_sub(ga_roadpath)].start);
-	    garage_[road_to_sub(ga_roadpath)].garage[cur_dup].push_back(car_sortedarray_[i].id);  
+	 {  std::cout<<"The: "<<i<<"Has no path"<<std::endl;   break;}
+
+	    ga_roadpath = map_[car_array_[i].cross_path[0]]
+	                            [car_array_[i].cross_path[1]].id;
+	    int road_sub=road_tosub(ga_roadpath,road_dict_);
+	    cur_dup = not_equal(car_array_[i].set,
+				road_array_[road_sub].start);
+	    garage_[road_sub].garage[cur_dup].push_back(car_sortedarray_[i].id);  
       }
       
       /*********************************神奇车库  测试输出*********************************/
-//      for(int i=0;i<=104;i++)
-//      {
-//        for(int j=0;j<=1;j++)
-//        {
-// 	std::vector<int>  copy_garage(garage_[i].garage[j]);
-// 	 if(j==0) printf(" 道路 %d 正向出发的车： ",i );
-//   	  else  printf("      反向出发的车： ");
-//       while(copy_garage.size()>0)
-// 	  {
-// 	   std::cout<<copy_garage[0]<< "  ";
-// 	    copy_garage.erase(copy_garage.begin());
-// 	  }
-//        }
-//        	    std::cout<<std::endl;
-//      }
+     for(int i=0;i<road_num_;i++)
+     {
+       for(int j=0;j<=1;j++)
+       {
+	std::vector<int>  copy_garage(garage_[i].garage[j]);
+	 if(j==0) printf(" 道路 %d 正向出发的车： ",road_dict_[i] );
+  	  else  printf("      反向出发的车： ");
+      while(copy_garage.size()>0)
+	  {
+	   std::cout<<copy_garage[0]<< "  ";
+	    copy_garage.erase(copy_garage.begin());
+	  }
+       }
+       	    std::cout<<std::endl;
+     }
 }
-bool Astar_search(Car *car_,Road* road_array_,int min_road_id,int max_road_id,Cross* cross_array_,
+bool Astar_search(Car *car_,Road* road_array_,int road_num_,Cross* cross_array_,
 		  int min_cross_id,int max_cross_id,int (*weight_)[MAX_CROSS],Road map_[][MAX_CROSS])
 {
     
     int  from=  car_->set  ;
     int	 to=  car_->goal     ;
     int i=0;
-    A_star *a=new A_star(road_array_, min_road_id, max_road_id,cross_array_,min_cross_id, max_cross_id);
+    A_star *a=new A_star(road_array_,road_num_,cross_array_,min_cross_id, max_cross_id);
     
     
     node *start=new node(from);
@@ -1068,31 +990,7 @@ void print_time(const char *head)
     
 #endif
 }
-//将车辆的出发时间进行排序
-int  campare_settime(const void * a, const void * b)
-{
- return (*(Car *)a).set_time > (*(Car *)b).set_time ? 1 : -1; 
-}
 
-void quickSortOfCpp(Car* car_list,int sub_begin,int sub_end)
-{
-    qsort(car_list, sub_end-sub_begin+1, sizeof(car_list[0]), campare_settime);
-}
-bool cmp(int a,int b){
-    return a > b;
-}
-
-//输入
-int not_equal(int a,int b)
-{
-  if(a==b) return 0;
-    else return 1;
-}
-int min(int a, int b)
-{
-  if(a>b) return b;
-     return a;
-}
 bool sch_allcross_drive(Car* car_array,int min_car_id,int max_car_id,
 			 Cross* cross_array,int min_cross_id,int max_cross_id,
 			 int min_road_id_,int max_road_id_,Road* road_array,
@@ -1100,6 +998,7 @@ bool sch_allcross_drive(Car* car_array,int min_car_id,int max_car_id,
 			 Road map_[][MAX_CROSS],
 			 int T,
 			 std::vector<int> &wait_list_,std::vector<int> &bloack_list_
+			 ,int *reached_car_
 			)
 {    
           
@@ -1144,7 +1043,7 @@ bool sch_allcross_drive(Car* car_array,int min_car_id,int max_car_id,
 			    &cross_array[sch_cross_drive],
 			    sch_road_drive_offset,cur_cross_road,
 			    cross_array,road_array,map_,
-			    wait_list_,bloack_list_,T) ;
+			    wait_list_,bloack_list_,T,reached_car_) ;
 		  if(sch_car_road.block==true)
 		     {
 		       while(!bloack_list_.empty())
@@ -1196,33 +1095,37 @@ bool sch_allcross_drive(Car* car_array,int min_car_id,int max_car_id,
   return false;
 }
 //更新当前路口的公共字段 输入：当前路口 当前道路
-bool update_cross_prior_garage(int T_,Cross* cross_,Road  *road_array_,Road* road_,Car *car_array_,Cross *cross_array_,Road map_[][MAX_CROSS])
+bool update_cross_prior_garage(int T_,Cross* cross_,Road  *road_array_,Road* road_,std::vector<int>&road_dict_,std::vector<int>&car_dict_,
+			       Car *car_array_,Cross *cross_array_,Road map_[][MAX_CROSS])
 {
 
-    if(map_[(cross_->id==road_->end)?road_->start:road_->end][cross_->id].id==-1) return false;             
-  for(int j=0;j<road_->road_length;j++)
+    if(map_[(cross_->id==road_->end)?road_->start:road_->end][cross_->id].id==-1) return false;   
+    int road_sub=road_tosub(road_->id,road_dict_);
+    
+  for(int j=0;j<road_->limit_speed;j++)
    {
     for(int i=0;i<road_->lane_num;i++)
     {  
       if(road_->load[(cross_->id==road_->end)?0:1][i][j]!=0)   //查询该车位是否有车
       {     
         int car_id=road_->load[(cross_->id==road_->end)?0:1][i][j]; 
-	if(j-min(car_array_[car_to_sub(car_id)].max_speed,road_->limit_speed)<0)
+		int car_sub=car_tosub(car_id,car_dict_);
+	if(j-min(car_array_[car_sub].max_speed,road_->limit_speed)<0)
 	{
 	  //下一时刻可以过路口    
-	  how_tonext to_next=next_road(&car_array_[car_to_sub(car_id)],
-				        &road_array_[road_to_sub(road_->id)],
+	  how_tonext to_next=next_road(&car_array_[car_sub],
+				        &road_array_[road_sub],
 				          cross_array_,
 				          &cross_array_[cross_->id],map_);
 	  if(to_next.next_road==-1){ 
-	    car_array_[car_to_sub(car_id)].move_ori =go_straight;
-	    car_array_[car_to_sub(car_id)].next_road=road_->id;
+	    car_array_[car_sub].move_ori =go_straight;
+	    car_array_[car_sub].next_road=road_->id;
 	    std::cout << "Attention in garage: "<<car_id <<" "<<cross_->id<<" "<<road_->id<<" "
 	    <<std::endl;
 	  }
 	  else{
-	  car_array_[car_to_sub(car_id)].move_ori =to_next.direct ;
-	  car_array_[car_to_sub(car_id)].next_road=to_next.next_road ;
+	  car_array_[car_sub].move_ori =to_next.direct ;
+	  car_array_[car_sub].next_road=to_next.next_road ;
 	  
     if(road_->id==cross_->road_id[0]) cross_->prior_uproad=car_id;
 	else if(road_->id==cross_->road_id[2]) cross_->prior_downroad=car_id;
@@ -1241,12 +1144,12 @@ bool update_cross_prior_garage(int T_,Cross* cross_,Road  *road_array_,Road* roa
 
 void sch_allcross_garage(Car* car_array,
 			 Cross* cross_array_,int min_cross_id,int max_cross_id,
-			 Road* road_array,
+			 Road* road_array,std::vector<int>&road_dict_,std::vector<int>&car_dict_,
 			 Magic_garage* garage,
 			 Road map_[][MAX_CROSS],
-			 int T,int *wait_num_
+			 int T,int *wait_num_ ,int *reached_car_,int car_num_
 			)
-{   
+{   srand(time(NULL));
   	      for(int sch_cross_garage=min_cross_id;sch_cross_garage<=max_cross_id;sch_cross_garage++)
 		 {
                     cross_array_[sch_cross_garage].prior_downroad=cross_array_[sch_cross_garage].prior_uproad
@@ -1258,9 +1161,12 @@ void sch_allcross_garage(Car* car_array,
 		    std::memcpy(cur_cross_road,cross_array_[sch_cross_garage].road_id,sizeof(cross_array_[sch_cross_garage].road_id));
 		    int array_offset=3;
 		  for(int i=0;i<4;i++)
-		    if(cur_cross_road[i]!=-1)
-		      if(road_array[road_to_sub(cur_cross_road[i])].flag_twoway!=1)                     //该道路为单向道，且该路口不是起点
-			if(sch_cross_garage!=road_array[road_to_sub(cur_cross_road[i])].start)  cur_cross_road[i]=-1;
+		    if(cur_cross_road[i]!=-1) 
+		    {
+		      int road_sub=road_tosub(cur_cross_road[i],road_dict_);
+		      if(road_array[road_sub].flag_twoway!=1)                     //该道路为单向道，且该路口不是起点
+			if(sch_cross_garage!=road_array[road_sub].start)  cur_cross_road[i]=-1;
+		    }
 		    std::sort(cur_cross_road,cur_cross_road+4);    
 		  //去掉不存在的道路 或者不调度 不进入该交叉口的道路
 		    for(;array_offset>=0;array_offset--)
@@ -1270,41 +1176,66 @@ void sch_allcross_garage(Car* car_array,
 		    } 
 		  /******需要调度的道路id升序存于cur_cross_road中    起始下标为 array_offset******/
 // 		  std::cout <<sch_cross_garage<<" connect: ";
-
+                  
 		  for(int sch_road_garage_offset=array_offset;sch_road_garage_offset<4;sch_road_garage_offset++)
 		  {   	      
-		    int sch_road_garage = cur_cross_road[sch_road_garage_offset]; 	
+		    int sch_road_garage = cur_cross_road[sch_road_garage_offset]; 
+		    int road_sub=road_tosub(cur_cross_road[sch_road_garage],road_dict_);
 		    //判断该路的车库是否有车调度
-		    int cur_dup=not_equal(sch_cross_garage,road_array[road_to_sub(sch_road_garage)].start);
-		    if(!garage[road_to_sub(sch_road_garage)].garage[cur_dup].empty()&&(*wait_num_<max_car_road))
+		    int cur_dup=not_equal(sch_cross_garage,road_array[road_sub].start);
+		    if((cross_array_[sch_cross_garage].prior_uproad!=0)
+		      &&(sch_road_garage==cross_array_[sch_cross_garage].road_id[2])) continue;
+		    if((cross_array_[sch_cross_garage].prior_downroad!=0)
+		      &&(sch_road_garage==cross_array_[sch_cross_garage].road_id[0])) continue;
+		    if((cross_array_[sch_cross_garage].prior_rightroad!=0)
+		      &&(sch_road_garage==cross_array_[sch_cross_garage].road_id[3]))  continue;
+		    if((cross_array_[sch_cross_garage].left_cross_id!=0)
+		      &&(sch_road_garage==cross_array_[sch_cross_garage].road_id[1]))  continue;
+		    
+		    if(!garage[road_sub].garage[cur_dup].empty())
 			 {   	      
-			   	    
+			      int sch_car_road; int set_now=0;
+			     
+			   if (T==1) 
+	                     sch_car_road=2+T1_rate*max_car_road*
+	                          garage[road_sub].garage[cur_dup].size()/car_num_;
+			    else{
+			       sch_car_road=max_car_road*
+	                          garage[road_sub].garage[cur_dup].size()/
+	                          (car_num_-*wait_num_+1);
+			    }	  
+			    int ran_pra;
+			    if(garage[road_sub].garage[cur_dup].size()<
+			      road_array[road_sub].road_length 
+			    ) ran_pra=0;
+			    else ran_pra=random_thre;
 			      //检查道路最高优先级车道 以及偏移量
 			      road_space space_Condition = check_road_space(&cross_array_[sch_cross_garage],
-									    &road_array[road_to_sub(sch_road_garage)]);
+									    &road_array[road_sub]);
 // 			       std::cout << "test: "<<space_Condition.lane <<std::endl;
 			      if(space_Condition.lane==-1) continue;
 // 			      std::cout<<"sch_road_garage "<< sch_sch_allcross_garageroad_garage<< " "<<cur_dup;
 			      //道路是否有余量
-			      int cur_dup=not_equal(sch_cross_garage,road_array[road_to_sub(sch_road_garage)].start);
+			      int cur_dup=not_equal(sch_cross_garage,road_array[road_sub].start);
 			      //循环的条件 道路非满且车库非空 优先级最高的车的发车时间不大于该时刻
 			      
-			      while((space_Condition.lane!=-1)&&(!garage[road_to_sub(road_array[road_to_sub(sch_road_garage)].id)].garage[cur_dup].empty())
-				&&((car_array[car_to_sub(garage[road_to_sub(road_array[road_to_sub(sch_road_garage)].id)].garage[cur_dup][0])].set_time)<=T)
-				)
+			      while((space_Condition.lane!=-1)&&(!garage[road_sub].garage[cur_dup].empty())
+				&&((car_array[car_to_sub(garage[road_sub].garage[cur_dup][0])].set_time)<=T)
+				&&(rand()%1000/(float)(1000.0))>random_thre)
 			      {
 				     *wait_num_++;  
-				    int cur_dup=not_equal(sch_cross_garage,road_array[road_to_sub(sch_road_garage)].start);
-				    std::vector<int> car_garage(garage[road_to_sub(road_array[road_to_sub(sch_road_garage)].id)].garage[cur_dup]); 
+				     set_now++;
+				    int cur_dup=not_equal(sch_cross_garage,road_array[road_sub].start);
+				    std::vector<int> car_garage(garage[road_sub].garage[cur_dup]); 
 				    //向量拷贝 只是为了让后面看起来短一点 没什么太大软用
 	                            
-				    int how_far = min(road_array[road_to_sub(sch_road_garage)].road_length-space_Condition.offset,
-						      min(car_array[car_to_sub(car_garage[0])].max_speed,road_array[road_to_sub(sch_road_garage)].limit_speed));
-				    int space_offset = road_array[road_to_sub(sch_road_garage)].road_length-how_far;
+				    int how_far = min(road_array[road_sub].road_length-space_Condition.offset,
+						      min(car_array[car_to_sub(car_garage[0])].max_speed,road_array[road_sub].limit_speed));
+				    int space_offset = road_array[road_sub].road_length-how_far;
 				      if(space_offset<0)  space_offset=0;
 				 
 				      /**** 终于将车安排上了 更新车道数组****/
-				    road_array[road_to_sub(sch_road_garage)].load[cur_dup][space_Condition.lane][space_offset]=car_garage[0];
+				    road_array[road_sub].load[cur_dup][space_Condition.lane][space_offset]=car_garage[0];
 				    /**** 终于将车安排上了 更新车道数组****/
 				    
 				    /**** 上路后还有一系列操作 比如 ***/
@@ -1313,16 +1244,17 @@ void sch_allcross_garage(Car* car_array,
 				    car_array[car_to_sub(car_garage[0])].now_road=sch_road_garage;
 				    car_array[car_to_sub(car_garage[0])].state=completed;
 				    //发车成功  将其从车库中删掉
-			  	    garage[road_to_sub(road_array[road_to_sub(sch_road_garage)].id)].
-				    garage[cur_dup].erase(garage[road_to_sub(road_array[road_to_sub(sch_road_garage)].id)].
+			  	    garage[road_sub].
+				    garage[cur_dup].erase(garage[road_sub].
 					garage[cur_dup].begin());
 				      
-				space_Condition = check_road_space(&cross_array_[sch_cross_garage],&road_array[road_to_sub(sch_road_garage)]);
+				space_Condition = check_road_space(&cross_array_[sch_cross_garage],&road_array[road_sub]);
 			      }
 		  }
                     //更新路口的公共字段
                     update_cross_prior_garage(T,&cross_array_[sch_cross_garage],road_array,
-					      &road_array[road_to_sub(sch_road_garage)] ,car_array,cross_array_,map_);
+					      &road_array[road_sub],road_dict_,car_dict_
+					       ,car_array,cross_array_,map_);
 		  }
 		  
 		}
@@ -1425,8 +1357,5 @@ void debug_dir_tocross(Road *road_array_,int min_cross_id,int max_cross_id,Cross
          std::cout<<std::endl;}
 
 }
-void out(std::string s)
-{
-  std::cout<< "Debug: "<< s <<std::endl;
-}
+
 

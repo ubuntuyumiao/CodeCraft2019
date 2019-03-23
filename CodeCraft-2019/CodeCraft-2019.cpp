@@ -32,26 +32,38 @@ int main(int argc,char** argv)
       std::string crossPath(argv[3]);
       std::string answerPath(argv[4]);
 
+      std::vector<int>car_dict;
+      std::vector<int>road_dict;
+      std::vector<int>cross_dict;
+      
       if(!read_file(crossPath,cross,cross_sorted,&min_cross_id,&max_cross_id,
 	            roadPath,road,road_sorted,&min_road_id,&max_road_id,
-                    carPath,car,car_sorted,&min_car_id,&max_car_id,map))    return 0;
+                    carPath,car,car_sorted,&min_car_id,&max_car_id,map,
+		    car_dict,road_dict,cross_dict
+ 		  ))    return 0;
       
-      road_num=max_road_id-min_road_id+1,
-      cross_num=max_cross_id-min_cross_id+1,
-      car_num=max_car_id-min_car_id+1;
+      road_num=road_dict.size(),
+      cross_num=cross_dict.size(),
+      car_num=car_dict.size();
+      std::cout<<"Car: "<< car_num
+
+	  <<"Road: "<< road_num
+
+	  <<"Cross: "<< cross_num<<std::endl;  
 /*********************************将所有路口与道路信息以邻接矩阵表示*********************************/
-      map_matrix(cross,min_cross_id,max_cross_id,weight_net,road,map);    
+      map_matrix(cross,cross_num,road_dict,weight_net,road,map);    
 /*********************************A-Star算法  + 神奇车库*********************************/ 
       int has_find=0; 
-      quickSortOfCpp(car_sorted,car_to_sub(min_car_id),car_to_sub(max_car_id));
-     for(int i=min_car_id;i<=max_car_id;i++)
+      quickSortOfCpp(car_sorted,car_num);
+      
+     for(int i=0;i<car_num;i++)
      {
-       if( Astar_search(&car[car_to_sub(i)], road,road_to_sub(min_road_id),road_to_sub(max_road_id),
+       if( Astar_search(&car[i], road,road_num,
 	                cross,min_cross_id,max_cross_id,weight_net,map))
             has_find++;
      }
      //安排神奇车库
-     ready_garage(car_to_sub(min_car_id),car_to_sub(max_car_id),garage,road,car, car_sorted, map);
+     ready_garage(car_num,car_dict,road_num,road_dict,garage,road,car,car_sorted,map);
 /*********************************A-Star算法  + 神奇车库*********************************/
      
 
@@ -64,13 +76,15 @@ int main(int argc,char** argv)
           std::vector<int> block_list; 
 	  bool block_flag=false;
 	  int wait_num=0; 
+	  int reached_car=0;
+	  srand(time(NULL));
 	  //检查是否全部到终点
-	  while(!All_car_isreached(car,car_to_sub(min_car_id),car_to_sub(max_car_id)))
+	  while(!All_car_isreached(car,car_num))
 	  {
 	    //开始走表 
 		T++;      
 	    //将所有终止态车变为等待态 并加入等待表
-	      chang_completed_towait(car_to_sub(min_car_id),car_to_sub(max_car_id),car,wait_list);
+	      chang_completed_towait(car,car_num,wait_list);
 	      wait_num=wait_list.size();
 	    //调度全地图等待车车 直到等待表为空
 	      while(!wait_list.empty())
@@ -78,13 +92,13 @@ int main(int argc,char** argv)
 		block_flag=sch_allcross_drive(car,car_to_sub(min_car_id),car_to_sub(max_car_id),
 					      cross, min_cross_id, max_cross_id,
 				              road_to_sub(min_road_id),road_to_sub(max_road_id),
-				              road,garage,map,T,wait_list,block_list);
+				              road,garage,map,T,wait_list,block_list,&reached_car);
 		if(block_flag) break;
 	      }
 	      if(block_flag){ std::cout<<"SCH out block!!!"<<std::endl;  break;} 
-// 	      if(T==2) break;
 	      //正常跳出while 表明 无车等待 尝试调度车库
-              sch_allcross_garage(car,cross, min_cross_id, max_cross_id,road,garage,map,T,&wait_num);
+              sch_allcross_garage(car,cross, min_cross_id, max_cross_id,road,road_dict,car_dict,
+				  garage,map,T,&wait_num,&reached_car,car_num);
 	  } 
 	  
 /******************************车辆调度规则执行******************************/
@@ -93,7 +107,8 @@ int main(int argc,char** argv)
 	//调试路口调度时 驶向路口道路信息
 // 	debug_dir_tocross(road,min_cross_id,max_cross_id,cross);  
       //写输出文件
-      if(!write_output(answerPath,car,car_to_sub(min_car_id), car_to_sub(max_car_id),map)) return 0;
+      std::cout<<"Time Schdule: "<<" | "<<T<<" | "<<std::endl; 
+      if(!write_output(answerPath,car,car_num,map)) return 0;
       print_time("End");
       return 0;
 }

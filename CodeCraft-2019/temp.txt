@@ -1,0 +1,32 @@
+//检查是否有车未到终点 
+bool All_car_isreached(Car* car_array,int car_num_)
+{
+  bool all_car_isreached=true;
+   for(int i=0;i<car_num_;i++)
+    {
+      //路上还有车等待调度
+      if(car_array[i].state!=reached)  
+      { 
+	all_car_isreached=false;
+	break;
+      }
+
+    }
+return all_car_isreached;
+}
+
+// 将所有终止态的车改为等待态
+
+void chang_completed_towait(Car *car_array_,int car_num_,std::vector<int> &wait_list_)
+{
+
+  for(int sub=0;sub<car_num_;sub++)
+  {
+    if(car_array_[sub].state==completed)
+    {
+      car_array_[sub].state=wait_schedule;
+      wait_list_.push_back(sub_to_car(sub));
+    }
+  }
+
+}

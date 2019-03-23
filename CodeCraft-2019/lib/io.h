@@ -54,7 +54,7 @@ public:
     node *end; 
     vector<node*> openlist;//open表，存遍历到的节点
     vector<node*> closelist;//close表，存访问过的节点
-    A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array,
+    A_star(Road* road_array,int road_num_,Cross* cross_array,
 	   int mincross_id,int maxcross_id);
     ~A_star();
  
@@ -87,7 +87,7 @@ int A_star::cal_dis(int cross_from,int cross_to)
     
     return init_weight;
 }
-A_star::A_star(Road* road_array,int minroad_id,int maxroad_id,Cross* cross_array,
+A_star::A_star(Road* road_array,int road_num_,Cross* cross_array,
 	       int mincross_id,int maxcross_id)
 {
   min_cross_id=mincross_id;
