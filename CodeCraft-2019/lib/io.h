@@ -54,17 +54,17 @@ public:
     node *end; 
     vector<node*> openlist;//open表，存遍历到的节点
     vector<node*> closelist;//close表，存访问过的节点
-    A_star(Road* road_array,int road_num_,Cross* cross_array,
-	   int mincross_id,int maxcross_id);
+    A_star();
     ~A_star();
  
-    void search(Car *car_,node* start,node* end,
+    void search(Car *car_,node* start,node* end,std::vector<int>&cross_dict_,
                  Cross* cross_array_,Road map_[][MAX_CROSS],int (*weight_)[MAX_CROSS]
     ); 
-    void check(int current_cross_id_,node* father,int g,Cross* cross_array_);
-    void nextstep(Car *car_,node* current,Cross* cross_array_,Road map_[][MAX_CROSS],int (*weight_)[MAX_CROSS]);
+    void check(int current_cross_id_,node* father,int g,Cross* cross_array_,std::vector<int>&cross_dict_);
+    void nextstep(Car *car_,node* current,Cross* cross_array_,
+		  Road map_[][MAX_CROSS],int (*weight_)[MAX_CROSS],std::vector<int>&cross_dict_);
     int finding(vector<node*>* nodelist,int x,int y);
-    int cal_dis(int cross_from,int cross_to);
+    int cross_tosub(int cross_id_,std::vector<int>&cross_dict_);
     static bool compare(node* n1,node* n2);
     void print(node* current);
     int min_cross_id=-1,max_cross_id=-1;
@@ -73,48 +73,35 @@ public:
     std::stack<int> route_stack;
     bool find_path=false;
 };
-int A_star::cal_dis(int cross_from,int cross_to)
-{
-  int cr1[2]={0,0},cr2[2]={0,0};
-  for(int i=1;i<=coord_max;i++)
-    for(int j=1;j<=coord_max;j++)
-    {
-       if(coord[i][j]==cross_from)   {  cr1[0]=i; cr1[1]=j ; }
-        else if(coord[i][j]==cross_to)   {   cr2[0]=i; cr2[1]=j ; }
 
-        if((cr1[0]!=0)&&(cr2[0]!=0))  { return  (cr2[0]-cr1[0])*(cr2[0]-cr1[0])+(cr2[1]-cr1[1])*(cr2[1]-cr1[1]);  }
-    }
-    
-    return init_weight;
-}
-A_star::A_star(Road* road_array,int road_num_,Cross* cross_array,
-	       int mincross_id,int maxcross_id)
+A_star::A_star()
 {
-  min_cross_id=mincross_id;
-  max_cross_id=maxcross_id;
-   
-   coord_max=sqrt(maxcross_id-mincross_id+1);
-   int id=0;
-  for(int i=1;i<=coord_max;i++)
-    for(int j=1;j<=coord_max;j++)
-    {
-      id++;
-      coord[i][j]=id;
-    }
+
 }
 A_star::~A_star()
 {
 }
-void A_star::search(Car *car_,node* start,node* end,
+int A_star::cross_tosub(int cross_id_,std::vector<int>&cross_dict_)
+{
+    vector<int>::iterator it = find(cross_dict_.begin(), cross_dict_.end(),cross_id_);
+ 
+    if(it != cross_dict_.end())
+    { return &*it-&cross_dict_[0]; }
+    else 
+        cout<<cross_id_<<" can not find"<<endl;
+ 
+    return &*it-&cross_dict_[0];
+}
+void A_star::search(Car *car_,node* start,node* end,std::vector<int>&cross_dict_,
                     Cross* cross_array_,Road map_[][MAX_CROSS],int (*weight_)[MAX_CROSS]
 )
 {
-    if(start->cross_id<min_cross_id
-      ||start->cross_id>max_cross_id
-      ||end->cross_id<min_cross_id
-      ||end->cross_id>max_cross_id)
+    if(start->cross_id<cross_dict_[0]
+      ||start->cross_id>cross_dict_[cross_dict_.size()-1]
+      ||end->cross_id<cross_dict_[0]
+      ||end->cross_id>cross_dict_[cross_dict_.size()-1])
     {
-//         std::cout << "io.h ERROR : no this cross id " << std::endl;
+        std::cout << "io.h ERROR : no this cross id " << std::endl;
         return;//如果路口ID不在范围内直接返回
     }
     node* current;
@@ -134,7 +121,7 @@ void A_star::search(Car *car_,node* start,node* end,
             closelist.clear();
             break;
         }
-        nextstep(car_,current,cross_array_,map_,weight_
+        nextstep(car_,current,cross_array_,map_,weight_,cross_dict_
 	  );//用于遍历函数
         closelist.push_back(current);
         openlist.erase(openlist.begin());//一旦访问完就丢弃到close中
@@ -142,70 +129,88 @@ void A_star::search(Car *car_,node* start,node* end,
     }
 }
 //核心 怎么动态化网格权重
-void A_star::nextstep(Car *car_,node* current,Cross* cross_array_,Road map_[][MAX_CROSS],int (*weight_)[MAX_CROSS])
+void A_star::nextstep(Car *car_,node* current,Cross* cross_array_,
+		      Road map_[][MAX_CROSS],int (*weight_)[MAX_CROSS],std::vector<int>&cross_dict_)
 { 
   int way_cost;
+  int cur_cross_sub=this->cross_tosub(current->cross_id,cross_dict_);
+  int down_cross_sub=-1,up_cross_sub=-1,left_cross_sub=-1,right_cross_sub=-1;
+  if(cross_array_[cur_cross_sub].down_cross_id!=-1)
+      down_cross_sub=this->cross_tosub(cross_array_[cur_cross_sub].down_cross_id,cross_dict_);
+  if(cross_array_[cur_cross_sub].up_cross_id!=-1)
+      up_cross_sub=this->cross_tosub(cross_array_[cur_cross_sub].up_cross_id,cross_dict_);
+  if(cross_array_[cur_cross_sub].left_cross_id!=-1)
+      left_cross_sub=this->cross_tosub(cross_array_[cur_cross_sub].left_cross_id,cross_dict_);
+  if(cross_array_[cur_cross_sub].right_cross_id!=-1)
+      right_cross_sub=this->cross_tosub(cross_array_[cur_cross_sub].right_cross_id,cross_dict_);
+
   //下
-if(map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].id!=-1)  
+if((down_cross_sub!=-1)&&(map_[cur_cross_sub][down_cross_sub].id!=-1))
 {  
-  way_cost = speed_near_w * abs(car_->max_speed-map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].limit_speed) 
-                              * abs(car_->max_speed-map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].limit_speed) 
-             +  space_plus_speed  *map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].road_length *
-                                    map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].lane_num /
-                                    map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].limit_speed
-             - weight_[current->cross_id][cross_array_[current->cross_id].down_cross_id];
   
-  check(cross_array_[current->cross_id].down_cross_id,current,
-	  way_cost,cross_array_);
+  way_cost = speed_near_w * abs(car_->max_speed-map_[cur_cross_sub][down_cross_sub].limit_speed) 
+                              * abs(car_->max_speed-map_[cur_cross_sub][down_cross_sub].limit_speed) 
+             +  space_plus_speed  *map_[cur_cross_sub][down_cross_sub].road_length *
+                                    map_[cur_cross_sub][down_cross_sub].lane_num /
+                                    map_[cur_cross_sub][down_cross_sub].limit_speed
+             - weight_[cur_cross_sub][down_cross_sub];
+  
+  check(cross_array_[cur_cross_sub].down_cross_id,current,
+	  way_cost,cross_array_,cross_dict_);
 }
 //上
-if(map_[current->cross_id][cross_array_[current->cross_id].up_cross_id].id!=-1)  
+if((up_cross_sub!=-1)&&(map_[cur_cross_sub][up_cross_sub].id!=-1)) 
 {  
-    way_cost = init_weight+ speed_near_w * abs(car_->max_speed-map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].limit_speed)  
-                                            * abs(car_->max_speed-map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].limit_speed) 
-             +  space_plus_speed  *map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].road_length *
-                                    map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].lane_num /
-                                    map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].limit_speed;
-	    - weight_[current->cross_id][cross_array_[current->cross_id].down_cross_id];
-    check(cross_array_[current->cross_id].up_cross_id,current,
-	  way_cost,cross_array_);
+
+    way_cost = speed_near_w * abs(car_->max_speed-map_[cur_cross_sub][up_cross_sub].limit_speed) 
+                              * abs(car_->max_speed-map_[cur_cross_sub][up_cross_sub].limit_speed) 
+             +  space_plus_speed  *map_[cur_cross_sub][up_cross_sub].road_length *
+                                    map_[cur_cross_sub][up_cross_sub].lane_num /
+                                    map_[cur_cross_sub][up_cross_sub].limit_speed
+             - weight_[cur_cross_sub][up_cross_sub];
+  
+  check(cross_array_[cur_cross_sub].up_cross_id,current,
+	  way_cost,cross_array_,cross_dict_);
 }
  //右  
-if(map_[current->cross_id][cross_array_[current->cross_id].right_cross_id].id!=-1) 
+if((right_cross_sub!=-1)&&(map_[cur_cross_sub][right_cross_sub].id!=-1))
 {
-    way_cost =init_weight+ speed_near_w * abs(car_->max_speed-map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].limit_speed)  
-                                            * abs(car_->max_speed-map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].limit_speed) 
-             +  space_plus_speed  *map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].road_length *
-                                    map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].lane_num /
-                                    map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].limit_speed;
-	    - weight_[current->cross_id][cross_array_[current->cross_id].down_cross_id];
-    check(cross_array_[current->cross_id].right_cross_id,current,
-	 way_cost,cross_array_);
+   
+    way_cost = speed_near_w * abs(car_->max_speed-map_[cur_cross_sub][right_cross_sub].limit_speed) 
+                              * abs(car_->max_speed-map_[cur_cross_sub][right_cross_sub].limit_speed) 
+             +  space_plus_speed  *map_[cur_cross_sub][right_cross_sub].road_length *
+                                    map_[cur_cross_sub][right_cross_sub].lane_num /
+                                    map_[cur_cross_sub][right_cross_sub].limit_speed
+             - weight_[cur_cross_sub][right_cross_sub];
+  
+  check(cross_array_[cur_cross_sub].right_cross_id,current,
+	  way_cost,cross_array_,cross_dict_);
 }
 //左
-if(map_[current->cross_id][cross_array_[current->cross_id].left_cross_id].id!=-1)
+if((left_cross_sub!=-1)&&(map_[cur_cross_sub][left_cross_sub].id!=-1))
 {
-    way_cost =init_weight+ speed_near_w * abs(car_->max_speed-map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].limit_speed)  
-                                           * abs(car_->max_speed-map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].limit_speed) 
-             +  space_plus_speed  *map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].road_length *
-                                    map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].lane_num /
-                                    map_[current->cross_id][cross_array_[current->cross_id].down_cross_id].limit_speed;
-	     - weight_[current->cross_id][cross_array_[current->cross_id].down_cross_id];
-    check(cross_array_[current->cross_id].left_cross_id,current,
-	  way_cost,cross_array_);
+    way_cost = speed_near_w * abs(car_->max_speed-map_[cur_cross_sub][left_cross_sub].limit_speed) 
+                              * abs(car_->max_speed-map_[cur_cross_sub][left_cross_sub].limit_speed) 
+             +  space_plus_speed  *map_[cur_cross_sub][left_cross_sub].road_length *
+                                    map_[cur_cross_sub][left_cross_sub].lane_num /
+                                    map_[cur_cross_sub][left_cross_sub].limit_speed
+             - weight_[cur_cross_sub][left_cross_sub];
+  
+  check(cross_array_[cur_cross_sub].left_cross_id,current,
+	  way_cost,cross_array_,cross_dict_);
 }
     
 }
 // g 为到该点的代价
-void A_star::check(int cross_id_neighbor,node* father,int g,Cross* cross_array_)
+void A_star::check(int cross_id_neighbor,node* father,int g,Cross* cross_array_,std::vector<int>&cross_dict_)
 //用来访问节点
 {
   //如果路口ID不在范围内直接返回
     int j=0,in_list=0;
-    if(cross_id_neighbor<min_cross_id
-      ||cross_id_neighbor>max_cross_id
-      ||father->cross_id<min_cross_id
-      ||father->cross_id>max_cross_id) 
+    if(cross_id_neighbor<cross_dict_[0]
+      ||cross_id_neighbor>cross_dict_[cross_dict_.size()-1]
+      ||father->cross_id<cross_dict_[0]
+      ||father->cross_id>cross_dict_[cross_dict_.size()-1]) 
                 return ;
   
     for(size_t i=0;i<closelist.size();i++)
@@ -240,8 +245,10 @@ void A_star::check(int cross_id_neighbor,node* father,int g,Cross* cross_array_)
     else//如果两个表都不在就计算一下f值，存到open表中
     {
         node* p=new node(cross_id_neighbor,father);
-// 	p->h=abs(cross_array_[p->cross_id].right_cross_id- cross_array_[end->cross_id].right_cross_id)*weightW; 
-	p->h= Astar_h_w*cal_dis(cross_array_[p->cross_id].id,cross_array_[end->cross_id].id);
+	int p_sub=cross_tosub(p->cross_id,cross_dict_);
+	int end_sub=cross_tosub(end->cross_id,cross_dict_);
+	p->h=abs(cross_array_[p_sub].right_cross_id- cross_array_[end_sub].right_cross_id)*weightW; 
+
         p->g=p->father->g+g;
 	
         p->f=p->g+p->h;

@@ -8,11 +8,11 @@ ProjectRootRelative=./
 
 [CMake][CMake Build Directory 0]
 Build Directory Path=file:///home/robotyu/Documents/CodeCraft2019/build
-Build Type=Debug
-CMake Binary=file:///usr/bin/cmake
+Build Type=
+CMake Binary=file:///opt/cmake-3.11/bin/cmake
 Environment Profile=
 Extra Arguments=
-Install Directory=
+Install Directory=file:///usr/local
 
 [Defines And Includes][Compiler]
 Name=GCC
