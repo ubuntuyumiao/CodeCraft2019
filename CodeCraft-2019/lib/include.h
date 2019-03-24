@@ -9,8 +9,6 @@
 #include <vector>
 #include<algorithm>
 
-#define MAX_CROSS   64
-
 #define  CAR_NUM 10240
 #define  ROAD_NUM 105
 #define  CROSS_NUM 64
@@ -34,10 +32,14 @@
  * 
  */
 
+
+#define max_car_road  500
+#define road_percent 0.8
+#define DECAY 0.02
+#define min_road_per 0.45
+
+
 #define init_weight 10
-#define max_car_road  50
-#define T1_rate 2
-// #define DIVIDE  4
 #define Astar_h_w    8
 #define speed_near_w 0
 #define space_plus_speed 0
@@ -75,7 +77,7 @@ typedef struct Car
     int goal;
     int max_speed;
     int set_time;
-    int cross_path[MAX_CROSS];
+    int cross_path[CROSS_NUM];
     int now_road;
     int next_road;
     bool wait_anthor;
@@ -93,7 +95,7 @@ typedef struct Road
     int end;
     int flag_twoway;
     bool completed;
-    
+    int car_onroad;
     //定义： load[0]存放 start-->end方向道路 load[1]存放 end->start方向道路
     int load[2][MAX_LANE][MAX_LANE_LENGHT];
 }Road;
@@ -158,7 +160,7 @@ void quickSort(Car* car_list,int car_begin,int car_end);
 int compare_prior_sch(Car* car_array_,std::vector<int>&car_dict_, Cross* cross_,Road* road_array,Road* road_,Cross *cross_array);
 
 //通过当前所在道路输出下一条道路 以及转向关系
-how_tonext next_road(Car* car_,Road* cur_road,Cross* cross_array_,std::vector<int>&cross_dict_,Cross* cross_,Road map_[][MAX_CROSS]);
+how_tonext next_road(Car* car_,Road* cur_road,Cross* cross_array_,std::vector<int>&cross_dict_,Cross* cross_,Road map_[][CROSS_NUM]);
 
 // 将所有终止态的车改为等待态
 void chang_completed_towait(Car *car_array_,std::vector<int>&wait_list_,std::vector<int>&car_dist_);
@@ -187,24 +189,24 @@ void update_to_cross_drive(Car* car_,Road* road_,Cross* cross_);
 void init_waitanthor(Car* car_array,std::vector<int>&car_dict_,Road* road_array_,
 		     std::vector<int>&road_dict_);
 
-bool write_output(std::string path,Car *car_array_,int car_num_,Road map_[][MAX_CROSS],std::vector<int>&cross_dict_);
+bool write_output(std::string path,Car *car_array_,int car_num_,Road map_[][CROSS_NUM],std::vector<int>&cross_dict_);
 
 int campare_settime(const void * a, const void * b);
 
 //Astart寻路
 bool Astar_search(Car *car_,Road* road_array_,std::vector<int>&road_dict_,
 		  Cross* cross_array_,std::vector<int>&cross_dict_,
-		  int (*weight_)[MAX_CROSS],Road map_[][MAX_CROSS]);
+		  int (*weight_)[CROSS_NUM],Road map_[][CROSS_NUM]);
 
 //发车排序
 void quickSortOfCpp(Car* car_list,int car_num_);
 
 void map_matrix(Cross* cross_array_,std::vector<int>&cross_dict_,std::vector<int>&road_dict_
-	        ,int (*weight_)[MAX_CROSS],Road* road_array_,Road map_[][MAX_CROSS]);
+	        ,int (*weight_)[CROSS_NUM],Road* road_array_,Road map_[][CROSS_NUM]);
 
 bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedarray_,int* min_cross_id_,int* max_cross_id_,
 	       std::string road_path, Road *road_array_,Road *road_sortedarray_,int* min_road_id_,int* max_road_id,
-	       std::string car_path,Car *car_array_,Car *car_sortedarray_,int* min_car_id_,int* max_car_id_,Road map_[][MAX_CROSS]
+	       std::string car_path,Car *car_array_,Car *car_sortedarray_,int* min_car_id_,int* max_car_id_,Road map_[][CROSS_NUM]
 	      ,std::vector<int>&car_dict_,std::vector<int>&road_dict_,std::vector<int>&cross_dict_);
 
 void debug_dir_leavecross(Road *road_array_,int min_cross_id,int max_cross_id,Cross *cross_array_);
@@ -214,11 +216,12 @@ void debug_dir_tocross(std::vector<int>&road_dict_,Road *road_array_,std::vector
 //路口调度 获得对应道路等待态优先级最高的车（不含已调度过 wait_another的车）
 sch_pos sch_most_prior(Car *car_array_,std::vector<int>&car_dict_,Road* road_,
 		       std::vector<int>&road_dict_,Cross* cross_,std::vector<int>&cross_dict_,int offset,
-		       int cur_road[],Cross *cross_array_,Road* road_array_,Road map_[][MAX_CROSS],
-		       std::vector<int> &wait_list_,std::vector<int> &block_list_,int T_,int *reached_car_);
+		       int cur_road[],Cross *cross_array_,Road* road_array_,Road map_[][CROSS_NUM],
+		       std::vector<int> &wait_list_,std::vector<int> &block_list_,int T_,
+		       int *reached_car_,int *wait_num_);
 
 void ready_garage(std::vector<int>&car_dict_,std::vector<int>&road_dict_,std::vector<int>&cross_dict_,
-		   Magic_garage* garage_,Road* road_array_,Car *car_array_,Car *car_sortedarray_,Road map_[][MAX_CROSS]);
+		   Magic_garage* garage_,Road* road_array_,Car *car_array_,Car *car_sortedarray_,Road map_[][CROSS_NUM]);
 
 //检查是否有车未到终点
 bool All_car_isreached(Car* car_array,int car_num_);
@@ -227,7 +230,7 @@ void sch_allcross_garage(Car* car_array,
 			 Cross* cross_array_,std::vector<int>&cross_dict_,
 			 Road* road_array,std::vector<int>&road_dict_,std::vector<int>&car_dict_,
 			 Magic_garage* garage,
-			 Road map_[][MAX_CROSS],
+			 Road map_[][CROSS_NUM],
 			 int T,int *wait_num_,int *reached_car_,int car_num_
 			);
 
@@ -235,11 +238,11 @@ bool sch_allcross_drive(Car* car_array,std::vector<int>&car_dict_,
 			 Cross* cross_array,std::vector<int>&cross_dict_,
 			 Road* road_array,std::vector<int>&road_dict_,
 			 Magic_garage* garage,
-			 Road map_[][MAX_CROSS],
+			 Road map_[][CROSS_NUM],
 			 int T,
 			 std::vector<int> &wait_list_,
-			 std::vector<int> &bloack_list_,int *reached_car_
+			 std::vector<int> &bloack_list_,int *reached_car_,int *wait_num_
 			);
-
+bool print_map(int coord_max,Car* car_);
 #endif
 

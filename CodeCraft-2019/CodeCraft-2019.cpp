@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unistd.h>
 #include "include.h"
+
 Car  car[CAR_NUM],car_sorted[CAR_NUM];
 Road road[ROAD_NUM],road_sorted[ROAD_NUM];
 Magic_garage garage[ROAD_NUM];
@@ -11,7 +12,7 @@ Road map[CROSS_NUM][CROSS_NUM];
 
 
 // 路口到路口的权重网络
-int weight_net[MAX_CROSS][MAX_CROSS];
+int weight_net[CROSS_NUM][CROSS_NUM];
 
 int main(int argc,char** argv)
 {
@@ -54,14 +55,17 @@ int main(int argc,char** argv)
 /*********************************A-Star算法  + 神奇车库*********************************/
       int has_find=0; 
       quickSortOfCpp(car_sorted,car_num);
-      
+
      for(int i=0;i<car_num;i++)
      {
        if( Astar_search(&car[i], road,road_dict,
 	                cross,cross_dict,weight_net,map))
             has_find++;
+//        print_map(8,&car[i]);
+//        sleep(1);
      }
      std::cout<<"find "<< has_find<< " solutions of  "<<car_num<<" car"<<std::endl;
+  
      //安排神奇车库
      ready_garage(car_dict,road_dict,cross_dict, garage,road,car,car_sorted,map);
 /*********************************A-Star算法  + 神奇车库*********************************/
@@ -92,7 +96,7 @@ int main(int argc,char** argv)
 		block_flag=sch_allcross_drive(car,car_dict,
 					      cross, cross_dict,
 				              road,road_dict,
-				              garage,map,T,wait_list,block_list,&reached_car);
+				              garage,map,T,wait_list,block_list,&reached_car,&wait_num);
 		if(block_flag) break;
 	      }
 	      if(block_flag){ std::cout<<"SCH out block!!!"<<std::endl;  break;} 

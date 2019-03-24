@@ -2,6 +2,10 @@
 #include <vector>
 #include "include.h"
 using namespace std;
+#define RED     "\033[31m"      /* Red */
+#define GREEN   "\033[32m"      /* Green */
+#define YELLOW  "\033[33m"      /* Yellow */
+#define WHITE   "\033[37m"      /* White */
 int cross_tosub(int cross_id_,std::vector<int>&cross_dict_)
 {
     vector<int>::iterator it = find(cross_dict_.begin(), cross_dict_.end(),cross_id_);
@@ -50,9 +54,12 @@ int  campare_carid(const void * a, const void * b)
 }
 int  campare_speed(const void * a, const void * b)
 {
+ return (*(Car *)a).max_speed < (*(Car *)b).max_speed ? 1 : -1; 
+}
+int  campare_route(const void * a, const void * b)
+{
  return (*(Car *)a).route > (*(Car *)b).route ? 1 : -1; 
 }
-
 bool cmp(int a,int b){
     return a > b;
 }
