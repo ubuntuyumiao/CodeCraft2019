@@ -6,39 +6,7 @@ using namespace std;
 #define GREEN   "\033[32m"      /* Green */
 #define YELLOW  "\033[33m"      /* Yellow */
 #define WHITE   "\033[37m"      /* White */
-int cross_tosub(int cross_id_,std::vector<int>&cross_dict_)
-{
-    vector<int>::iterator it = find(cross_dict_.begin(), cross_dict_.end(),cross_id_);
- 
-    if(it != cross_dict_.end())
-        return &*it-&cross_dict_[0];
-    else
-        cout<<"can not find cross"<<" "<<cross_id_<<endl;
- 
-    return &*it-&cross_dict_[0];
-}
-int car_tosub(int car_id_,std::vector<int>&car_dict_)
-{
-    vector<int>::iterator it = find(car_dict_.begin(), car_dict_.end(),car_id_);
- 
-    if(it != car_dict_.end())
-        return &*it-&car_dict_[0];
-    else
-        cout<<"can not find car"<<endl;
- 
-    return &*it-&car_dict_[0];
-}
-int road_tosub(int road_id_,std::vector<int>&road_dict_)
-{
-    vector<int>::iterator it = find(road_dict_.begin(), road_dict_.end(),road_id_);
- 
-    if(it != road_dict_.end())
-        return &*it-&road_dict_[0];
-    else
-        cout<<"can not find road"<<endl;
- 
-    return &*it-&road_dict_[0]; 
-}
+
 void out(std::string s)
 {
   std::cout<< "Debug: "<< s <<std::endl;

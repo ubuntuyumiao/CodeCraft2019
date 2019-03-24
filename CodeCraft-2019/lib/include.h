@@ -32,11 +32,16 @@
  * 
  */
 
+/* -- 1088
+#define max_car_road  1000
+#define road_percent 0.92
+#define DECAY 0.0012
+#define min_road_per 0.78*/
 
-#define max_car_road  500
-#define road_percent 0.8
-#define DECAY 0.02
-#define min_road_per 0.45
+#define max_car_road  1000
+#define road_percent 0.95
+#define DECAY 0.0001
+#define min_road_per 0.89
 
 
 #define init_weight 10
@@ -45,6 +50,8 @@
 #define space_plus_speed 0
 #define Entropy  0
 #define dacay   0
+
+#define MAX 200
 
 
 typedef enum drive_state
@@ -60,6 +67,17 @@ typedef enum sche_direct
   turn_left,
   turn_right
 }sche_direct;
+ struct MGraph
+{
+    int edges[MAX][MAX];//邻接矩阵，记录的是两点之间的距离，也就是权值 
+    int cross_num;
+    int road_num;  //顶点数和边数
+    
+    int set[MAX];
+    int dist[MAX];
+    int path[MAX];    
+    int goal_path[MAX];
+};
 typedef struct how_tonext
 {
   int next_road;
@@ -150,6 +168,12 @@ typedef struct pior_cross
 }pior_cross;
 
 
+int cross_tosub(int cross_id_,std::vector<int>&cross_dict_);
+int car_tosub(int car_id_,std::vector<int>&car_dict_);
+int road_tosub(int road_id_,std::vector<int>&road_dict_);
+void init_MGraph(struct MGraph &dijk_graph) ;
+void dijk_insert(struct MGraph &dijk_graph,int u, int v, int w);
+int dijk_search(struct MGraph &dijk_graph, int from,int to,Car* car_,std::vector<int>&cross_dict_,Road map_[][CROSS_NUM]);
 int not_equal(int a,int b);
 int min(int a, int b);
 void out(std::string s);
@@ -202,7 +226,7 @@ bool Astar_search(Car *car_,Road* road_array_,std::vector<int>&road_dict_,
 void quickSortOfCpp(Car* car_list,int car_num_);
 
 void map_matrix(Cross* cross_array_,std::vector<int>&cross_dict_,std::vector<int>&road_dict_
-	        ,int (*weight_)[CROSS_NUM],Road* road_array_,Road map_[][CROSS_NUM]);
+	        ,int (*weight_)[CROSS_NUM],Road* road_array_,Road map_[][CROSS_NUM],struct MGraph &dijk_graph);
 
 bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedarray_,int* min_cross_id_,int* max_cross_id_,
 	       std::string road_path, Road *road_array_,Road *road_sortedarray_,int* min_road_id_,int* max_road_id,

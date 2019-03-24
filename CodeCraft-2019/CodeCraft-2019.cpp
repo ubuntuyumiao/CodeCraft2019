@@ -1,7 +1,6 @@
 #include <iostream>
 #include <unistd.h>
 #include "include.h"
-
 Car  car[CAR_NUM],car_sorted[CAR_NUM];
 Road road[ROAD_NUM],road_sorted[ROAD_NUM];
 Magic_garage garage[ROAD_NUM];
@@ -51,19 +50,27 @@ int main(int argc,char** argv)
 
 	  <<" Cross: "<< cross_num<<std::endl;  
 /*********************************将所有路口与道路信息以邻接矩阵表示*********************************/
-      map_matrix(cross,cross_dict,road_dict,weight_net,road,map);   
+      MGraph dijk_g;
+      dijk_g.cross_num=CROSS_NUM;
+      dijk_g.road_num=ROAD_NUM;
+      init_MGraph(dijk_g);
+    
+      map_matrix(cross,cross_dict,road_dict,weight_net,road,map,dijk_g);   
 /*********************************A-Star算法  + 神奇车库*********************************/
       int has_find=0; 
       quickSortOfCpp(car_sorted,car_num);
-
+      print_time("Begin");
      for(int i=0;i<car_num;i++)
      {
-       if( Astar_search(&car[i], road,road_dict,
-	                cross,cross_dict,weight_net,map))
-            has_find++;
-//        print_map(8,&car[i]);
-//        sleep(1);
+       int start_to_sub=cross_tosub(car[i].set,cross_dict);
+       int end_to_sub=cross_tosub(car[i].goal,cross_dict);
+//     if( Astar_search(&car[i], road,road_dict,cross,cross_dict,weight_net,map))      
+       int best_next=dijk_search(dijk_g,start_to_sub,end_to_sub,&car[i],cross_dict,map);
+       dijk_insert(dijk_g,start_to_sub,best_next,dijk_g.edges[start_to_sub][best_next]
+                                                    +dijk_g.edges[start_to_sub][best_next]*
+                                                     2.5/map[start_to_sub][best_next].road_length);
      }
+
      std::cout<<"find "<< has_find<< " solutions of  "<<car_num<<" car"<<std::endl;
   
      //安排神奇车库
@@ -92,7 +99,7 @@ int main(int argc,char** argv)
 	    //调度全地图等待车车 直到等待表为空
 	      while(!wait_list.empty())
 	      {
-		wait_num=wait_list.size();
+// 		wait_num=wait_list.size();
 		block_flag=sch_allcross_drive(car,car_dict,
 					      cross, cross_dict,
 				              road,road_dict,
