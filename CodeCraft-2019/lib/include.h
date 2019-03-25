@@ -21,27 +21,19 @@
 
 
 
-/* 以下参数含义为：
- * 
- * 偏置项 固定值
- * 道路存在最大的行驶车辆
- * A星算法的 该点到终点距离权值
- * 每一条路 与该车的速度相近权值
- * 每一条路的空间/限速
- * 每辆车给道路留下的信息熵浓度  以及衰减值
- * 
- */
+#define first_average_w 1.25
+#define T1_roadlenght_w 0.15
+#define T1_roadcar_w 0.3
+//  -- 1088
+#define max_car_road  1600
+#define road_percent 0.90
+#define DECAY 0.00012
+#define min_road_per 0.58
 
-/* -- 1088
-#define max_car_road  1000
-#define road_percent 0.92
-#define DECAY 0.0012
-#define min_road_per 0.78*/
-
-#define max_car_road  1000
-#define road_percent 0.95
-#define DECAY 0.0001
-#define min_road_per 0.89
+// #define max_car_road  1000
+// #define road_percent 0.98
+// #define DECAY 0.00009
+// #define min_road_per 0.85
 
 
 #define init_weight 10
@@ -114,6 +106,8 @@ typedef struct Road
     int flag_twoway;
     bool completed;
     int car_onroad;
+    int car_willonroad;
+    float best_space_per;
     //定义： load[0]存放 start-->end方向道路 load[1]存放 end->start方向道路
     int load[2][MAX_LANE][MAX_LANE_LENGHT];
 }Road;
@@ -173,7 +167,14 @@ int car_tosub(int car_id_,std::vector<int>&car_dict_);
 int road_tosub(int road_id_,std::vector<int>&road_dict_);
 void init_MGraph(struct MGraph &dijk_graph) ;
 void dijk_insert(struct MGraph &dijk_graph,int u, int v, int w);
-int dijk_search(struct MGraph &dijk_graph, int from,int to,Car* car_,std::vector<int>&cross_dict_,Road map_[][CROSS_NUM]);
+int dijk_search(struct MGraph &dijk_graph, int from,int to,Car* car_,
+		std::vector<int>&road_dict_ ,std::vector<int>&cross_dict_,Road* road_array_,
+		Road map_[][CROSS_NUM]);
+
+int dijk_research(struct MGraph &g, int from,int to,int now_road_sub_, 
+		  Car* car_,Cross* cross_array_,Road* road_array_,
+		  std::vector<int>&cross_dict_,Road map_[][CROSS_NUM]);
+
 int not_equal(int a,int b);
 int min(int a, int b);
 void out(std::string s);
@@ -192,7 +193,7 @@ void chang_completed_towait(Car *car_array_,std::vector<int>&wait_list_,std::vec
 // 如果该道路在位置上最靠前 且为终止态 ，且下一个时刻即将过路口，将其信息发送到其下一个路口公告字段
 void update_to_cross(Car* car_,Road* road_,Cross* cross_,Cross *cross_array_);
 
-void clear_cross_proir(Car* car_,Road* road_,Cross* cross_);
+bool clear_cross_proir(Car* car_,Road* road_,Cross* cross_);
 
 //检查此车是否在等待列表中出现
 bool check_in_list(int car_id_,std::vector<int> &wait_list_); 
@@ -245,6 +246,7 @@ sch_pos sch_most_prior(Car *car_array_,std::vector<int>&car_dict_,Road* road_,
 		       int *reached_car_,int *wait_num_);
 
 void ready_garage(std::vector<int>&car_dict_,std::vector<int>&road_dict_,std::vector<int>&cross_dict_,
+		  Cross* cross_array,
 		   Magic_garage* garage_,Road* road_array_,Car *car_array_,Car *car_sortedarray_,Road map_[][CROSS_NUM]);
 
 //检查是否有车未到终点
@@ -255,7 +257,8 @@ void sch_allcross_garage(Car* car_array,
 			 Road* road_array,std::vector<int>&road_dict_,std::vector<int>&car_dict_,
 			 Magic_garage* garage,
 			 Road map_[][CROSS_NUM],
-			 int T,int *wait_num_,int *reached_car_,int car_num_
+			 int T,int *wait_num_,int *reached_car_,int car_num_,
+			 struct MGraph &dijk_graph
 			);
 
 bool sch_allcross_drive(Car* car_array,std::vector<int>&car_dict_,
