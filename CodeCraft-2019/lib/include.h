@@ -12,30 +12,31 @@
 #define  CAR_NUM 10240
 #define  ROAD_NUM 105
 #define  CROSS_NUM 64
-
-
 #define INF 0x3f3f3f3f
-
 #define MAX_LANE 10
 #define MAX_LANE_LENGHT 30
 
 
-
-#define first_average_w 1.25
-#define T1_roadlenght_w 0.15
-#define T1_roadcar_w 0.3
-//  -- 1088
-#define max_car_road  1600
+//--1346
+// #define first_average_w 1.75
+// #define T1_roadlenght_w 0.10
+// #define T1_roadcar_w 0.1
+// #define max_car_road  1200
+// #define road_percent 0.90
+// #define DECAY 0.00012
+// #define min_road_per 0.55
+#define T_SOFT  500
+#define T_SOFT_RATE  0.00002
+#define first_average_w 3.95
+#define T1_roadlenght_w 0.001
+#define T1_roadcar_w 0.4
+#define max_car_road  1200
 #define road_percent 0.90
-#define DECAY 0.00012
-#define min_road_per 0.58
+#define DECAY 0.00002
+#define min_road_per 0.85
+#define force_weight  0.1
 
-// #define max_car_road  1000
-// #define road_percent 0.98
-// #define DECAY 0.00009
-// #define min_road_per 0.85
-
-
+//以下 参数 无效
 #define init_weight 10
 #define Astar_h_w    8
 #define speed_near_w 0
@@ -172,8 +173,8 @@ int dijk_search(struct MGraph &dijk_graph, int from,int to,Car* car_,
 		Road map_[][CROSS_NUM]);
 
 int dijk_research(struct MGraph &g, int from,int to,int now_road_sub_, 
-		  Car* car_,Cross* cross_array_,Road* road_array_,
-		  std::vector<int>&cross_dict_,Road map_[][CROSS_NUM]);
+		  Car* car_,Cross* cross_array_,Road* road_array_,std::vector<int>&road_dict_,
+		  std::vector<int>&cross_dict_,Road map_[][CROSS_NUM],int ori_sub);
 
 int not_equal(int a,int b);
 int min(int a, int b);
@@ -185,7 +186,8 @@ void quickSort(Car* car_list,int car_begin,int car_end);
 int compare_prior_sch(Car* car_array_,std::vector<int>&car_dict_, Cross* cross_,Road* road_array,Road* road_,Cross *cross_array);
 
 //通过当前所在道路输出下一条道路 以及转向关系
-how_tonext next_road(Car* car_,Road* cur_road,Cross* cross_array_,std::vector<int>&cross_dict_,Cross* cross_,Road map_[][CROSS_NUM]);
+how_tonext next_road(Car* car_,Road* cur_road,Cross* cross_array_,
+		     std::vector<int>&cross_dict_,Cross* cross_,Cross* next_cross_,Road map_[][CROSS_NUM]);
 
 // 将所有终止态的车改为等待态
 void chang_completed_towait(Car *car_array_,std::vector<int>&wait_list_,std::vector<int>&car_dist_);

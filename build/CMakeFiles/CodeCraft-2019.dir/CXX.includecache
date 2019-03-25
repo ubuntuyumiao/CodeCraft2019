@@ -11,6 +11,8 @@ iostream
 -
 unistd.h
 -
+memory
+-
 include.h
 /home/robotyu/Documents/CodeCraft2019/CodeCraft-2019/include.h
 

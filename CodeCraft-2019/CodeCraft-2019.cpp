@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unistd.h>
+#include <memory>
 #include "include.h"
 Car  car[CAR_NUM],car_sorted[CAR_NUM];
 Road road[ROAD_NUM],road_sorted[ROAD_NUM];
@@ -9,7 +10,8 @@ Cross cross[CROSS_NUM],cross_sorted[CROSS_NUM];
 Road map[CROSS_NUM][CROSS_NUM];
 //神奇车库数组 存放每条道路处的神奇车库
 
-
+bool block_flag=true;
+int T=0; 
 // 路口到路口的权重网络
 int weight_net[CROSS_NUM][CROSS_NUM];
 bool research_best_way(struct MGraph &dijk_graph,Car* car_array_,std::vector<int>&car_dict_,
@@ -18,6 +20,11 @@ bool research_best_way(struct MGraph &dijk_graph,Car* car_array_,std::vector<int
 		      ,int T_);
 int main(int argc,char** argv)
 {
+
+      memset(car,0,sizeof(Car));memset(car_sorted,0,sizeof(Car));memset(cross,0,sizeof(Cross));
+      memset(road,0,sizeof(Road));memset(road_sorted,0,sizeof(road_sorted));memset(cross_sorted,0,sizeof(Cross));
+      memset(garage,0,sizeof(Magic_garage));memset(map,0,sizeof(Road));memset(cross_sorted,0,sizeof(Cross));
+      memset(weight_net,0,sizeof(weight_net));
       int min_car_id=0,max_car_id=0;
       int min_road_id=0,max_road_id=0;
       int min_cross_id=0,max_cross_id=0;
@@ -44,6 +51,7 @@ int main(int argc,char** argv)
                     carPath,car,car_sorted,&min_car_id,&max_car_id,map,
 		    car_dict,road_dict,cross_dict
  		  ))    return 0;
+
       road_num=road_dict.size(),
       cross_num=cross_dict.size(),
       car_num=car_dict.size();
@@ -53,6 +61,8 @@ int main(int argc,char** argv)
 
 	  <<" Cross: "<< cross_num<<std::endl;  
 /*********************************将所有路口与道路信息以邻接矩阵表示*********************************/
+
+      block_flag=false;
       MGraph dijk_g;
       dijk_g.cross_num=CROSS_NUM;
       dijk_g.road_num=ROAD_NUM;
@@ -66,8 +76,8 @@ int main(int argc,char** argv)
      for(int i=0;i<car_num;i++)
      {
        int start_to_sub=cross_tosub(car[i].set,cross_dict);
-       int end_to_sub=cross_tosub(car[i].goal,cross_dict);
-//     if( Astar_search(&car[i], road,road_dict,cross,cross_dict,weight_net,map))      
+       int end_to_sub=cross_tosub(car[i].goal,cross_dict);   
+       
        int best_next=dijk_search(dijk_g,start_to_sub,end_to_sub,&car[i],
 				 road_dict,cross_dict,road,map);
        int rod_sub= road_tosub(map[start_to_sub][best_next].id,road_dict);
@@ -86,6 +96,7 @@ int main(int argc,char** argv)
 	 int new_w =dijk_g.edges[cr1_sub][cr2_sub] - T1_roadlenght_w* (road[rod_sub].road_length
 					      /road[rod_sub].lane_num)+
                                  T1_roadcar_w* road[rosub].car_willonroad;
+	  if(new_w<0) {std::cout<<"warning ";new_w=0;}			 
          dijk_insert(dijk_g,cr1_sub,cr2_sub,new_w );
 	}
 	has_find++;
@@ -100,18 +111,21 @@ int main(int argc,char** argv)
 
     
 /******************************车辆调度规则执行******************************/
-	  //记录时刻   
-	  int T=0;  
+	  //记录时刻 
+	  T=0;
 	  //等待表;
 	  std::vector<int> wait_list; 
 	  //检锁表
           std::vector<int> block_list; 
-	  bool block_flag=false;
 	  int wait_num=0; 
 	  int reached_car=0;
 	  srand(time(NULL));
-	  int wait_car;
+	  int wait_car=0;
+	  int wait_sametime=0;
 	  //检查是否全部到终点
+	  std::cout<<"---------------------------------------------------------"<<std::endl;
+	  std::cout<<"---------------------------------------------------------"<<std::endl;
+	  sleep(1);
 	  while(!All_car_isreached(car,car_num))
 	  {
 	    //开始走表 
@@ -122,10 +136,21 @@ int main(int argc,char** argv)
 	      while(!wait_list.empty())
 	      {
 // 		wait_num=wait_list.size();
+	      if(wait_car==wait_list.size())
+	       {
+		 wait_sametime++;  
+		 if(wait_sametime>CROSS_NUM*10) 
+		 {out("BLOCKED"); 
+		   debug_dir_tocross(road_dict, road,cross_dict,cross); 
+	           std::cout << map[44][43].best_space_per <<"  "<<map[44][43].car_onroad
+			    <<"  "<<map[44][43].car_willonroad; 
+		   block_flag=true;break;}
+	        }else  wait_sametime=0; 
 		block_flag=sch_allcross_drive(car,car_dict,
 					      cross, cross_dict,
 				              road,road_dict,
 				              garage,map,T,wait_list,block_list,&reached_car,&wait_num);
+		wait_car=wait_list.size();
 		if(block_flag) break;
 	      }
 	      
@@ -133,19 +158,20 @@ int main(int argc,char** argv)
 	      //正常跳出while 表明 无车等待 尝试调度车库
               sch_allcross_garage(car,cross,cross_dict,road,road_dict,car_dict,
 				  garage,map,T,&wait_num,&reached_car,car_num,dijk_g);
+
 	      if(T>1)
 	      research_best_way(dijk_g,car,car_dict,road_dict,road,cross,cross_dict,map,T);
-	      if(T>=1)
-		  {
-		  std::cout<<"On road : "<<(wait_num-reached_car)<<" || " 
-		  <<T<<" || "<<(wait_num)<<"      |"<<(reached_car) 
-		  <<std::endl;	 
-		  }
+// 	      if(T>=1)
+// 		  {
+// 		  std::cout<<"On road : "<<(wait_num-reached_car)<<" || " 
+// 		  <<T<<" || "<<(wait_num)<<"      |"<<(reached_car) 
+// 		  <<std::endl;	 
+// 		  }
 	      
-	      std::cout<< std::endl<< std::endl;
-// 	      sleep(1);
+// 	      std::cout<< std::endl<< std::endl;
+// 	     if(T>1086)  { debug_dir_tocross(road_dict, road,cross_dict,cross); sleep(5);}
 	  } 
-	  
+  
 /******************************车辆调度规则执行******************************/
 	//调试发车时 驶离开路口道路信息
 // 	debug_dir_leavecross(road,min_cross_id,max_cross_id,cross);
@@ -155,6 +181,7 @@ int main(int argc,char** argv)
       std::cout<<"Time Schdule: "<<" | "<<T<<" | "<<std::endl; 
       if(!write_output(answerPath,car,car_num,map,cross_dict)) return 0;
       print_time("End");
+      
       return 0;
 }
 bool research_best_way(struct MGraph &dijk_graph,Car* car_array_,std::vector<int>&car_dict_,
@@ -165,7 +192,7 @@ bool research_best_way(struct MGraph &dijk_graph,Car* car_array_,std::vector<int
   {
     if((car_array_[car_sub].state==still_stored)||(car_array_[car_sub].state==reached)) continue;
       else if(car_array_[car_sub].next_road==car_array_[car_sub].now_road)  continue;
-      
+    
    //reschedule the route:
     //reschedule the route:
     if(((car_array_[car_sub].now_road>road_dict_[0])&&car_array_[car_sub].now_road<road_dict_[road_dict_.size()-1])
@@ -179,55 +206,68 @@ bool research_best_way(struct MGraph &dijk_graph,Car* car_array_,std::vector<int
 	else if(road_array_[now_roadsub].start==road_array_[next_roadsub].end) now_cross=road_array_[now_roadsub].start;
 	else if(road_array_[now_roadsub].start==road_array_[next_roadsub].start) now_cross=road_array_[now_roadsub].start;
 	else  { std::cout<<std::endl; continue;}
-	int pre_next_cross=now_cross;
+	int pre_cross=now_cross;
+	int next_cross;
 /*	std::cout << "CAR:  "<< car_array_[car_sub].id<<" " <<now_cross
 		  << "  NOW ON : "<<   car_array_[car_sub].now_road 
 		  << " Next: "<<   car_array_[car_sub].next_road <<std::endl ;*/
-	for(int k=0;k<CROSS_NUM;k++)
+         int ori_sub=0;
+	for(int k=car_array_[car_sub].route-1;k>=0;k--)
 	{
-	  if(car_array_[car_sub].cross_path[k]==0){ std::cout<<"error"; break;}
+	  if(car_array_[car_sub].cross_path[k]==0){ 
+	    std::cout<<"error";
+	    break;
+	  }
+	  
 	 if(car_array_[car_sub].cross_path[k]==now_cross) 
-	 { pre_next_cross=car_array_[car_sub].cross_path[k-1]; break;}
-	}
-	int pre_next_cross_sub = cross_tosub(pre_next_cross,cross_dict_);
+	  { 
+	   ori_sub=k;
+	   next_cross=car_array_[car_sub].cross_path[k+1];
+	   pre_cross=car_array_[car_sub].cross_path[k-1];
+	   break;
+	  }
+        }
+	  
+	if(next_cross==car_array_[car_sub].goal) continue;
+	int pre_cross_sub = cross_tosub(pre_cross,cross_dict_);
 	int temp_w_save;
 
 	int now_cross_sub = cross_tosub(now_cross,cross_dict_);  
 	int goal_sub = 	cross_tosub(car_array_[car_sub].goal,cross_dict_);
-	temp_w_save =dijk_graph.edges[now_cross_sub][pre_next_cross_sub]; 
-         if(pre_next_cross_sub!=car_array_[car_sub].goal) 
+	temp_w_save =dijk_graph.edges[now_cross_sub][pre_cross_sub]; 
+         if(pre_cross!=car_array_[car_sub].goal) 
 	 {
 	   // not allowed back
-	   dijk_graph.edges[now_cross_sub][pre_next_cross_sub]=INF; 
+	   dijk_graph.edges[now_cross_sub][pre_cross_sub]=INF; 
 	 }
-	if(car_array_[car_sub].id==10027) 
-	{
-	  	for(int k=0;k<CROSS_NUM;k++)
-	{
-	  if(car_array_[car_sub].cross_path[k]==0) break;
-	  std::cout <<" "<<car_array_[car_sub].cross_path[k];
-	}std::cout<<std::endl<<std::endl<<std::endl;
-     
-	  std::cout<< now_cross<<" "<<pre_next_cross; out("here");
-	  
-	}
+	if(car_array_[car_sub].id==14687)  { 
+      std::cout<< car_array_[car_sub].id<<"   ";
+  for(int k=0;k<CROSS_NUM;k++)
+  {
+    if(car_array_[4687].cross_path[k]==0) break;
+    std::cout<<car_array_[4687].cross_path[k]<<" ";
+  }
+  std::cout<<"  "<<car_array_[4687].id<<" "<<car_array_[4687].route<<" "  <<now_cross<<" "<<next_cross  ;
+  out("before research ");std::cout<<std::endl<<std::endl;sleep(1);} 
         dijk_research(dijk_graph,now_cross_sub,goal_sub,now_roadsub,&car_array_[car_sub],
-		      cross_array_,road_array_,cross_dict_,map_);
-	dijk_graph.edges[now_cross_sub][pre_next_cross_sub]=temp_w_save;
-// 	std::cout << "re CAR:  "<< car_array_[car_sub].id<<" " <<now_cross
-// 		  << "  re NOW ON : "<<   car_array_[car_sub].now_road 
-// 		  << " re Next: "<<   car_array_[car_sub].next_road <<std::endl  <<std::endl  <<std::endl ;
-// 	
-	/*for(int k=0;k<CROSS_NUM;k++)
-	{
-	  if(car_array_[car_sub].cross_path[k]==0) break;
-	  std::cout <<" "<<car_array_[car_sub].cross_path[k];
-	}std::cout<<std::endl<<std::endl<<std::endl;
-         sleep(1);*/	
+		      cross_array_,road_array_,road_dict_,cross_dict_,map_,ori_sub);
+	
+	
+	if(car_array_[car_sub].id==14687)  { 
+      std::cout<< car_array_[car_sub].id<<"   ";
+  for(int k=0;k<CROSS_NUM;k++)
+  {
+    if(car_array_[4687].cross_path[k]==0) break;
+    std::cout<<car_array_[4687].cross_path[k]<<" ";
+  }
+  std::cout<<"  "<<car_array_[4687].id<<" "<<car_array_[4687].route<<" "  <<now_cross<<" "<<next_cross
+  
+  ;
+  out("after research ");std::cout<<std::endl<<std::endl;sleep(1);} 
+	
+	dijk_graph.edges[now_cross_sub][pre_cross_sub]=temp_w_save;
+
       }
-      
-//       else std::cout <<std::endl ;
-    
   }
   return true;
 }
