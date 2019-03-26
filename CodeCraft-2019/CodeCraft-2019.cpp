@@ -16,7 +16,7 @@ int main(int argc,char** argv)
 {
         bool block_flag=true;
 
-while(block_flag)
+// while(block_flag)
 {
       //神奇车库数组 存放每条道路处的神奇车库
 
@@ -41,15 +41,15 @@ while(block_flag)
 	  std::cout << "please input args: carPath, roadPath, crossPath, answerPath" << std::endl;
 	  exit(1);
 	}
-//       std::string carPath(argv[1]);
-//       std::string roadPath(argv[2]);
-//       std::string crossPath(argv[3]);
-//       std::string answerPath(argv[4]);
+      std::string carPath(argv[1]);
+      std::string roadPath(argv[2]);
+      std::string crossPath(argv[3]);
+      std::string answerPath(argv[4]);
 
-      std::string carPath="../config/car.txt";
-      std::string roadPath="../config/road.txt";
-      std::string crossPath="../config/cross.txt";
-      std::string answerPath="../config/answer.txt";
+//       std::string carPath="../config/car.txt";
+//       std::string roadPath="../config/road.txt";
+//       std::string crossPath="../config/cross.txt";
+//       std::string answerPath="../config/answer.txt";
 
       std::vector<int>car_dict;
       std::vector<int>road_dict;
@@ -191,7 +191,7 @@ while(block_flag)
             if(!write_output(answerPath,car,car_num,map,cross_dict)) return 0;
             print_time("End");
 // 	    block_flag=true;
-	    continue;
+// 	    continue;
 	  }
 }
 /******************************车辆调度规则执行******************************/

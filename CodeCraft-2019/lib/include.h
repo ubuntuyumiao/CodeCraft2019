@@ -24,10 +24,10 @@
 #define T1_roadlenghtspace_w -0.005
 #define T1_roadcar_w 1.8
 
-#define T_SOFT  200
-#define T_SOFT_RATE  0.000020
+#define T_SOFT  180
+#define T_SOFT_RATE  0.000025
 
-#define max_car_road  1200
+#define max_car_road  1400
 #define speed_near_w 0
 #define road_percent 0.93
 #define DECAY 0.00002
