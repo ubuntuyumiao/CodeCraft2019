@@ -9,9 +9,10 @@
 #include <vector>
 #include<algorithm>
 
-#define  CAR_NUM 10240
-#define  ROAD_NUM 105
-#define  CROSS_NUM 64
+#define  CAR_NUM    10240
+#define  ROAD_NUM   105
+#define  CROSS_NUM  64
+
 #define INF 0x3f3f3f3f
 #define MAX_LANE 10
 #define MAX_LANE_LENGHT 30
@@ -34,15 +35,11 @@
 #define min_road_per 0.80
 #define force_weight  0.1
 
-//以下 参数 无效
-// #define init_weight 10
-// #define Astar_h_w    8
-// #define space_plus_speed 0
-// #define Entropy  0
-// #define dacay   0
-// 
-// #define MAX 200
 
+struct System_Para
+{
+
+};
 
 typedef enum drive_state
 {

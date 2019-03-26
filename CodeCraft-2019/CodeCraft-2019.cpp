@@ -41,15 +41,11 @@ while(block_flag)
 	  std::cout << "please input args: carPath, roadPath, crossPath, answerPath" << std::endl;
 	  exit(1);
 	}
-//       std::string carPath(argv[1]);
-//       std::string roadPath(argv[2]);
-//       std::string crossPath(argv[3]);
-//       std::string answerPath(argv[4]);
+      std::string carPath(argv[1]);
+      std::string roadPath(argv[2]);
+      std::string crossPath(argv[3]);
+      std::string answerPath(argv[4]);
 
-      std::string carPath="../config/car.txt";
-      std::string roadPath="../config/road.txt";
-      std::string crossPath="../config/cross.txt";
-      std::string answerPath="../config/answer.txt";
 
       std::vector<int>car_dict;
       std::vector<int>road_dict;

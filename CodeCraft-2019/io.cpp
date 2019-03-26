@@ -475,7 +475,14 @@ sch_pos sch_most_prior(Car *car_array_,std::vector<int>&car_dict_,Road* road_,
 			    //路口是其终点 更新车道数组 车辆改为reached状态 break;
 			      if(cross_->id==car_array_[car_sub].goal) 
 			         {
-				   
+				    int proir_id= compare_prior_sch(car_array_,car_dict_,
+						     &cross_array_[cross_sub],
+		                                     road_array_,
+				                     &road_array_[road_sub],
+				                     cross_array_);
+ 
+		                 if(proir_id==road_->id)
+				 {
 			           road_->load[(cross_->id==road_->end)?0:1][i][j]=0;
 			           car_array_[car_sub].state=reached;
 				   car_array_[car_sub].wait_anthor=false;
@@ -491,6 +498,12 @@ sch_pos sch_most_prior(Car *car_array_,std::vector<int>&car_dict_,Road* road_,
 
 			           memset(huan,-1,sizeof(huan));front_car=0;
 			            i=0;j=0;break;
+				 }
+				  else 
+				  {
+				    sch_most.road_completed=false;
+			            sch_most.next_road=proir_id;  return  sch_most;
+				  }
 			         }
 			      else 
 			         {  
@@ -1801,7 +1814,19 @@ bool update_cross_prior_garage(int T_,Cross* cross_,std::vector<int>&cross_dict_
 				        &road_array_[road_sub],
 				          cross_array_,cross_dict_,
 				          &cross_array_[cross_sub],map_);
-	  if(to_next.next_road==-1){ 
+	  if(car_array_[car_sub].goal==cross_array_[cross_sub].id)
+	  {
+	  check=true;
+	  if(road_->id==cross_->road_id[0]) 
+	    cross_->prior_uproad=car_id;
+	      else if(road_->id==cross_->road_id[2]) 
+		cross_->prior_downroad=car_id;
+		else if(road_->id==cross_->road_id[3]) 
+		  cross_->prior_leftroad=car_id;
+		  else if(road_->id==cross_->road_id[1]) 
+		    cross_->prior_rightroad=car_id;
+	  }
+	  else if(to_next.next_road==-1){ 
 	    car_array_[car_sub].move_ori =go_straight;
 	    car_array_[car_sub].next_road=road_->id;
 	    std::cout << "Attention in garage: "<<car_id <<" "<<cross_->id<<" "<<road_->id<<" "
