@@ -17,35 +17,31 @@
 #define MAX_LANE_LENGHT 30
 
 
-//--1346
-// #define first_average_w 1.75
-// #define T1_roadlenght_w 0.10
-// #define T1_roadcar_w 0.1
-// #define max_car_road  1200
-// #define road_percent 0.90
-// #define DECAY 0.00012
-// #define min_road_per 0.55
-#define normalize_length_w 6.5
-#define T_SOFT  300
-#define T_SOFT_RATE  0.00001
+
+#define normalize_length_w 10.5
+
 #define first_average_w 3.95
-#define T1_roadlenghtspace_w 0.01
-#define T1_roadcar_w 0.08
-#define max_car_road  1200
+#define T1_roadlenghtspace_w -0.005
+#define T1_roadcar_w 1.8
+
+#define T_SOFT  50
+#define T_SOFT_RATE  0.000005
+
+#define max_car_road  1500
 #define speed_near_w 0
-#define road_percent 0.95
+#define road_percent 0.93
 #define DECAY 0.00002
-#define min_road_per 0.85
+#define min_road_per 0.80
 #define force_weight  0.1
 
 //以下 参数 无效
-#define init_weight 10
-#define Astar_h_w    8
-#define space_plus_speed 0
-#define Entropy  0
-#define dacay   0
-
-#define MAX 200
+// #define init_weight 10
+// #define Astar_h_w    8
+// #define space_plus_speed 0
+// #define Entropy  0
+// #define dacay   0
+// 
+// #define MAX 200
 
 
 typedef enum drive_state
@@ -63,14 +59,14 @@ typedef enum sche_direct
 }sche_direct;
  struct MGraph
 {
-    int edges[MAX][MAX];//邻接矩阵，记录的是两点之间的距离，也就是权值 
+    int edges[CROSS_NUM][CROSS_NUM];//邻接矩阵，记录的是两点之间的距离，也就是权值 
     int cross_num;
     int road_num;  //顶点数和边数
     
-    int set[MAX];
-    int dist[MAX];
-    int path[MAX];    
-    int goal_path[MAX];
+    int set[CROSS_NUM];
+    int dist[CROSS_NUM];
+    int path[CROSS_NUM];    
+    int goal_path[CROSS_NUM];
 };
 typedef struct how_tonext
 {
@@ -213,8 +209,8 @@ road_space check_road_space(Cross *cur_cross_,Road *cur_road_);
 
 //输入参数 当前路口  目标道路
 drive_toroad check_road_drive_space(Cross *cur_cross_,Road *road_,Car* car_array_,
-				    std::vector<int>&car_dict_, int max_offset);
-
+				    std::vector<int>&car_dict_, std::vector<int>&road_dict_,int max_offset);
+void dis_cusroad(int road_sub,Road* road,std::vector<int>car_dict,Car* car,int T);
 // 注意：发车与调度也不一样
 void update_to_cross_drive(Car* car_,Road* road_,Cross* cross_);
 
@@ -242,7 +238,7 @@ bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedar
 	      ,std::vector<int>&car_dict_,std::vector<int>&road_dict_,std::vector<int>&cross_dict_,
 	      int* min_roadlength_,int* max_roadlength_
 	      );
-
+void deal_with_car(std::vector<int>&car_dict_,Car* car_array_,Car* car_sortedarray_);
 void debug_dir_leavecross(Road *road_array_,int min_cross_id,int max_cross_id,Cross *cross_array_);
 
 void debug_dir_tocross(std::vector<int>&road_dict_,Road *road_array_,std::vector<int>&cross_dict_,Cross *cross_array_);

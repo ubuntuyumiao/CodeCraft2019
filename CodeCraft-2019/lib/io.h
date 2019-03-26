@@ -150,7 +150,7 @@ if((down_cross_sub!=-1)&&(map_[cur_cross_sub][down_cross_sub].id!=-1))
   
   way_cost = speed_near_w * abs(car_->max_speed-map_[cur_cross_sub][down_cross_sub].limit_speed) 
                               * abs(car_->max_speed-map_[cur_cross_sub][down_cross_sub].limit_speed) 
-             +  space_plus_speed  *map_[cur_cross_sub][down_cross_sub].road_length *
+             +  0  *map_[cur_cross_sub][down_cross_sub].road_length *
                                     map_[cur_cross_sub][down_cross_sub].lane_num /
                                     map_[cur_cross_sub][down_cross_sub].limit_speed
              + weight_[cur_cross_sub][down_cross_sub];
@@ -164,7 +164,7 @@ if((up_cross_sub!=-1)&&(map_[cur_cross_sub][up_cross_sub].id!=-1))
 
     way_cost = speed_near_w * abs(car_->max_speed-map_[cur_cross_sub][up_cross_sub].limit_speed) 
                               * abs(car_->max_speed-map_[cur_cross_sub][up_cross_sub].limit_speed) 
-             +  space_plus_speed  *map_[cur_cross_sub][up_cross_sub].road_length *
+             +  0  *map_[cur_cross_sub][up_cross_sub].road_length *
                                     map_[cur_cross_sub][up_cross_sub].lane_num /
                                     map_[cur_cross_sub][up_cross_sub].limit_speed
              + weight_[cur_cross_sub][up_cross_sub];
@@ -178,7 +178,7 @@ if((right_cross_sub!=-1)&&(map_[cur_cross_sub][right_cross_sub].id!=-1))
    
     way_cost = speed_near_w * abs(car_->max_speed-map_[cur_cross_sub][right_cross_sub].limit_speed) 
                               * abs(car_->max_speed-map_[cur_cross_sub][right_cross_sub].limit_speed) 
-             +  space_plus_speed  *map_[cur_cross_sub][right_cross_sub].road_length *
+             +  0  *map_[cur_cross_sub][right_cross_sub].road_length *
                                     map_[cur_cross_sub][right_cross_sub].lane_num /
                                     map_[cur_cross_sub][right_cross_sub].limit_speed
              + weight_[cur_cross_sub][right_cross_sub];
@@ -191,7 +191,7 @@ if((left_cross_sub!=-1)&&(map_[cur_cross_sub][left_cross_sub].id!=-1))
 {
     way_cost = speed_near_w * abs(car_->max_speed-map_[cur_cross_sub][left_cross_sub].limit_speed) 
                               * abs(car_->max_speed-map_[cur_cross_sub][left_cross_sub].limit_speed) 
-             +  space_plus_speed  *map_[cur_cross_sub][left_cross_sub].road_length *
+             +  0  *map_[cur_cross_sub][left_cross_sub].road_length *
                                     map_[cur_cross_sub][left_cross_sub].lane_num /
                                     map_[cur_cross_sub][left_cross_sub].limit_speed
              + weight_[cur_cross_sub][left_cross_sub];

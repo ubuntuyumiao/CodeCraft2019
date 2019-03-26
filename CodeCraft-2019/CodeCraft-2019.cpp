@@ -73,7 +73,7 @@ int main(int argc,char** argv)
       map_matrix(cross,cross_dict,road_dict,weight_net,road,map,dijk_g);   
 /*********************************A-Star算法  + 神奇车库*********************************/
       int has_find=0; 
-      quickSortOfCpp(car_sorted,car_num);
+
       print_time("Begin");
      for(int i=0;i<car_num;i++)
      {
@@ -84,7 +84,7 @@ int main(int argc,char** argv)
 				 road_dict,cross_dict,road,map);
        int rod_sub= road_tosub(map[start_to_sub][best_next].id,road_dict);
         dijk_insert(dijk_g,start_to_sub,best_next,dijk_g.edges[start_to_sub][best_next]
-					     +first_average_w*road[rod_sub].car_willonroad
+					     +first_average_w*map[start_to_sub][best_next].car_willonroad
 					     /(road[rod_sub].road_length
 					      *road[rod_sub].lane_num));
 	for(int k=2;k<CROSS_NUM;k++)
@@ -102,9 +102,11 @@ int main(int argc,char** argv)
 	  if(new_w<0) {std::cout<<"warning ";new_w=0;}			 
          dijk_insert(dijk_g,cr1_sub,cr2_sub,new_w );
 	}
+	car_sorted[i].route=car[i].route;
 	has_find++;
      }
-
+            //deal with the data
+     deal_with_car(car_dict,car,car_sorted);
      std::cout<<"find "<< min_roadlength<< " solutions of  "<<max_roadlength<<" car"<<std::endl;
      //安排神奇车库
      ready_garage(car_dict,road_dict,cross_dict, cross,
@@ -142,7 +144,7 @@ int main(int argc,char** argv)
 	      if(wait_car==wait_list.size())
 	       {
 		 wait_sametime++;  
-		 if(wait_sametime>CROSS_NUM*10) 
+		 if(wait_sametime>CROSS_NUM*100) 
 		 { out("BLOCKED"); 
 		   debug_dir_tocross(road_dict, road,cross_dict,cross); 
 		   block_flag=true;break;}
@@ -171,7 +173,7 @@ int main(int argc,char** argv)
 		  <<T<<" || "<<(wait_num)<<"      |"<<(reached_car) 
 		  <<std::endl<< std::endl; 
 		  }
-
+              
 // 	     if(T>1086)  { debug_dir_tocross(road_dict, road,cross_dict,cross); sleep(5);}
 	  } 
   
