@@ -9,37 +9,55 @@
 #include <vector>
 #include<algorithm>
 
-#define  CAR_NUM    10240
-#define  ROAD_NUM   105
-#define  CROSS_NUM  64
+#define  CAR_NUM    50000
+#define  ROAD_NUM   1000
+#define  CROSS_NUM  400
 
 #define INF 0x3f3f3f3f
 #define MAX_LANE 10
 #define MAX_LANE_LENGHT 30
 
 
-
 #define normalize_length_w 10.5
-
-#define first_average_w 3.95
+#define first_road_dependon_carwillon 3.95
 #define T1_roadlenghtspace_w -0.005
 #define T1_roadcar_w 1.8
 
-#define T_SOFT  200
-#define T_SOFT_RATE  0.000020
+#define T_SOFT  60
+#define T_SOFT_RATE  0.0000020
 
-#define max_car_road  1200
+#define max_car_road  1500
 #define speed_near_w 0
-#define road_percent 0.93
+#define road_percent 0.85
 #define DECAY 0.00002
 #define min_road_per 0.80
-#define force_weight  0.1
+#define force_weight  0.6
 
-
-struct System_Para
-{
-
-};
+// struct System_Para
+// {
+// 
+// 	double first_road_dependon_carwillon ;     //第一次规划时第一条路道路上将有车辆的影响系数
+// 	double T1_roadlenghtspace_w ;              //第一次规划时道路空间影响权值系数 
+// 	double T1_roadcar_w;                       //第一次规划时路径信息浓度影响系数
+// 	
+//         int max_car_road  ;            //地图某时刻允许最大车辆
+// 	int T_SOFT  ;                  //允许车辆递增开始时间
+// 	double T_SOFT_RATE  ;          //增长系数
+// 
+// 	double normalize_length_w ;    //道路长度归一化后的放大系数（还是要作为是否选择道路的大头）
+// 	double speed_near_w ;          //限速与自身速度差值对权值的影响系数
+// 	double road_percent ;          //道路最大占有率
+// 	double DECAY ;                 //占有率衰减系数
+// 	double min_road_per ;          //道路最小占有率
+// 	double force_weight ;          //直行车辆对两侧道路影响系数
+// 	
+// /********动态调度影响参数**********/
+//         double normal_roadlength;
+// 	double length_di_speed;
+// 	double best_space;
+// 	double car_onroad_w;
+// 	double car_willonroad;
+// };
 
 typedef enum drive_state
 {
@@ -163,6 +181,7 @@ int cross_tosub(int cross_id_,std::vector<int>&cross_dict_);
 int car_tosub(int car_id_,std::vector<int>&car_dict_);
 int road_tosub(int road_id_,std::vector<int>&road_dict_);
 void init_MGraph(struct MGraph &dijk_graph) ;
+void init_Para(struct System_Para &para_) ;
 void dijk_insert(struct MGraph &dijk_graph,int u, int v, int w);
 int dijk_search(struct MGraph &dijk_graph, int from,int to,Car* car_,
 		std::vector<int>&road_dict_ ,std::vector<int>&cross_dict_,Road* road_array_,
@@ -218,10 +237,6 @@ bool write_output(std::string path,Car *car_array_,int car_num_,Road map_[][CROS
 
 int campare_settime(const void * a, const void * b);
 
-//Astart寻路
-bool Astar_search(Car *car_,Road* road_array_,std::vector<int>&road_dict_,
-		  Cross* cross_array_,std::vector<int>&cross_dict_,
-		  int (*weight_)[CROSS_NUM],Road map_[][CROSS_NUM]);
 
 //发车排序
 void quickSortOfCpp(Car* car_list,int car_num_);
@@ -236,8 +251,6 @@ bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedar
 	      int* min_roadlength_,int* max_roadlength_
 	      );
 void deal_with_car(std::vector<int>&car_dict_,Car* car_array_,Car* car_sortedarray_);
-void debug_dir_leavecross(Road *road_array_,int min_cross_id,int max_cross_id,Cross *cross_array_);
-
 void debug_dir_tocross(std::vector<int>&road_dict_,Road *road_array_,std::vector<int>&cross_dict_,Cross *cross_array_);
 
 //路口调度 获得对应道路等待态优先级最高的车（不含已调度过 wait_another的车）
