@@ -25,13 +25,15 @@
 // #define road_percent 0.90
 // #define DECAY 0.00012
 // #define min_road_per 0.55
-#define T_SOFT  500
-#define T_SOFT_RATE  0.00002
+#define normalize_length_w 6.5
+#define T_SOFT  300
+#define T_SOFT_RATE  0.00001
 #define first_average_w 3.95
-#define T1_roadlenght_w 0.001
-#define T1_roadcar_w 0.4
+#define T1_roadlenghtspace_w 0.01
+#define T1_roadcar_w 0.08
 #define max_car_road  1200
-#define road_percent 0.90
+#define speed_near_w 0
+#define road_percent 0.95
 #define DECAY 0.00002
 #define min_road_per 0.85
 #define force_weight  0.1
@@ -39,7 +41,6 @@
 //以下 参数 无效
 #define init_weight 10
 #define Astar_h_w    8
-#define speed_near_w 0
 #define space_plus_speed 0
 #define Entropy  0
 #define dacay   0
@@ -108,7 +109,9 @@ typedef struct Road
     bool completed;
     int car_onroad;
     int car_willonroad;
+    int will_gocross;
     float best_space_per;
+    int front_car;
     //定义： load[0]存放 start-->end方向道路 load[1]存放 end->start方向道路
     int load[2][MAX_LANE][MAX_LANE_LENGHT];
 }Road;
@@ -189,6 +192,8 @@ int compare_prior_sch(Car* car_array_,std::vector<int>&car_dict_, Cross* cross_,
 how_tonext next_road(Car* car_,Road* cur_road,Cross* cross_array_,
 		     std::vector<int>&cross_dict_,Cross* cross_,Cross* next_cross_,Road map_[][CROSS_NUM]);
 
+how_tonext next_road_drive(Car* car_,Road* cur_road,Cross *cross_array_,std::vector<int>&cross_dict_,
+		     Cross* cross_,Road map_[][CROSS_NUM]);
 // 将所有终止态的车改为等待态
 void chang_completed_towait(Car *car_array_,std::vector<int>&wait_list_,std::vector<int>&car_dist_);
 
@@ -234,7 +239,9 @@ void map_matrix(Cross* cross_array_,std::vector<int>&cross_dict_,std::vector<int
 bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedarray_,int* min_cross_id_,int* max_cross_id_,
 	       std::string road_path, Road *road_array_,Road *road_sortedarray_,int* min_road_id_,int* max_road_id,
 	       std::string car_path,Car *car_array_,Car *car_sortedarray_,int* min_car_id_,int* max_car_id_,Road map_[][CROSS_NUM]
-	      ,std::vector<int>&car_dict_,std::vector<int>&road_dict_,std::vector<int>&cross_dict_);
+	      ,std::vector<int>&car_dict_,std::vector<int>&road_dict_,std::vector<int>&cross_dict_,
+	      int* min_roadlength_,int* max_roadlength_
+	      );
 
 void debug_dir_leavecross(Road *road_array_,int min_cross_id,int max_cross_id,Cross *cross_array_);
 
@@ -260,7 +267,8 @@ void sch_allcross_garage(Car* car_array,
 			 Magic_garage* garage,
 			 Road map_[][CROSS_NUM],
 			 int T,int *wait_num_,int *reached_car_,int car_num_,
-			 struct MGraph &dijk_graph
+			 struct MGraph &dijk_graph,
+			 int* min_roadlength,int* max_roadlength
 			);
 
 bool sch_allcross_drive(Car* car_array,std::vector<int>&car_dict_,

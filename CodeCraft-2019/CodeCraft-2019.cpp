@@ -28,6 +28,7 @@ int main(int argc,char** argv)
       int min_car_id=0,max_car_id=0;
       int min_road_id=0,max_road_id=0;
       int min_cross_id=0,max_cross_id=0;
+      int max_roadlength=0,min_roadlength=0;
       print_time("Begin");
       // 道路（边）总数 路口（节点）数 车辆数
        int road_num=0,cross_num=0,car_num=0;
@@ -49,7 +50,8 @@ int main(int argc,char** argv)
       if(!read_file(crossPath,cross,cross_sorted,&min_cross_id,&max_cross_id,
 	            roadPath,road,road_sorted,&min_road_id,&max_road_id,
                     carPath,car,car_sorted,&min_car_id,&max_car_id,map,
-		    car_dict,road_dict,cross_dict
+		    car_dict,road_dict,cross_dict,
+		    &min_roadlength,&max_roadlength
  		  ))    return 0;
 
       road_num=road_dict.size(),
@@ -93,16 +95,17 @@ int main(int argc,char** argv)
 	  int cr2_sub=cross_tosub(car[i].cross_path[k],cross_dict);
 	  int rosub=road_tosub(map[cr1_sub][cr2_sub].id,road_dict);
 	  
-	 int new_w =dijk_g.edges[cr1_sub][cr2_sub] - T1_roadlenght_w* (road[rod_sub].road_length
-					      /road[rod_sub].lane_num)+
-                                 T1_roadcar_w* road[rosub].car_willonroad;
+	 int new_w =(map[cr1_sub][cr2_sub].road_length-min_roadlength)/(float)(max_roadlength-min_roadlength)*normalize_length_w
+	                         + T1_roadlenghtspace_w* (road[rod_sub].road_length/(float)road[rod_sub].lane_num)+
+                                 T1_roadcar_w* road[rosub].car_willonroad
+                                 ;
 	  if(new_w<0) {std::cout<<"warning ";new_w=0;}			 
          dijk_insert(dijk_g,cr1_sub,cr2_sub,new_w );
 	}
 	has_find++;
      }
 
-     std::cout<<"find "<< has_find<< " solutions of  "<<car_num<<" car"<<std::endl;
+     std::cout<<"find "<< min_roadlength<< " solutions of  "<<max_roadlength<<" car"<<std::endl;
      //安排神奇车库
      ready_garage(car_dict,road_dict,cross_dict, cross,
 		  garage,road,car,car_sorted,map);
@@ -140,10 +143,8 @@ int main(int argc,char** argv)
 	       {
 		 wait_sametime++;  
 		 if(wait_sametime>CROSS_NUM*10) 
-		 {out("BLOCKED"); 
+		 { out("BLOCKED"); 
 		   debug_dir_tocross(road_dict, road,cross_dict,cross); 
-	           std::cout << map[44][43].best_space_per <<"  "<<map[44][43].car_onroad
-			    <<"  "<<map[44][43].car_willonroad; 
 		   block_flag=true;break;}
 	        }else  wait_sametime=0; 
 		block_flag=sch_allcross_drive(car,car_dict,
@@ -153,22 +154,24 @@ int main(int argc,char** argv)
 		wait_car=wait_list.size();
 		if(block_flag) break;
 	      }
-	      
+	      		    
+	    
 	      if(block_flag){ std::cout<<"SCH out block!!!"<<std::endl;  break;} 
 	      //正常跳出while 表明 无车等待 尝试调度车库
               sch_allcross_garage(car,cross,cross_dict,road,road_dict,car_dict,
-				  garage,map,T,&wait_num,&reached_car,car_num,dijk_g);
+				  garage,map,T,&wait_num,&reached_car,car_num,dijk_g,
+				  &min_roadlength,&max_roadlength
+				 );
 
 	      if(T>1)
 	      research_best_way(dijk_g,car,car_dict,road_dict,road,cross,cross_dict,map,T);
-// 	      if(T>=1)
-// 		  {
-// 		  std::cout<<"On road : "<<(wait_num-reached_car)<<" || " 
-// 		  <<T<<" || "<<(wait_num)<<"      |"<<(reached_car) 
-// 		  <<std::endl;	 
-// 		  }
-	      
-// 	      std::cout<< std::endl<< std::endl;
+	      if(T>=1)
+		  {
+		  std::cout<<"On road : "<<(wait_num-reached_car)<<" || " 
+		  <<T<<" || "<<(wait_num)<<"      |"<<(reached_car) 
+		  <<std::endl<< std::endl; 
+		  }
+
 // 	     if(T>1086)  { debug_dir_tocross(road_dict, road,cross_dict,cross); sleep(5);}
 	  } 
   
@@ -240,32 +243,37 @@ bool research_best_way(struct MGraph &dijk_graph,Car* car_array_,std::vector<int
 	   // not allowed back
 	   dijk_graph.edges[now_cross_sub][pre_cross_sub]=INF; 
 	 }
-	if(car_array_[car_sub].id==14687)  { 
-      std::cout<< car_array_[car_sub].id<<"   ";
-  for(int k=0;k<CROSS_NUM;k++)
-  {
-    if(car_array_[4687].cross_path[k]==0) break;
-    std::cout<<car_array_[4687].cross_path[k]<<" ";
-  }
-  std::cout<<"  "<<car_array_[4687].id<<" "<<car_array_[4687].route<<" "  <<now_cross<<" "<<next_cross  ;
-  out("before research ");std::cout<<std::endl<<std::endl;sleep(1);} 
+	 
+// 	if(car_array_[car_sub].id==14687)  
+// 	{ 
+// 	std::cout<< car_array_[car_sub].id<<"   ";
+// 	for(int k=0;k<CROSS_NUM;k++)
+// 	{
+// 	if(car_array_[4687].cross_path[k]==0) break;
+// 	std::cout<<car_array_[4687].cross_path[k]<<" ";
+// 	}
+// 	out("before research ");std::cout<<std::endl<<std::endl;sleep(1); 
+// 	} 
+	
+	
         dijk_research(dijk_graph,now_cross_sub,goal_sub,now_roadsub,&car_array_[car_sub],
 		      cross_array_,road_array_,road_dict_,cross_dict_,map_,ori_sub);
 	
-	
-	if(car_array_[car_sub].id==14687)  { 
-      std::cout<< car_array_[car_sub].id<<"   ";
-  for(int k=0;k<CROSS_NUM;k++)
-  {
-    if(car_array_[4687].cross_path[k]==0) break;
-    std::cout<<car_array_[4687].cross_path[k]<<" ";
-  }
-  std::cout<<"  "<<car_array_[4687].id<<" "<<car_array_[4687].route<<" "  <<now_cross<<" "<<next_cross
-  
-  ;
-  out("after research ");std::cout<<std::endl<<std::endl;sleep(1);} 
-	
 	dijk_graph.edges[now_cross_sub][pre_cross_sub]=temp_w_save;
+	
+// 	if(car_array_[car_sub].id==14687)  { 
+//       std::cout<< car_array_[car_sub].id<<"   ";
+//   for(int k=0;k<CROSS_NUM;k++)
+//   {
+//     if(car_array_[4687].cross_path[k]==0) break;
+//     std::cout<<car_array_[4687].cross_path[k]<<" ";
+//   }
+//   std::cout<<"  "<<car_array_[4687].id<<" "<<car_array_[4687].route<<" "  <<now_cross<<" "<<next_cross
+//   
+//   ;
+//   out("after research ");std::cout<<std::endl<<std::endl;sleep(1);} 
+//   std::cout<<"  "<<car_array_[4687].id<<" "<<car_array_[4687].route<<" "  <<now_cross<<" "<<next_cross  ;	
+	
 
       }
   }
