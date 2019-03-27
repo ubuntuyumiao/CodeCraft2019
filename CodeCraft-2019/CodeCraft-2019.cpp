@@ -128,6 +128,7 @@ int main(int argc,char** argv)
 	  //检查是否全部到终点
 	  std::cout<<"---------------------------------------------------------"<<std::endl;
 	  std::cout<<"---------------------------------------------------------"<<std::endl;
+	  sleep(2);
 	  while(!All_car_isreached(car,car_num))
 	  {
 	    //开始走表 
@@ -143,7 +144,7 @@ int main(int argc,char** argv)
 		 wait_sametime++;  
 		 if(wait_sametime>100) 
 		 { out("BLOCKED"); 
-// 		   debug_dir_tocross(road_dict, road,cross_dict,cross); 
+		   debug_dir_tocross(road_dict, road,cross_dict,cross,dijk_g); 
 		   block_flag=true;break;}
 	        }else  wait_sametime=0; 
 		block_flag=sch_allcross_drive(car,car_dict,
@@ -167,6 +168,7 @@ int main(int argc,char** argv)
 		  <<T<<" || "<<(wait_num)<<"      |"<<(reached_car) 
 		  <<std::endl<< std::endl; 
 		  }
+// 		  if(T==2) {debug_dir_tocross(road_dict, road,cross_dict,cross,dijk_g); out("here"); sleep(5);}
 	  } 
 
 	    std::cout<<"Time Schdule: "<<" | "<<T<<" | "<<std::endl; 

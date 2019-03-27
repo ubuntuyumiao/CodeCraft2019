@@ -241,7 +241,7 @@ bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedar
 	      int* min_roadlength_,int* max_roadlength_
 	      );
 void deal_with_car(std::vector<int>&car_dict_,Car* car_array_,Car* car_sortedarray_);
-void debug_dir_tocross(std::vector<int>&road_dict_,Road *road_array_,std::vector<int>&cross_dict_,Cross *cross_array_);
+void debug_dir_tocross(std::vector<int>&road_dict_,Road *road_array_,std::vector<int>&cross_dict_,Cross *cross_array_,struct MGraph &dijk_graph);
 
 //路口调度 获得对应道路等待态优先级最高的车（不含已调度过 wait_another的车）
 sch_pos sch_most_prior(Car *car_array_,std::vector<int>&car_dict_,Road* road_,
