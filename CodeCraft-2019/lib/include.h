@@ -9,9 +9,9 @@
 #include <vector>
 #include<algorithm>
 
-#define  CAR_NUM    50000
-#define  ROAD_NUM   500
-#define  CROSS_NUM  200
+#define  CAR_NUM   10240
+#define  ROAD_NUM   105
+#define  CROSS_NUM  64
 
 #define INF 0x3f3f3f3f
 #define MAX_LANE 10
@@ -21,7 +21,6 @@
 struct System_Para
 {
 
-	double first_road_dependon_carwillon ;     //第一次规划时第一条路道路上将有车辆的影响系数
 	double T1_roadlenghtspace_w ;              //第一次规划时道路空间影响权值系数 
 	double car_willonroad;                      //规划时路径信息浓度影响系数
 	
@@ -228,7 +227,8 @@ int campare_settime(const void * a, const void * b);
 void quickSortOfCpp(Car* car_list,int car_num_);
 
 void map_matrix(Cross* cross_array_,std::vector<int>&cross_dict_,std::vector<int>&road_dict_
-	        ,int (*weight_)[CROSS_NUM],Road* road_array_,Road map_[][CROSS_NUM],struct MGraph &dijk_graph);
+	        ,Road* road_array_,Road map_[][CROSS_NUM],struct MGraph &dijk_graph,int max_length,int min_length
+	       ,struct System_Para &para_);
 
 bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedarray_,int* min_cross_id_,int* max_cross_id_,
 	       std::string road_path, Road *road_array_,Road *road_sortedarray_,int* min_road_id_,int* max_road_id,

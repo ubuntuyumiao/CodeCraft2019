@@ -53,7 +53,7 @@ int main(int argc,char** argv)
 		    car_dict,road_dict,cross_dict,
 		    &min_roadlength,&max_roadlength
  		  ))    return 0;
-
+      out("here");
       road_num=road_dict.size(),
       cross_num=cross_dict.size(),
       car_num=car_dict.size();
@@ -71,11 +71,14 @@ int main(int argc,char** argv)
       dijk_g.road_num=road_num;
       init_MGraph(dijk_g);
       init_Para(para);
-      map_matrix(cross,cross_dict,road_dict,weight_net,road,map,dijk_g);   
+      map_matrix(cross,cross_dict,road_dict,road,map,dijk_g,max_roadlength,min_roadlength,para);   
 /*********************************A-Star算法  + 神奇车库*********************************/
       int has_find=0; 
 
       print_time("Begin");
+      
+      memset(dijk_map.map,-1,sizeof(dijk_map.map));
+
      for(int i=0;i<car_num;i++)
      {
 	int start_to_sub=cross_tosub(car[i].set,cross_dict);
@@ -83,24 +86,19 @@ int main(int argc,char** argv)
 
 	int best_next=dijk_search(dijk_g,start_to_sub,end_to_sub,&car[i],
 				  road_dict,cross_dict,road,map,para);
+	
+	
 	int rod_sub= road_tosub(map[start_to_sub][best_next].id,road_dict);
-	dijk_insert(dijk_g,start_to_sub,best_next,dijk_g.edges[start_to_sub][best_next]
-				+ para.first_road_dependon_carwillon
-				                           *map[start_to_sub][best_next].car_willonroad
-					                   /(road[rod_sub].road_length
-					                   *road[rod_sub].lane_num));
-	for(unsigned int k=2;k<cross_dict.size();k++)
+	for(unsigned int k=0;k<cross_dict.size();k++)
 	{
-	  if(car[i].cross_path[k]==0) break;
-	  int cr1_sub=cross_tosub(car[i].cross_path[k-1],cross_dict); 
-
-	  int cr2_sub=cross_tosub(car[i].cross_path[k],cross_dict);
+	  if(car[i].cross_path[k+1]==0)  break;
+	  
+	  int cr1_sub=cross_tosub(car[i].cross_path[k],cross_dict); 
+	  int cr2_sub=cross_tosub(car[i].cross_path[k+1],cross_dict); 
 	  int rosub=road_tosub(map[cr1_sub][cr2_sub].id,road_dict);
-
-	  int new_w =   para.normalize_length_w * (road[rosub].road_length-min_roadlength)
-				                                        /(float)(max_roadlength-min_roadlength)
-		      + para.T1_roadlenghtspace_w * (road[rod_sub].road_length*(float)road[rod_sub].lane_num)
-	              + para.car_willonroad  * map[start_to_sub][best_next].car_willonroad
+	  int new_w =  dijk_g.edges[cr1_sub][cr2_sub];
+		      +   (road[rod_sub].road_length*(float)road[rod_sub].lane_num)              * para.T1_roadlenghtspace_w
+	              +   map[start_to_sub][best_next].car_willonroad                            * para.car_willonroad 
 				  ;
 	  if(new_w<0) {std::cout<<"warning ";new_w=road[rosub].road_length*0.5;}			 
 	  dijk_insert(dijk_g,cr1_sub,cr2_sub,new_w );
@@ -130,7 +128,6 @@ int main(int argc,char** argv)
 	  //检查是否全部到终点
 	  std::cout<<"---------------------------------------------------------"<<std::endl;
 	  std::cout<<"---------------------------------------------------------"<<std::endl;
-	  sleep(1);
 	  while(!All_car_isreached(car,car_num))
 	  {
 	    //开始走表 
