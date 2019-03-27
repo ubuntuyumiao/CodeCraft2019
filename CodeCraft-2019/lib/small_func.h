@@ -26,15 +26,15 @@ void init_Para(struct System_Para &para_)
 	para_.DECAY =0.0002;                 
 	para_.min_road_per =0.75;
        
-	para_.max_car_road=  1200;            
-	para_.T_SOFT = 50;                 
+	para_.max_car_road=  1000;            
+	para_.T_SOFT = 100;                 
 	para_.T_SOFT_RATE = 0.00001;  
 /********动态调度影响参数**********/
         para_.normalize_length_w =8.5; 
-	para_.length_di_speed= 15.2;
-	para_.best_space_w=-1.5;
+	para_.length_di_speed= 13.2;
+	para_.best_space_w=-1.8;
 	para_.car_onroad_w=1.05;
-	para_.garage_size_w =0.1;
+	para_.garage_size_w =0.3;
 	para_.car_willonroad=0.09 ;
 
 }

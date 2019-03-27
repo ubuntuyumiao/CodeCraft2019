@@ -204,7 +204,7 @@ bool research_best_way(struct MGraph &dijk_graph,Car* car_array_,std::vector<int
   {
     if((car_array_[car_sub].state==still_stored)||(car_array_[car_sub].state==reached)) continue;
       else if(car_array_[car_sub].next_road==car_array_[car_sub].now_road)  continue;
-    
+    if(car_array_[car_sub].not_allow_research==true) continue;
     //reschedule the route:
     if(((car_array_[car_sub].now_road>road_dict_[0])&&car_array_[car_sub].now_road<road_dict_[road_dict_.size()-1])
 	&&((car_array_[car_sub].next_road>road_dict_[0])&&car_array_[car_sub].next_road<road_dict_[road_dict_.size()-1]))

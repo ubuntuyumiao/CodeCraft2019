@@ -6,5 +6,5 @@ CXX_FLAGS =  -O3 -Wall -std=c++11
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib -I/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019 
+CXX_INCLUDES = -I/home/dl/Documents/CodeCraft2019/CodeCraft-2019/lib -I/home/dl/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019 
 

@@ -9,6 +9,9 @@
 #include <vector>
 #include<algorithm>
 
+// #define  CAR_NUM   40960
+// #define  ROAD_NUM   162
+// #define  CROSS_NUM  100
 #define  CAR_NUM   10240
 #define  ROAD_NUM   105
 #define  CROSS_NUM  64
@@ -90,6 +93,7 @@ typedef struct Car
     int next_road;
     bool wait_anthor;
     int route;
+    bool not_allow_research;
     drive_state state;  //调度状态 ： 等待出发态 等待调度态 终止态
     sche_direct move_ori;
 }Car;
