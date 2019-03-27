@@ -1527,7 +1527,7 @@ bool sch_allcross_drive(Car* car_array,std::vector<int>&car_dict_,
 			 std::vector<int> &bloack_list_,int *reached_car_,int *wait_num_
 			)
 {    
-	   
+	   init_waitanthor(car_array,car_dict_,road_array,road_dict_);
        for(unsigned int sch_cross_drive=0;sch_cross_drive<cross_dict_.size();sch_cross_drive++)
        {   
 	   
