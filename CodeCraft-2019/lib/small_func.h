@@ -27,7 +27,7 @@ void init_Para(struct System_Para &para_)
 	para_.min_road_per =0.75;
        
 	para_.max_car_road=  1200;            
-	para_.T_SOFT = 100;                 
+	para_.T_SOFT = 50;                 
 	para_.T_SOFT_RATE = 0.00001;  
 /********动态调度影响参数**********/
         para_.normalize_length_w =8.5; 
