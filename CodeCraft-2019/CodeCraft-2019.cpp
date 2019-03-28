@@ -98,7 +98,7 @@ int main(int argc,char** argv)
 	  int rosub=road_tosub(map[cr1_sub][cr2_sub].id,road_dict);
 	  int new_w =  dijk_g.edges[cr1_sub][cr2_sub];
 		      +   (road[rod_sub].road_length*(float)road[rod_sub].lane_num)              * para.T1_roadlenghtspace_w
-	              +   map[start_to_sub][best_next].car_willonroad                            * para.car_willonroad 
+	              +  sqrt( map[start_to_sub][best_next].car_willonroad  )                          * para.car_willonroad 
 				  ;
 	  if(new_w<0) {std::cout<<"warning ";new_w=road[rosub].road_length*0.5;}			 
 	  dijk_insert(dijk_g,cr1_sub,cr2_sub,new_w );
@@ -144,7 +144,7 @@ int main(int argc,char** argv)
 		 wait_sametime++;  
 		 if(wait_sametime>100) 
 		 { out("BLOCKED"); 
-		   debug_dir_tocross(road_dict, road,cross_dict,cross,dijk_g); 
+// 		   debug_dir_tocross(road_dict, road,cross_dict,cross,dijk_g); 
 		   block_flag=true;break;}
 	        }else  wait_sametime=0; 
 		block_flag=sch_allcross_drive(car,car_dict,

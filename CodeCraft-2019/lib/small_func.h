@@ -18,23 +18,23 @@ using namespace std;
 void init_Para(struct System_Para &para_) 
 {
         
-	para_.speed_near_w =0.6;
-	para_.T1_roadlenghtspace_w= -0.011;                                              
+	para_.speed_near_w =4.5;
+	para_.T1_roadlenghtspace_w= -0.008;                                              
 	     
 	
-	para_.road_percent =0.85;          
-	para_.DECAY =0.0002;                 
+	para_.road_percent =0.95;          
+	para_.DECAY =0.0008;                 
 	para_.min_road_per =0.75;
        
-	para_.max_car_road=  1100;            
-	para_.T_SOFT = 100;                 
-	para_.T_SOFT_RATE = 0.00003;  
+	para_.max_car_road=  1500;            
+	para_.T_SOFT = 200;                 
+	para_.T_SOFT_RATE = 0.00007;  
 /********动态调度影响参数**********/
-        para_.normalize_length_w =12.5; 
-	para_.length_di_speed= 8.2;
-	para_.best_space_w= 9.8;
-	para_.car_onroad_w=0.25;
-	para_.garage_size_w =0.03;
+        para_.normalize_length_w =0.0; 
+	para_.length_di_speed= 80.0;
+	para_.best_space_w= 5.8;
+	para_.car_onroad_w=0.65;
+	para_.garage_size_w =0.08;
 	para_.car_willonroad=0.09 ;
 
 }

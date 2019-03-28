@@ -1237,7 +1237,9 @@ void map_matrix(Cross* cross_array_,std::vector<int>&cross_dict_,std::vector<int
 	      {
 
 		int road_sub=road_tosub(cross_array_[i].road_id[0],road_dict_);
-		int init_w =road_array_[road_sub].road_length/(float)(max_length-min_length)  *para_.normalize_length_w;
+		int init_w =road_array_[road_sub].road_length/((float)
+	                     (max_length)-( min_length)) /
+	                      ((float)road_array_[road_sub].limit_speed)                  * para_.length_di_speed ;
 		cross_array_[i].up_cross_id=cross_dict_[j];
 		cross_array_[j].down_cross_id=cross_dict_[i];
 		if(road_array_[road_sub].flag_twoway==1) {   
@@ -1263,7 +1265,9 @@ void map_matrix(Cross* cross_array_,std::vector<int>&cross_dict_,std::vector<int
 	   if((cross_array_[i].road_id[1]!=-1)&&(cross_array_[i].road_id[1]==cross_array_[j].road_id[3]))
 	      { 
 		int road_sub=road_tosub(cross_array_[i].road_id[1],road_dict_); 
-		int init_w =road_array_[road_sub].road_length/(float)(max_length-min_length)  *para_.normalize_length_w;
+		int init_w =road_array_[road_sub].road_length/((float)
+	                     (max_length)-( min_length)) /
+	                      ((float)road_array_[road_sub].limit_speed)                  * para_.length_di_speed ;
 		cross_array_[i].right_cross_id=cross_dict_[j];
 		 cross_array_[j].left_cross_id=cross_dict_[i];
 		if(road_array_[road_sub].flag_twoway==1){
@@ -1287,7 +1291,9 @@ void map_matrix(Cross* cross_array_,std::vector<int>&cross_dict_,std::vector<int
 	   if((cross_array_[i].road_id[2]!=-1)&&(cross_array_[i].road_id[2]==cross_array_[j].road_id[0])) 
 	      {
 		int road_sub=road_tosub(cross_array_[i].road_id[2],road_dict_);
-		int init_w =road_array_[road_sub].road_length/(float)(max_length-min_length)  *para_.normalize_length_w;
+		int init_w =road_array_[road_sub].road_length/((float)
+	                     (max_length)-(min_length)) /
+	                      ((float)road_array_[road_sub].limit_speed)                  * para_.length_di_speed ;
 		cross_array_[i].down_cross_id=cross_dict_[j];
 		cross_array_[j].up_cross_id=cross_dict_[i];
 		if(road_array_[road_sub].flag_twoway==1){
@@ -1311,7 +1317,9 @@ void map_matrix(Cross* cross_array_,std::vector<int>&cross_dict_,std::vector<int
 	   if((cross_array_[i].road_id[3]!=-1)&&(cross_array_[i].road_id[3]==cross_array_[j].road_id[1])) 
 	      { 
 		int road_sub=road_tosub(cross_array_[i].road_id[3],road_dict_);
-                int init_w =road_array_[road_sub].road_length/(float)(max_length-min_length)  *para_.normalize_length_w;
+                int init_w =road_array_[road_sub].road_length/((float)
+	                     (max_length)-( min_length)) /
+	                      ((float)road_array_[road_sub].limit_speed)                  * para_.length_di_speed ;
 		cross_array_[i].left_cross_id=cross_dict_[j];
 		cross_array_[j].right_cross_id=cross_dict_[i];
 		if(road_array_[road_sub].flag_twoway==1){
@@ -1795,8 +1803,8 @@ void sch_allcross_garage(Car* car_array,
 		      int cr_e_sub =cross_tosub(((cross_dict_[sch_cross_garage]==road_array[road_sub].end)?
 			road_array[road_sub].start:road_array[road_sub].end),  cross_dict_);
 
-                        if(para_.road_percent-T*para_.DECAY>para_.min_road_per)
-			    limit_per=para_.road_percent-T*para_.DECAY ;
+                        if(para_.min_road_per+T*para_.DECAY>para_.road_percent)
+			    limit_per=para_.road_percent ;
 		        else limit_per=para_.min_road_per; 
 		      if((map_[sch_cross_garage][cr_e_sub].car_onroad/((float)(road_array[road_sub].lane_num
 			*road_array[road_sub].road_length))>limit_per)) break;
@@ -1854,7 +1862,7 @@ void sch_allcross_garage(Car* car_array,
 	                        
 	  int garage_size = garage[road_sub].garage[cur_dup].size()                      * para_.garage_size_w ;
 	  
-	  int car_willonroad =  map_[sch_cross_garage][to_cross_sub].car_willonroad       * para_.car_willonroad;
+	  int car_willonroad = sqrt( map_[sch_cross_garage][to_cross_sub].car_willonroad)       * para_.car_willonroad;
 	  
 	  int new_weight = 	normal_roadlength+  length_di_speed +  
 	                        best_space + car_onroad+ garage_size + car_willonroad;
@@ -1863,7 +1871,7 @@ void sch_allcross_garage(Car* car_array,
 			         <<"   "<<YELLOW<<normal_roadlength <<"   "
 			         <<CYAN<<length_di_speed<<"   "
 			         <<LIGHT_BLUE<<best_space<<"   "
-			         <<GREEN<< map_[sch_cross_garage][to_cross_sub].car_onroad<<"   "
+			         <<GREEN<< car_onroad<<"   "
 				 <<PURPLE<<garage_size<<"   "
 				 <<DARY_GRAY<<car_willonroad<<"   -------->   " <<RED<< new_weight;
 				 std::cout<<WHITE<<std::endl;
