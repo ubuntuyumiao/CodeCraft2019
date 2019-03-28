@@ -275,7 +275,7 @@ bool sch_allcross_drive(Car* car_array,std::vector<int>&car_dict_,
 			 Road map_[][CROSS_NUM],
 			 int T,
 			 std::vector<int> &wait_list_,
-			 std::vector<int> &bloack_list_,int *reached_car_,int *wait_num_
+			 std::vector<int> &bloack_list_,int *reached_car_,int *wait_num_,struct MGraph &dijk_graph
 			);
 bool print_map(int coord_max,Car* car_);
 #endif

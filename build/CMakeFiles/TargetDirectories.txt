@@ -1,3 +1,3 @@
-/home/robot/Downloads/CodeCraft2019-190328.05.56/build/CMakeFiles/edit_cache.dir
-/home/robot/Downloads/CodeCraft2019-190328.05.56/build/CMakeFiles/rebuild_cache.dir
-/home/robot/Downloads/CodeCraft2019-190328.05.56/build/CMakeFiles/CodeCraft-2019.dir
+/home/ym/Documents/CodeCraft2019/build/CMakeFiles/edit_cache.dir
+/home/ym/Documents/CodeCraft2019/build/CMakeFiles/rebuild_cache.dir
+/home/ym/Documents/CodeCraft2019/build/CMakeFiles/CodeCraft-2019.dir

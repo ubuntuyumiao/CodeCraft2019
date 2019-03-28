@@ -6,25 +6,21 @@
 
 #IncludeRegexTransform: 
 
-/home/robot/Downloads/CodeCraft2019-190328.05.56/CodeCraft-2019/CodeCraft-2019.cpp
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/CodeCraft-2019.cpp
 iostream
 -
-unistd.h
--
-memory
--
 include.h
-/home/robot/Downloads/CodeCraft2019-190328.05.56/CodeCraft-2019/include.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/include.h
 
-/home/robot/Downloads/CodeCraft2019-190328.05.56/CodeCraft-2019/io.cpp
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/io.cpp
 io.h
-/home/robot/Downloads/CodeCraft2019-190328.05.56/CodeCraft-2019/io.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/io.h
 small_func.h
-/home/robot/Downloads/CodeCraft2019-190328.05.56/CodeCraft-2019/small_func.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/small_func.h
 unistd.h
 -
 
-/home/robot/Downloads/CodeCraft2019-190328.05.56/CodeCraft-2019/lib/include.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/include.h
 stdio.h
 -
 queue
@@ -40,7 +36,7 @@ vector
 algorithm
 -
 
-/home/robot/Downloads/CodeCraft2019-190328.05.56/CodeCraft-2019/lib/io.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/io.h
 iostream
 -
 stdlib.h
@@ -60,13 +56,13 @@ cmath
 string.h
 -
 include.h
-/home/robot/Downloads/CodeCraft2019-190328.05.56/CodeCraft-2019/lib/include.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/include.h
 
-/home/robot/Downloads/CodeCraft2019-190328.05.56/CodeCraft-2019/lib/small_func.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/small_func.h
 iostream
 -
 vector
 -
 include.h
-/home/robot/Downloads/CodeCraft2019-190328.05.56/CodeCraft-2019/lib/include.h
+/home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/include.h
 

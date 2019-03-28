@@ -1,6 +1,4 @@
 #include <iostream>
-#include <unistd.h>
-#include <memory>
 #include "include.h"
 Car  car[CAR_NUM],car_sorted[CAR_NUM];
 Road road[ROAD_NUM],road_sorted[ROAD_NUM];
@@ -58,10 +56,8 @@ int main(int argc,char** argv)
       cross_num=cross_dict.size(),
       car_num=car_dict.size();
       std::cout<<"Car: "<< car_num
-
-	  <<" Road: "<< road_num
-
-	  <<" Cross: "<< cross_num<<std::endl;  
+	       <<" Road: "<< road_num
+	       <<" Cross: "<< cross_num<<std::endl;  
 /*********************************将所有路口与道路信息以邻接矩阵表示*********************************/
 
       System_Para para;
@@ -96,10 +92,10 @@ int main(int argc,char** argv)
 	  int cr1_sub=cross_tosub(car[i].cross_path[k],cross_dict); 
 	  int cr2_sub=cross_tosub(car[i].cross_path[k+1],cross_dict); 
 	  int rosub=road_tosub(map[cr1_sub][cr2_sub].id,road_dict);
-	  int new_w =  dijk_g.edges[cr1_sub][cr2_sub];
+	  int new_w =  dijk_g.edges[cr1_sub][cr2_sub]
 		      +   (road[rod_sub].road_length*(float)road[rod_sub].lane_num)              * para.T1_roadlenghtspace_w
-	              +  sqrt( map[start_to_sub][best_next].car_willonroad  )                          * para.car_willonroad 
-				  ;
+	              +  sqrt( map[start_to_sub][best_next].car_willonroad  )                          * para.car_willonroad ;
+		      
 	  if(new_w<0) {std::cout<<"warning ";new_w=road[rosub].road_length*0.5;}			 
 	  dijk_insert(dijk_g,cr1_sub,cr2_sub,new_w );
 	}
@@ -122,13 +118,12 @@ int main(int argc,char** argv)
 	  block_flag=false;
 	  int reached_car=0;                     
 	  T=0;
-	  srand(time(NULL));
 	  unsigned int wait_car=0;
 	  int wait_sametime=0;
 	  //检查是否全部到终点
 	  std::cout<<"---------------------------------------------------------"<<std::endl;
 	  std::cout<<"---------------------------------------------------------"<<std::endl;
-	  sleep(2);
+// 	  sleep(2);
 	  while(!All_car_isreached(car,car_num))
 	  {
 	    //开始走表 
@@ -144,13 +139,13 @@ int main(int argc,char** argv)
 		 wait_sametime++;  
 		 if(wait_sametime>100) 
 		 { out("BLOCKED"); 
-// 		   debug_dir_tocross(road_dict, road,cross_dict,cross,dijk_g); 
+		   debug_dir_tocross(road_dict, road,cross_dict,cross,dijk_g); 
 		   block_flag=true;break;}
 	        }else  wait_sametime=0; 
 		block_flag=sch_allcross_drive(car,car_dict,
 					      cross, cross_dict,
 				              road,road_dict,
-				              garage,map,T,wait_list,block_list,&reached_car,&wait_num);
+				              garage,map,T,wait_list,block_list,&reached_car,&wait_num,dijk_g);
 		wait_car=wait_list.size();
 		if(block_flag) break;
 	      }    
@@ -161,7 +156,7 @@ int main(int argc,char** argv)
 				  &min_roadlength,&max_roadlength,para
 				 );
 	      if(T>1)
-// 	      research_best_way(dijk_g,car,car_dict,road_dict,road,cross,cross_dict,map,T,para,dijk_map);
+	      research_best_way(dijk_g,car,car_dict,road_dict,road,cross,cross_dict,map,T,para,dijk_map);
 	      if(T>=1)
 		  {
 		  std::cout<<"On road : "<<(wait_num-reached_car)<<" || " 

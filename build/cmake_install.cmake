@@ -1,4 +1,4 @@
-# Install script for directory: /home/robot/Downloads/CodeCraft2019-190328.05.56/CodeCraft-2019
+# Install script for directory: /home/ym/Documents/CodeCraft2019/CodeCraft-2019
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/robot/Downloads/CodeCraft2019-190328.05.56/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/ym/Documents/CodeCraft2019/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

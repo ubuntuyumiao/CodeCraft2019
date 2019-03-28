@@ -13,7 +13,7 @@ using namespace std;
 #define LIGHT_BLUE   "\033[1;34m"
 #define DARY_GRAY    "\033[1;30m"
 
-// #define DEBUG
+#define DEBUG
 // #define DEEP_DEBUG
 void init_Para(struct System_Para &para_) 
 {
@@ -22,20 +22,20 @@ void init_Para(struct System_Para &para_)
 	para_.T1_roadlenghtspace_w= -0.008;                                              
 	     
 	
-	para_.road_percent =0.95;          
+	para_.road_percent =0.90;          
 	para_.DECAY =0.0008;                 
 	para_.min_road_per =0.75;
        
-	para_.max_car_road=  1500;            
-	para_.T_SOFT = 200;                 
-	para_.T_SOFT_RATE = 0.00007;  
+	para_.max_car_road=  1200;            
+	para_.T_SOFT = 50;                 
+	para_.T_SOFT_RATE = 0.000004;  
 /********动态调度影响参数**********/
         para_.normalize_length_w =0.0; 
-	para_.length_di_speed= 80.0;
-	para_.best_space_w= 5.8;
+	para_.length_di_speed= 60.0;
+	para_.best_space_w= 12.8;
 	para_.car_onroad_w=0.65;
 	para_.garage_size_w =0.08;
-	para_.car_willonroad=0.09 ;
+	para_.car_willonroad=0.2 ;
 
 }
 void out(std::string s)
