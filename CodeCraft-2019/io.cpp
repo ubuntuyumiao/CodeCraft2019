@@ -485,9 +485,9 @@ sch_pos sch_most_prior(Car *car_array_,std::vector<int>&car_dict_,Road* road_,
                                 if((j-max_can)<0)
                                 {
                                       how_tonext to_next=next_road_drive(&car_array_[car_sub],
-						                                                 &road_array_[road_sub],
-				                                                        cross_array_,cross_dict_,
-				                                                     &cross_array_[cross_sub],map_);
+						                            &road_array_[road_sub],
+				                                             cross_array_,cross_dict_,
+				                                            &cross_array_[cross_sub],map_);
  
                                       if(to_next.next_road==-1)
                                         {
@@ -539,7 +539,7 @@ sch_pos sch_most_prior(Car *car_array_,std::vector<int>&car_dict_,Road* road_,
                                                 car_array_[car_sub].wait_anthor=false;
                                                 car_array_[car_sub].now_road=road_->id;
                                                 check_and_delete(car_id,wait_list_);
-                                                most_prior_car=-1;i=0;j=0;break;
+                                                front[i]=-1;most_prior_car=-1;i=0;j=0;break;
                                             }
                                             else
                                             {
@@ -574,7 +574,7 @@ sch_pos sch_most_prior(Car *car_array_,std::vector<int>&car_dict_,Road* road_,
                                                       car_array_[car_sub].now_road=road_->id;
                                                       car_array_[car_sub].next_road=goal_road;
                                                      check_and_delete(car_id,wait_list_);
-                                                     most_prior_car=-1;i=0;j=0;break;
+                                                     front[i]=-1;most_prior_car=-1;i=0;j=0;break;
                                                     }
                                                     else
                                                       {
@@ -624,13 +624,13 @@ sch_pos sch_most_prior(Car *car_array_,std::vector<int>&car_dict_,Road* road_,
                                     road_->load[(cross_->id==road_->end)?0:1][i][j]=0;
                                     if(road_->load[(cross_->id==road_->end)?0:1][i][j-max_can]!=0)
                                         std::cout<<"A has car!!!!!!!!"<<std::endl;
-			                        road_->load[(cross_->id==road_->end)?0:1][i][j-max_can]=car_id;
+			           road_->load[(cross_->id==road_->end)?0:1][i][j-max_can]=car_id;
                                    car_array_[car_sub].state=completed;
                                    car_array_[car_sub].wait_anthor=false;
                                    car_array_[car_sub].now_road=road_->id;
                                    check_and_delete(car_id,wait_list_);
 				   most_prior_car=-1;
-                                   continue;
+                                   front[i]=-1;most_prior_car=-1;i=0;j=0;break;
                                 }
                             }
                             else
@@ -650,7 +650,7 @@ sch_pos sch_most_prior(Car *car_array_,std::vector<int>&car_dict_,Road* road_,
                                    car_array_[car_sub].wait_anthor=false;
                                    car_array_[car_sub].now_road=road_->id;
                                    check_and_delete(car_id,wait_list_);
-				   continue;
+				  front[i]=-1;most_prior_car=-1;i=0;j=0;break;
                                }
                             }
                         }

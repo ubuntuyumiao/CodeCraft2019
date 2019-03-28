@@ -26,9 +26,9 @@ void init_Para(struct System_Para &para_)
 	para_.DECAY =0.0002;                 
 	para_.min_road_per =0.75;
        
-	para_.max_car_road=  1200;            
+	para_.max_car_road=  1100;            
 	para_.T_SOFT = 100;                 
-	para_.T_SOFT_RATE = 0.00002;  
+	para_.T_SOFT_RATE = 0.00003;  
 /********动态调度影响参数**********/
         para_.normalize_length_w =12.5; 
 	para_.length_di_speed= 8.2;
