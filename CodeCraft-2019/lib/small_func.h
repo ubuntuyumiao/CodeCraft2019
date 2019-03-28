@@ -17,25 +17,45 @@ using namespace std;
 // #define DEEP_DEBUG
 void init_Para(struct System_Para &para_) 
 {
-	para_.speed_near_w =4.5;
-	para_.T1_roadlenghtspace_w= -0.008;                                              
+  // --10240 T=653
+// 	para_.speed_near_w =4.5;
+// 	para_.T1_roadlenghtspace_w= -0.02;                                              
+// 	     
+// 	
+// 	para_.road_percent =0.98;          
+// 	para_.DECAY =0.0008;                 
+// 	para_.min_road_per =0.90;
+//        
+// 	para_.max_car_road=  1500;            
+// 	para_.T_SOFT = 50;                 
+// 	para_.T_SOFT_RATE = 0.00003;  
+// /********动态调度影响参数**********/
+//         para_.normalize_length_w =4.8; 
+// 	para_.length_di_speed= 60.0;
+// 	para_.best_space_w= 24.8;
+// 	para_.car_onroad_w=3.95;
+// 	para_.garage_size_w =0.08;
+// 	para_.car_willonroad=2.6 ;
+  
+  	para_.speed_near_w =6.5;
+	para_.T1_roadlenghtspace_w= -0.05;                                              
 	     
 	
-	para_.road_percent =0.90;          
-	para_.DECAY =0.0008;                 
-	para_.min_road_per =0.75;
+	para_.road_percent =0.98;          
+	para_.DECAY =0.0002;                 
+	para_.min_road_per =0.90;
        
 	para_.max_car_road=  1200;            
-	para_.T_SOFT = 50;                 
-	para_.T_SOFT_RATE = 0.000004;  
+	para_.T_SOFT = 40;                 
+	para_.T_SOFT_RATE = 0.00003;  
 /********动态调度影响参数**********/
-        para_.normalize_length_w =0.0; 
+        para_.normalize_length_w =2.8; 
 	para_.length_di_speed= 60.0;
-	para_.best_space_w= 12.8;
-	para_.car_onroad_w=0.65;
+	para_.best_space_w= 24.8;
+	para_.car_onroad_w=3.95;
 	para_.garage_size_w =0.08;
-	para_.car_willonroad=0.2 ;
-
+	para_.car_willonroad=2.8 ;
+  
 }
 void out(std::string s)
 {
