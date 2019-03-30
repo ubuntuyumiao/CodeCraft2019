@@ -13,49 +13,38 @@ using namespace std;
 #define LIGHT_BLUE   "\033[1;34m"
 #define DARY_GRAY    "\033[1;30m"
 
+
+// #define  CAR_NUM   40960
+// #define  ROAD_NUM   162
+// #define  CROSS_NUM  100
+// #define  CAR_NUM   10240
+// #define  ROAD_NUM   105
+// #define  CROSS_NUM  64
+
+
 // #define DEBUG
 // #define DEEP_DEBUG
+#define SYS_LIMIT_CAR 10000
 void init_Para(struct System_Para &para_) 
 {
-  // --10240 T=653
-// 	para_.speed_near_w =4.5;
-// 	para_.T1_roadlenghtspace_w= -0.02;                                              
-// 	     
-// 	
-// 	para_.road_percent =0.98;          
-// 	para_.DECAY =0.0008;                 
-// 	para_.min_road_per =0.90;
-//        
-// 	para_.max_car_road=  1500;            
-// 	para_.T_SOFT = 50;                 
-// 	para_.T_SOFT_RATE = 0.00003;  
-// /********动态调度影响参数**********/
-//         para_.normalize_length_w =4.8; 
-// 	para_.length_di_speed= 60.0;
-// 	para_.best_space_w= 24.8;
-// 	para_.car_onroad_w=3.95;
-// 	para_.garage_size_w =0.08;
-// 	para_.car_willonroad=2.6 ;
-  
+        
   	para_.speed_near_w =6.5;
-	para_.T1_roadlenghtspace_w= -0.05;                                              
-	     
+        para_.car_willonroad=2.6 ;                                        
+	para_.road_percent =0.95;          
+	para_.DECAY =0.00001;                 
+	para_.min_road_per =0.90;  
+	para_.max_car_road=  1800;            
+	para_.T_SOFT = 100;                 
+	para_.T_SOFT_RATE = 0.000001;  
 	
-	para_.road_percent =0.98;          
-	para_.DECAY =0.0002;                 
-	para_.min_road_per =0.90;
-       
-	para_.max_car_road=  1200;            
-	para_.T_SOFT = 40;                 
-	para_.T_SOFT_RATE = 0.00003;  
-/********动态调度影响参数**********/
-        para_.normalize_length_w =2.8; 
+/********动态调度参数**********/
+         
 	para_.length_di_speed= 60.0;
 	para_.best_space_w= 24.8;
-	para_.car_onroad_w=3.95;
+	para_.car_onroad_w=6.95;
 	para_.garage_size_w =0.08;
-	para_.car_willonroad=2.8 ;
-  
+	
+  	para_.T1_roadlenghtspace_w= 0.0; 
 }
 void out(std::string s)
 {
@@ -69,6 +58,14 @@ int  campare_settime(const void * a, const void * b)
 int  campare_carid(const void * a, const void * b)
 {
  return (*(Car *)a).id > (*(Car *)b).id ? 1 : -1; 
+}
+int  campare_crossid(const void * a, const void * b)
+{
+ return (*(Cross *)a).id > (*(Cross *)b).id ? 1 : -1; 
+}
+int  campare_roadid(const void * a, const void * b)
+{
+ return (*(Road *)a).id > (*(Road *)b).id ? 1 : -1; 
 }
 int  campare_speed(const void * a, const void * b)
 {

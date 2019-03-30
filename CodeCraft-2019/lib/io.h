@@ -11,7 +11,13 @@
 #include<cmath>
 #include<string.h>
 #include "include.h"
+#define  CAR_NUM   61440
+#define  ROAD_NUM   236
+#define  CROSS_NUM  143
 
+#define INF 0x3f3f3f3f
+#define MAX_LANE 10
+#define MAX_LANE_LENGHT 30
 
 using namespace std;
 

@@ -9,16 +9,13 @@
 #include <vector>
 #include<algorithm>
 
-// #define  CAR_NUM   40960
-// #define  ROAD_NUM   162
-// #define  CROSS_NUM  100
-#define  CAR_NUM   10240
-#define  ROAD_NUM   105
-#define  CROSS_NUM  64
+#define  CAR_NUM   61440
+#define  ROAD_NUM   236
+#define  CROSS_NUM  143
 
 #define INF 0x3f3f3f3f
-#define MAX_LANE 10
-#define MAX_LANE_LENGHT 30
+#define MAX_LANE 20
+#define MAX_LANE_LENGHT 80
 
 
 struct System_Para
@@ -94,6 +91,7 @@ typedef struct Car
     bool wait_anthor;
     int route;
     bool not_allow_research;
+    int now_cross;
     drive_state state;  //调度状态 ： 等待出发态 等待调度态 终止态
     sche_direct move_ori;
 }Car;
@@ -179,7 +177,7 @@ int dijk_search(struct MGraph &g, int from,int to,Car* car_,
 int dijk_research(struct DIJK_map &dijk_map,int pre_cross_sub_,struct MGraph &g, int from,int to,int now_road_sub_, 
 		  Car* car_,Cross* cross_array_,Road* road_array_,std::vector<int>&road_dict_,
 		  std::vector<int>&cross_dict_,Road map_[][CROSS_NUM],int ori_sub, struct System_Para &para_);
-int update_map(struct DIJK_map &dijk_map,int from,int to,struct MGraph &g,struct System_Para &para_);
+int update_map(struct DIJK_map &dijk_map,int from,int to,struct MGraph &g,struct System_Para &para_,Road map_[][CROSS_NUM]);
 int not_equal(int a,int b);
 int min(int a, int b);
 void out(std::string s);
@@ -234,8 +232,8 @@ void map_matrix(Cross* cross_array_,std::vector<int>&cross_dict_,std::vector<int
 	        ,Road* road_array_,Road map_[][CROSS_NUM],struct MGraph &dijk_graph,int max_length,int min_length
 	       ,struct System_Para &para_);
 
-bool read_file(std::string cross_path, Cross *cross_array_,Cross *cross_sortedarray_,int* min_cross_id_,int* max_cross_id_,
-	       std::string road_path, Road *road_array_,Road *road_sortedarray_,int* min_road_id_,int* max_road_id,
+bool read_file(std::string cross_path, Cross *cross_array_,int* min_cross_id_,int* max_cross_id_,
+	       std::string road_path, Road *road_array_,int* min_road_id_,int* max_road_id,
 	       std::string car_path,Car *car_array_,Car *car_sortedarray_,int* min_car_id_,int* max_car_id_,Road map_[][CROSS_NUM]
 	      ,std::vector<int>&car_dict_,std::vector<int>&road_dict_,std::vector<int>&cross_dict_,
 	      int* min_roadlength_,int* max_roadlength_
@@ -277,6 +275,7 @@ bool sch_allcross_drive(Car* car_array,std::vector<int>&car_dict_,
 			 std::vector<int> &wait_list_,
 			 std::vector<int> &bloack_list_,int *reached_car_,int *wait_num_,struct MGraph &dijk_graph
 			);
+
 bool print_map(int coord_max,Car* car_);
 #endif
 

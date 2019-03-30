@@ -6,6 +6,5 @@ CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o: /home/ym/Documents/CodeCraft
 
 CMakeFiles/CodeCraft-2019.dir/io.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/io.cpp
 CMakeFiles/CodeCraft-2019.dir/io.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/include.h
-CMakeFiles/CodeCraft-2019.dir/io.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/io.h
 CMakeFiles/CodeCraft-2019.dir/io.cpp.o: /home/ym/Documents/CodeCraft2019/CodeCraft-2019/lib/small_func.h
 
